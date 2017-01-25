@@ -254,6 +254,8 @@ local MSP_SET_RC_TUNING = 204
 -- BF specials
 local MSP_PID_ADVANCED     = 94
 local MSP_SET_PID_ADVANCED = 95
+local MSP_VTX_CONFIG       = 88
+local MSP_VTX_SET_CONFIG   = 89
 
 local MSP_EEPROM_WRITE = 250
 
@@ -266,6 +268,24 @@ local PAGE_SAVING  = 4
 local MENU_DISP    = 5
 
 local gState = PAGE_DISPLAY
+
+local function postReadVTX(page)
+   if page.values[1] == 3 then -- SmartAudio
+      page.fields[3].table = { 25, 200, 500, 800 }
+      page.fields[3].max = 4
+   elseif page.values[1] == 4 then -- Tramp
+      page.fields[3].table = { 25, 100, 200, 400, 600 }
+      page.fields[3].max = 5
+   else
+      -- TODO: print label on unavailable (0xFF) vs. unsupported (0)
+      --page.values = nil
+   end
+end
+
+local function getWriteValuesVTX(values)
+   local channel = (values[2]-1)*8 + values[3]-1
+   return { bit32.band(channel,0xFF), bit32.rshift(channel,8), values[4], values[5] }
+end
 
 local SetupPages = {
    {
@@ -314,23 +334,50 @@ local SetupPages = {
       },
       read  = MSP_RC_TUNING,
       write = MSP_SET_RC_TUNING,
+   },
+   {
+      title = "VTX",
+      text = {},
+      fields = {
+         -- Super Rate
+         { t = "Band",    x = 25,  y = 14, sp = 50, i=2, min=1, max=5, table = { "A", "B", "E", "F", "R" } },
+         { t = "Channel", x = 25,  y = 24, sp = 50, i=3, min=1, max=8 },
+         { t = "Power",   x = 25,  y = 34, sp = 50, i=4, min=1 },
+         { t = "Pit",     x = 25,  y = 44, sp = 50, i=5, min=0, max=1, table = { [0]="OFF", "ON" } },
+         { t = "(Dev)",   x = 100, y = 14, sp = 32, i=1, ro=true, table = {[3]="SmartAudio",[4]="Tramp"} },
+      },
+      read  = MSP_VTX_CONFIG,
+      write = MSP_VTX_SET_CONFIG,
+      postRead = postReadVTX,
+      getWriteValues = getWriteValuesVTX,
+      saveMaxRetries = 0,
+      saveTimeout = 200 -- 2s
    }
 }
 
 local currentPage = 1
 local currentLine = 1
 local saveTS = 0
+local saveTimeout = 0
 local saveRetries = 0
+local saveMaxRetries = 0
 
 local function saveSettings(new)
    local page = SetupPages[currentPage]
    if page.values then
-      mspSendRequest(page.write,page.values)
+      if page.getWriteValues then
+         mspSendRequest(page.write,page.getWriteValues(page.values))
+      else
+         mspSendRequest(page.write,page.values)
+      end
       saveTS = getTime()
       if gState == PAGE_SAVING then
          saveRetries = saveRetries + 1
       else
          gState = PAGE_SAVING
+         saveRetries = 0
+         saveMaxRetries = page.saveMaxRetries or 2 -- default 2
+         saveTimeout = page.saveTimeout or 150     -- default 1.5s
       end
    end
 end
@@ -366,7 +413,9 @@ local function processMspReply(cmd,rx_buf)
 
    -- ignore replies to write requests for now
    if cmd == page.write then
-      mspSendRequest(MSP_EEPROM_WRITE,{})
+      if cmd ~= MSP_VTX_SET_CONFIG then
+         mspSendRequest(MSP_EEPROM_WRITE,{})
+      end
       return
    end
 
@@ -385,6 +434,10 @@ local function processMspReply(cmd,rx_buf)
       page.values = {}
       for i=1,#(rx_buf) do
          page.values[i] = rx_buf[i]
+      end
+
+      if page.postRead ~= nil then
+         page.postRead(page)
       end
    end
 end
@@ -460,18 +513,22 @@ local function drawScreen(page,page_locked)
 
       local idx = f.i or i
       if page.values and page.values[idx] then
-         lcd.drawText(f.x + spacing, f.y, page.values[idx], text_options)
+         local val = page.values[idx]
+         if f.table and f.table[page.values[idx]] then
+            val = f.table[page.values[idx]]
+         end
+         lcd.drawText(f.x + spacing, f.y, val, text_options)
       else
          lcd.drawText(f.x + spacing, f.y, "---", text_options)
       end
    end
 end
 
-local function clipValue(val)
-   if val < 0 then
-      val = 0
-   elseif val > 255 then
-      val = 255
+local function clipValue(val,min,max)
+   if val < min then
+      val = min
+   elseif val > max then
+      val = max
    end
 
    return val
@@ -486,7 +543,7 @@ local function incValue(inc)
    local page = SetupPages[currentPage]
    local field = page.fields[currentLine]
    local idx = field.i or currentLine
-   page.values[idx] = clipValue(page.values[idx] + inc)
+   page.values[idx] = clipValue(page.values[idx] + inc, field.min or 0, field.max or 255)
 end
 
 local function drawMenu()
@@ -521,14 +578,13 @@ local function run(event)
    end
    lastRunTS = now
 
-   -- TODO: implement retry + retry counter
-   if (gState == PAGE_SAVING) and (saveTS + 150 < now) then
-      if saveRetries < 2 then
+   if (gState == PAGE_SAVING) and (saveTS + saveTimeout < now) then
+      if saveRetries < saveMaxRetries then
          saveSettings()
       else
-         -- two retries and still no success
+         -- max retries reached
          gState = PAGE_DISPLAY
-         saveTS = 0
+         invalidatePages()
       end
    end
    
@@ -565,7 +621,7 @@ local function run(event)
          local page = SetupPages[currentPage]
          local field = page.fields[currentLine]
          local idx = field.i or currentLine
-         if page.values and page.values[idx] then
+         if page.values and page.values[idx] and (field.ro ~= true) then
             gState = EDITING
          end
       end
