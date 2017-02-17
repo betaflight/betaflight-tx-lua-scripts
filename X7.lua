@@ -2,45 +2,52 @@ SetupPages = {
    {
       title = "PIDs",
       text = {
-         { t = "Roll",  x = 1,  y = 12 },
-         { t = "Pitch", x = 43, y = 12 },
-         { t = "Yaw",   x = 85, y = 12 },
+         { t = "P",      x =  48,  y = 14 },
+         { t = "I",      x =  76,  y = 14 },
+         { t = "D",      x = 104,  y = 14 },
+         { t = "ROLL",   x =   1,  y = 26 },
+         { t = "PITCH",  x =   1,  y = 36 },
+         { t = "YAW",    x =   1,  y = 46 },
       },
       fields = {
-         -- ROLL
-         { t = "P", x = 1,  y = 24, i=1 },
-         { t = "I", x = 1,  y = 34, i=2 },
-         { t = "D", x = 1,  y = 44, i=3 },
-         -- PITCH
-         { t = "P", x = 43,  y = 24, i=4 },
-         { t = "I", x = 43,  y = 34, i=5 },
-         { t = "D", x = 43,  y = 44, i=6 },
-         -- YAW
-         { t = "P", x = 85, y = 24, i=7 },
-         { t = "I", x = 85, y = 34, i=8 },
-         --{ t = "D", x = 85, y = 44, i=9 },
+         -- P
+         { x = 42, y = 26, i =  1 },
+         { x = 42, y = 36, i =  4 },
+         { x = 42, y = 46, i =  7 },
+         -- I
+         { x = 70, y = 26, i =  2 },
+         { x = 70, y = 36, i =  5 },
+         { x = 70, y = 46, i =  8 },
+         -- D
+         { x = 98, y = 26, i =  3 },
+         { x = 98, y = 36, i =  6 },
+         --{ x = 98, y = 46, i =  9 },
       },
    },
    {
       title = "Rates",
       text = {
-         { t = "S-Rates", x = 8,  y = 12 },
-         { t = "RC",      x = 62, y = 12 },
-         { t = "Expo",    x = 86, y = 12 },
+         { t = "RC",     x =  41,  y = 11, to = SMLSIZE },
+         { t = "Rate",   x =  41,  y = 18, to = SMLSIZE },
+         { t = "Super",  x =  67,  y = 11, to = SMLSIZE },
+         { t = "Rate",   x =  67,  y = 18, to = SMLSIZE },
+         { t = "RC",     x =  97,  y = 11, to = SMLSIZE },
+         { t = "Expo",   x =  97,  y = 18, to = SMLSIZE },
+         { t = "ROLL",   x =   1,  y = 26 },
+         { t = "PITCH",  x =   1,  y = 36 },
+         { t = "YAW",    x =   1,  y = 46 },
       },
       fields = {
+         -- RC Rate
+         { x = 42, y = 31, i =  1 },
+         { x = 42, y = 46, i = 12 },
          -- Super Rate
-         { t = "R", x = 1, y = 24, i=3 },
-         { t = "P", x = 1, y = 34, i=4 },
-
-         -- Roll + Pitch
-         { x = 60, y = 29, i=1 },
-         { x = 90, y = 29, i=2 },
-
-         -- Yaw
-         { t = "Y", x = 1,  y = 44, i=5 },
-         {          x = 60, y = 44, i=12 },
-         {          x = 90, y = 44, i=11 },
+         { x = 70, y = 26, i =  3 },
+         { x = 70, y = 36, i =  4 },
+         { x = 70, y = 46, i =  5 },
+         -- RC Expo
+         { x = 98, y = 31, i =  2 },
+         { x = 98, y = 46, i = 11 },
       },
    },
    {
