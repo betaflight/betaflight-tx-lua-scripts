@@ -34,6 +34,10 @@ local saveTimeout = 0
 local saveRetries = 0
 local saveMaxRetries = 0
 
+backgroundFill = backgroundFill or ERASE
+foregroundColor = foregroundColor or SOLID
+globalTextOptions = globalTextOptions or 0
+
 local function saveSettings(new)
    local page = SetupPages[currentPage]
    if page.values then
@@ -153,21 +157,26 @@ local function requestPage(page)
    end
 end
 
+function drawScreenTitle(screen_title)
+   lcd.drawFilledRectangle(0, 0, LCD_W, 10, SOLID)
+   lcd.drawText(1,1,screen_title,INVERS)
+end
+
 local function drawScreen(page,page_locked)
 
    local screen_title = page.title
 
-   lcd.drawText(1,1,"Betaflight / "..screen_title,INVERS)
+   drawScreenTitle("Betaflight / "..screen_title)
 
    for i=1,#(page.text) do
       local f = page.text[i]
-      lcd.drawText(f.x, f.y, f.t, text_options)
+      lcd.drawText(f.x, f.y, f.t, globalTextOptions)
    end
    
    for i=1,#(page.fields) do
       local f = page.fields[i]
 
-      local text_options = 0
+      local text_options = globalTextOptions
       if i == currentLine then
          text_options = INVERS
          if gState == EDITING then
@@ -178,7 +187,7 @@ local function drawScreen(page,page_locked)
       local spacing = 20
 
       if f.t ~= nil then
-         lcd.drawText(f.x, f.y, f.t .. ":", 0)
+         lcd.drawText(f.x, f.y, f.t .. ":", globalTextOptions)
 
          -- draw some value
          if f.sp ~= nil then
@@ -231,16 +240,17 @@ local function drawMenu()
    local h_line = MenuBox.h_line
    local h_offset = MenuBox.h_offset
    local h = #(menuList) * h_line + h_offset*2
-   lcd.drawFilledRectangle(x,y,w,h,ERASE)
-   lcd.drawRectangle(x,y,w-1,h-1,SOLID)
-   lcd.drawText(x+h_line/2,y+h_offset,"Menu:")
+
+   lcd.drawFilledRectangle(x,y,w,h,backgroundFill)
+   lcd.drawRectangle(x,y,w-1,h-1,foregroundColor)
+   lcd.drawText(x+h_line/2,y+h_offset,"Menu:",globalTextOptions)
 
    for i,e in ipairs(menuList) do
+      local text_options = globalTextOptions
       if menuActive == i then
-         lcd.drawText(x+MenuBox.x_offset,y+(i-1)*h_line+h_offset,e.t,INVERS)
-      else
-         lcd.drawText(x+MenuBox.x_offset,y+(i-1)*h_line+h_offset,e.t)
+         text_options = text_options + INVERS
       end
+      lcd.drawText(x+MenuBox.x_offset,y+(i-1)*h_line+h_offset,e.t,text_options)
    end
 end
 
@@ -271,9 +281,15 @@ local function run_ui(event)
    mspProcessTxQ()
 
    -- navigation
-   if (event == EVT_MENU_LONG) then
+   if (event == EVT_MENU_LONG) then -- Taranis QX7 / X9
       menuActive = 1
       gState = MENU_DISP
+
+   elseif EVT_PAGEUP_FIRST and (event == EVT_ENTER_LONG) then -- Horus
+      menuActive = 1
+      killEnterBreak = 1
+      gState = MENU_DISP
+
    -- menu is currently displayed
    elseif gState == MENU_DISP then
       if event == EVT_EXIT_BREAK then
@@ -283,12 +299,18 @@ local function run_ui(event)
       elseif event == EVT_MINUS_BREAK or event == EVT_ROT_RIGHT then
          incMenu(1)
       elseif event == EVT_ENTER_BREAK then
-         gState = PAGE_DISPLAY
-         menuList[menuActive].f()
+         if killEnterBreak == 1 then
+            killEnterBreak = 0
+         else
+            gState = PAGE_DISPLAY
+            menuList[menuActive].f()
+         end
       end
    -- normal page viewing
    elseif gState <= PAGE_DISPLAY then
-      if event == EVT_MENU_BREAK then
+      if event == EVT_PAGEUP_FIRST then
+         incPage(-1)
+      elseif event == EVT_MENU_BREAK or event == EVT_PAGEDN_FIRST then
          incPage(1)
       elseif event == EVT_PLUS_BREAK or event == EVT_ROT_LEFT then
          incLine(-1)
@@ -324,21 +346,24 @@ local function run_ui(event)
 
    -- draw screen
    lcd.clear()
+   if TEXT_BGCOLOR then
+      lcd.drawFilledRectangle(0, 0, LCD_W, LCD_H, TEXT_BGCOLOR)
+   end
    drawScreen(page,page_locked)
    
    -- do we have valid telemetry data?
    if getValue("RSSI") == 0 then
       -- No!
       lcd.drawText(NoTelem[1],NoTelem[2],NoTelem[3],NoTelem[4])
-      invalidatePages()
+      --invalidatePages()
    end
 
    if gState == MENU_DISP then
       drawMenu()
    elseif gState == PAGE_SAVING then
-      lcd.drawFilledRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,ERASE)
+      lcd.drawFilledRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,backgroundFill)
       lcd.drawRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,SOLID)
-      lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK)
+      lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
    end
 
    processMspReply(mspPollReply())
