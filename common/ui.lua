@@ -158,7 +158,7 @@ local function requestPage(page)
 end
 
 function drawScreenTitle(screen_title)
-   lcd.drawFilledRectangle(0, 0, LCD_W, 10, SOLID)
+   lcd.drawFilledRectangle(0, 0, LCD_W, 10)
    lcd.drawText(1,1,screen_title,INVERS)
 end
 
