@@ -158,7 +158,7 @@ local function requestPage(page)
 end
 
 function drawScreenTitle(screen_title)
-   lcd.drawFilledRectangle(0, 0, LCD_W, 10, SOLID)
+   lcd.drawFilledRectangle(0, 0, LCD_W, 10)
    lcd.drawText(1,1,screen_title,INVERS)
 end
 
@@ -170,7 +170,11 @@ local function drawScreen(page,page_locked)
 
    for i=1,#(page.text) do
       local f = page.text[i]
-      lcd.drawText(f.x, f.y, f.t, globalTextOptions)
+      if f.to == nil then
+         lcd.drawText(f.x, f.y, f.t, globalTextOptions)
+      else
+         lcd.drawText(f.x, f.y, f.t, f.to)
+      end
    end
    
    for i=1,#(page.fields) do
