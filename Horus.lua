@@ -56,7 +56,7 @@ SetupPages = {
          { t = "Channel", x = 35,  y = 96, sp = 94, i=3, min=1, max=8 },
          { t = "Power",   x = 35,  y = 124, sp = 94, i=4, min=1 },
          { t = "Pit",     x = 35,  y = 152, sp = 94, i=5, min=0, max=1, table = { [0]="OFF", "ON" } },
-         { t = "Dev",     x = 240, y = 68, sp = 68, i=1, ro=true, table = {[3]="SmartAudio",[4]="Tramp"} },
+         { t = "Dev",     x = 240, y = 68, sp = 68, i=1, ro=true, table = {[3]="SmartAudio",[4]="Tramp",[255]="None"} },
          { t = "Freq",    x = 240, y = 96, sp = 68, i="f", ro=true },
       },
    }
