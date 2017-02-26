@@ -2,42 +2,49 @@ SetupPages = {
    {
       title = "PIDs",
       text = {
-         { t = "Roll",  x = 60,  y = 40 },
-         { t = "Pitch", x = 160, y = 40 },
-         { t = "Yaw",   x = 260, y = 40 },
+         { t = "P",      x = 129,  y =  68 },
+         { t = "I",      x = 209,  y =  68 },
+         { t = "D",      x = 289,  y =  68 },
+         { t = "ROLL",   x =  35,  y =  96 },
+         { t = "PITCH",  x =  35,  y = 124 },
+         { t = "YAW",    x =  35,  y = 152 },
       },
       fields = {
-         -- ROLL
-         { t = "P", x = 36,  y = 68,  sp=30, i=1 },
-         { t = "I", x = 36,  y = 96,  sp=30, i=2 },
-         { t = "D", x = 36,  y = 124, sp=30, i=3 },
-         -- PITCH
-         { t = "P", x = 136, y = 68,  sp=34, i=4 },
-         { t = "I", x = 136, y = 96,  sp=34, i=5 },
-         { t = "D", x = 136, y = 124, sp=34, i=6 },
-         -- YAW
-         { t = "P", x = 236, y = 68,  sp=30, i=7 },
-         { t = "I", x = 236, y = 96,  sp=30, i=8 },
+         -- P
+         { x = 129, y =  96, i =  1 },
+         { x = 129, y = 124, i =  4 },
+         { x = 129, y = 152, i =  7 },
+         -- I
+         { x = 209, y =  96, i =  2 },
+         { x = 209, y = 124, i =  5 },
+         { x = 209, y = 152, i =  8 },
+         -- D
+         { x = 289, y =  96, i =  3 },
+         { x = 289, y = 124, i =  6 },
+         --{ x = 289, y = 152, i =  9 },
       },
    },
    {
       title = "Rates",
       text = {
-         { t = "Super rates", x = 14,  y = 40 },
+         { t = "RC Rate",    x = 100,  y = 68 },
+         { t = "Super Rate", x = 175,  y = 68 },
+         { t = "RC Expo",    x = 280,  y = 68 },
+         { t = "ROLL",   x =  35,  y =  96 },
+         { t = "PITCH",  x =  35,  y = 124 },
+         { t = "YAW",    x =  35,  y = 152 },
       },
       fields = {
+         -- RC Rate
+         { x = 129, y = 110, i =  1 },
+         { x = 129, y = 152, i = 12 },
          -- Super Rate
-         { t = "Roll",  x = 20,  y = 68, sp = 76, i=3 },
-         { t = "Pitch", x = 20,  y = 96, sp = 76, i=4 },
-
-         -- Roll + Pitch
-         { t = "RC Rate",  x = 152, y = 80, sp = 94, i=1 },
-         { t = "Expo",  x = 294, y = 80, sp = 68, i=2 },
-
-         -- Yaw
-         { t = "Yaw",   x = 20,  y = 128, sp = 76, i=5 },
-         { t = "RC Rate",  x = 152, y = 128, sp = 94, i=12 },
-         { t = "Expo",  x = 294, y = 128, sp = 68, i=11 },
+         { x = 209, y =  96, i =  3 },
+         { x = 209, y = 124, i =  4 },
+         { x = 209, y = 152, i =  5 },
+         -- RC Expo
+         { x = 289, y = 110, i =  2 },
+         { x = 289, y = 152, i = 11 },
       },
    },
    {
@@ -49,7 +56,7 @@ SetupPages = {
          { t = "Channel", x = 35,  y = 96, sp = 94, i=3, min=1, max=8 },
          { t = "Power",   x = 35,  y = 124, sp = 94, i=4, min=1 },
          { t = "Pit",     x = 35,  y = 152, sp = 94, i=5, min=0, max=1, table = { [0]="OFF", "ON" } },
-         { t = "Dev",     x = 240, y = 68, sp = 68, i=1, ro=true, table = {[3]="SmartAudio",[4]="Tramp"} },
+         { t = "Dev",     x = 240, y = 68, sp = 68, i=1, ro=true, table = {[3]="SmartAudio",[4]="Tramp",[255]="None"} },
          { t = "Freq",    x = 240, y = 96, sp = 68, i="f", ro=true },
       },
    }
