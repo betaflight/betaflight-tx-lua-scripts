@@ -1,6 +1,13 @@
 -- load msp.lua
 assert(loadScript("/SCRIPTS/BF/msp_sp.lua"))()
 
+-- global variables for pit mode state
+PIT_MODE_STATE_DISARMED = 1
+PIT_MODE_STATE_ARMED = 2
+PIT_MODE_STATE_CONSUMED = 3
+
+gPitModeState = PIT_MODE_STATE_CONSUMED
+
 -- getter
 local MSP_RC_TUNING     = 111
 local MSP_PID           = 112
@@ -27,19 +34,23 @@ local MENU_DISP    = 5
 
 local gState = PAGE_DISPLAY
 
-local currentPage = 1
+local PAGE_PIDS = 1
+local PAGE_RATES = 2
+local PAGE_VTX = 3
+
+local currentPage = PAGE_PIDS
 local currentLine = 1
 local saveTS = 0
 local saveTimeout = 0
 local saveRetries = 0
 local saveMaxRetries = 0
+local lastRSSI = 0
 
 backgroundFill = backgroundFill or ERASE
 foregroundColor = foregroundColor or SOLID
 globalTextOptions = globalTextOptions or 0
 
-local function saveSettings(new)
-   local page = SetupPages[currentPage]
+local function savePage(page)
    if page.values then
       if page.getWriteValues then
          mspSendRequest(page.write,page.getWriteValues(page.values))
@@ -58,6 +69,10 @@ local function saveSettings(new)
    end
 end
 
+local function saveCurrentPage()
+   savePage(SetupPages[currentPage])
+end
+
 local function invalidatePages()
    for i=1,#(SetupPages) do
       local page = SetupPages[i]
@@ -69,10 +84,10 @@ end
 
 local menuList = {
 
-   { t = "save page",
-     f = saveSettings },
+   { t = "Save Page",
+     f = saveCurrentPage },
 
-   { t = "reload",
+   { t = "Reload",
      f = invalidatePages }
 }
 
@@ -85,23 +100,34 @@ local function processMspReply(cmd,rx_buf)
       return
    end
 
-   local page = SetupPages[currentPage]
+   local page = nil
 
-   -- ignore replies to write requests for now
-   if cmd == page.write then
-      if cmd ~= MSP_VTX_SET_CONFIG then
-         mspSendRequest(MSP_EEPROM_WRITE,{})
+   -- find the page that initiated the command
+   for i=1,#(SetupPages) do
+      local testPage = SetupPages[i]
+      if testPage.read == cmd or testPage.write == cmd then
+         page = testPage
+         break
       end
+   end
+
+   if page == nil then
       return
    end
 
-   if cmd == MSP_EEPROM_WRITE then
+   -- ignore replies to write requests for now
+   if cmd == page.write and cmd ~= MSP_VTX_SET_CONFIG then
+      mspSendRequest(MSP_EEPROM_WRITE,{})
+      return
+   end
+
+   if cmd == MSP_EEPROM_WRITE or cmd == MSP_VTX_SET_CONFIG then
       gState = PAGE_DISPLAY
       page.values = nil
       saveTS = 0
       return
    end
-   
+
    if cmd ~= page.read then
       return
    end
@@ -117,7 +143,7 @@ local function processMspReply(cmd,rx_buf)
       end
    end
 end
-   
+
 local function MaxLines()
    return #(SetupPages[currentPage].fields)
 end
@@ -162,7 +188,7 @@ function drawScreenTitle(screen_title)
    lcd.drawText(1,1,screen_title,INVERS)
 end
 
-local function drawScreen(page,page_locked)
+local function drawScreen(page)
 
    local screen_title = page.title
 
@@ -176,7 +202,7 @@ local function drawScreen(page,page_locked)
          lcd.drawText(f.x, f.y, f.t, f.to)
       end
    end
-   
+
    for i=1,#(page.fields) do
       local f = page.fields[i]
 
@@ -258,22 +284,18 @@ local function drawMenu()
    end
 end
 
-local lastRunTS = 0
-local killEnterBreak = 0
+local function background_ui()
 
-local function run_ui(event)
-
-   local now = getTime()
-
-   -- if lastRunTS old than 500ms
-   if lastRunTS + 50 < now then
+   local currentRSSI = getValue("RSSI")
+   -- if RSSI went from none to some, invalidate pages
+   if  currentRSSI ~= 0 and lastRSSI == 0 then
       invalidatePages()
    end
-   lastRunTS = now
+   lastRSSI = currentRSSI
 
-   if (gState == PAGE_SAVING) and (saveTS + saveTimeout < now) then
+   if (gState == PAGE_SAVING) and (saveTS + saveTimeout < getTime()) then
       if saveRetries < saveMaxRetries then
-         saveSettings()
+         saveCurrentPage()
       else
          -- max retries reached
          gState = PAGE_DISPLAY
@@ -281,8 +303,32 @@ local function run_ui(event)
       end
    end
 
+   if gPitModeState == PIT_MODE_STATE_ARMED then
+      local vtxPage = SetupPages[PAGE_VTX]
+
+      -- if we have valid vtx values, use those
+      if vtxPage.values and vtxPage.values[5] == 1 then
+         vtxPage.values[5] = 0
+         savePage(vtxPage)
+      elseif not vtxPage.values then
+         -- set invalid values except for clearing pit mode
+         vtxPage.values = { 99, 99, 99, 99, 0}
+         savePage(vtxPage)
+         vtxPage.values = nil
+      end
+
+      gPitModeState = PIT_MODE_STATE_CONSUMED
+   end
+
    -- process send queue
    mspProcessTxQ()
+   processMspReply(mspPollReply())
+   return 0
+end
+
+local killEnterBreak = 0
+
+local function run_ui(event)
 
    -- navigation
    if (event == EVT_MENU_LONG) then -- Taranis QX7 / X9
@@ -340,12 +386,10 @@ local function run_ui(event)
    end
 
    local page = SetupPages[currentPage]
-   local page_locked = false
 
    if not page.values then
       -- request values
       requestPage(page)
-      page_locked = true
    end
 
    -- draw screen
@@ -353,13 +397,11 @@ local function run_ui(event)
    if TEXT_BGCOLOR then
       lcd.drawFilledRectangle(0, 0, LCD_W, LCD_H, TEXT_BGCOLOR)
    end
-   drawScreen(page,page_locked)
-   
+   drawScreen(page)
+
    -- do we have valid telemetry data?
    if getValue("RSSI") == 0 then
-      -- No!
       lcd.drawText(NoTelem[1],NoTelem[2],NoTelem[3],NoTelem[4])
-      --invalidatePages()
    end
 
    if gState == MENU_DISP then
@@ -370,7 +412,6 @@ local function run_ui(event)
       lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
    end
 
-   processMspReply(mspPollReply())
    return 0
 end
 
@@ -413,20 +454,20 @@ local function getWriteValuesVTX(values)
    return { bit32.band(channel,0xFF), bit32.rshift(channel,8), values[4], values[5] }
 end
 
-SetupPages[1].read  = MSP_PID
-SetupPages[1].write = MSP_SET_PID
+SetupPages[PAGE_PIDS].read  = MSP_PID
+SetupPages[PAGE_PIDS].write = MSP_SET_PID
 
-SetupPages[2].read  = MSP_RC_TUNING
-SetupPages[2].write = MSP_SET_RC_TUNING 
+SetupPages[PAGE_RATES].read  = MSP_RC_TUNING
+SetupPages[PAGE_RATES].write = MSP_SET_RC_TUNING
 
-SetupPages[3].read           = MSP_VTX_CONFIG
-SetupPages[3].write          = MSP_VTX_SET_CONFIG
-SetupPages[3].postRead       = postReadVTX
-SetupPages[3].getWriteValues = getWriteValuesVTX
-SetupPages[3].saveMaxRetries = 0
-SetupPages[3].saveTimeout    = 300 -- 3s
+SetupPages[PAGE_VTX].read           = MSP_VTX_CONFIG
+SetupPages[PAGE_VTX].write          = MSP_VTX_SET_CONFIG
+SetupPages[PAGE_VTX].postRead       = postReadVTX
+SetupPages[PAGE_VTX].getWriteValues = getWriteValuesVTX
+SetupPages[PAGE_VTX].saveMaxRetries = 0
+SetupPages[PAGE_VTX].saveTimeout    = 300 -- 3s
 
-SetupPages[3].fields[1].upd = updateVTXFreq
-SetupPages[3].fields[2].upd = updateVTXFreq
+SetupPages[PAGE_VTX].fields[1].upd = updateVTXFreq
+SetupPages[PAGE_VTX].fields[2].upd = updateVTXFreq
 
-return run_ui
+return run_ui, background_ui

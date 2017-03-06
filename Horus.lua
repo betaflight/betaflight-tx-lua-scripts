@@ -70,7 +70,7 @@ backgroundFill = TEXT_BGCOLOR
 foregroundColor = LINE_COLOR
 globalTextOptions = TEXT_COLOR
 
-local run_ui = assert(loadScript("/SCRIPTS/BF/ui.lua"))()
+local run_ui, background_ui = assert(loadScript("/SCRIPTS/BF/ui.lua"))()
 
 drawScreenTitle = function (title)
   lcd.drawFilledRectangle(0, 0, LCD_W, 30, TITLE_BGCOLOR)
@@ -78,4 +78,4 @@ drawScreenTitle = function (title)
   --lcd.drawText(LCD_W-40, 5, page.."/"..pages, MENU_TITLE_COLOR)
 end
 
-return {run=run_ui}
+return {run=run_ui, background=background_ui}
