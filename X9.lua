@@ -62,6 +62,18 @@ SetupPages = {
          { t = "Dev",     x = 100, y = 14, sp = 32, i=1, ro=true, table = {[3]="SmartAudio",[4]="Tramp",[255]="None"} },
          { t = "Freq",    x = 100, y = 24, sp = 32, i="f", ro=true },
       },
+   },
+   {
+      title = "Camera OSD control",
+      text = {
+         { t = "MENU", x = 86, y = 16 },
+         { t = "EXIT", x = 87, y = 40 },
+         { t = "+", x = 121, y = 28 },
+         { t = "-", x = 68, y = 28 },
+         { t = "ENT", x = 89, y = 28 },
+         { t = "(Hold MENU to exit page)", x = 36, y = 54 }
+      },
+      fields = {},
    }
 }
 
