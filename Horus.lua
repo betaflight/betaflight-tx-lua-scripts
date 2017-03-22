@@ -59,6 +59,19 @@ SetupPages = {
          { t = "Dev",     x = 240, y = 68, sp = 68, i=1, ro=true, table = {[3]="SmartAudio",[4]="Tramp",[255]="None"} },
          { t = "Freq",    x = 240, y = 96, sp = 68, i="f", ro=true },
       },
+   },
+   -- TODO fix the alignment
+   {
+      title = "Camera OSD control",
+      text = {
+         { t = "MENU", x = 86, y = 16 },
+         { t = "EXIT", x = 87, y = 40 },
+         { t = "+", x = 121, y = 28 },
+         { t = "-", x = 68, y = 28 },
+         { t = "ENT", x = 89, y = 28 },
+         { t = "(Hold MENU to exit page)", x = 36, y = 54 }
+      },
+      fields = {},
    }
 }
 

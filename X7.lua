@@ -62,7 +62,21 @@ SetupPages = {
          { t = "Dev",  x = 60, y = 12, sp = 34, i=1, ro=true, table = {[3]="SA",[4]="Tramp",[255]="None"} },
          { t = "Freq", x = 60, y = 22, sp = 34, i="f", ro=true },
       },
+   },
+   -- TODO fix the alignment
+   {
+      title = "Camera OSD control",
+      text = {
+         { t = "MENU", x = 86, y = 16 },
+         { t = "EXIT", x = 87, y = 40 },
+         { t = "+", x = 121, y = 28 },
+         { t = "-", x = 68, y = 28 },
+         { t = "ENT", x = 89, y = 28 },
+         { t = "(Hold MENU to exit page)", x = 36, y = 54 }
+      },
+      fields = {},
    }
+
 }
 
 MenuBox = { x=1, y=10, w=100, x_offset=36, h_line=10, h_offset=3 }

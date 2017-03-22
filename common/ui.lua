@@ -1,21 +1,7 @@
--- load msp.lua
+assert(loadScript("/SCRIPTS/BF/bf_msp.lua"))()
 assert(loadScript("/SCRIPTS/BF/msp_sp.lua"))()
-
--- getter
-local MSP_RC_TUNING     = 111
-local MSP_PID           = 112
-
--- setter
-local MSP_SET_PID       = 202
-local MSP_SET_RC_TUNING = 204
-
--- BF specials
-local MSP_PID_ADVANCED     = 94
-local MSP_SET_PID_ADVANCED = 95
-local MSP_VTX_CONFIG       = 88
-local MSP_VTX_SET_CONFIG   = 89
-
-local MSP_EEPROM_WRITE = 250
+assert(loadScript("/SCRIPTS/BF/bf_cam.lua"))()
+assert(loadScript("/SCRIPTS/BF/util.lua"))()
 
 local REQ_TIMEOUT = 80 -- 800ms request timeout
 
@@ -89,13 +75,13 @@ local function processMspReply(cmd,rx_buf)
 
    -- ignore replies to write requests for now
    if cmd == page.write then
-      if cmd ~= MSP_VTX_SET_CONFIG then
-         mspSendRequest(MSP_EEPROM_WRITE,{})
+      if cmd ~= BF_MSP_COMMANDS.MSP_VTX_SET_CONFIG then
+         mspSendRequest(BF_MSP_COMMANDS.MSP_EEPROM_WRITE,{})
       end
       return
    end
 
-   if cmd == MSP_EEPROM_WRITE then
+   if cmd == BF_MSP_COMMANDS.MSP_EEPROM_WRITE then
       gState = PAGE_DISPLAY
       page.values = nil
       saveTS = 0
@@ -214,16 +200,6 @@ local function drawScreen(page,page_locked)
    end
 end
 
-local function clipValue(val,min,max)
-   if val < min then
-      val = min
-   elseif val > max then
-      val = max
-   end
-
-   return val
-end
-
 local function getCurrentField()
    local page = SetupPages[currentPage]
    return page.fields[currentLine]
@@ -285,7 +261,16 @@ local function run_ui(event)
    mspProcessTxQ()
 
    -- navigation
-   if (event == EVT_MENU_LONG) then -- Taranis QX7 / X9
+   if currentPage == 4 and event == EVT_MENU_LONG or event == EVT_PAGEDN_FIRST then
+      -- cam OSD control: go to next page instead of showing the menu,
+      -- -- since we use the short menu press as a camera OSD command
+      handledMenuLong()
+      incPage(1)
+
+   elseif currentPage == 4 and handleCamOsdKeypress(event) then
+      -- cam OSD control: do nothing, event is already handled at this point
+
+   elseif (event == EVT_MENU_LONG) then -- Taranis QX7 / X9
       menuActive = 1
       gState = MENU_DISP
 
@@ -310,11 +295,12 @@ local function run_ui(event)
             menuList[menuActive].f()
          end
       end
+
    -- normal page viewing
    elseif gState <= PAGE_DISPLAY then
       if event == EVT_PAGEUP_FIRST then
          incPage(-1)
-      elseif event == EVT_MENU_BREAK or event == EVT_PAGEDN_FIRST then
+      elseif (event == EVT_MENU_BREAK or event == EVT_PAGEDN_FIRST) and not shouldIgnoreMenuBreak() then
          incPage(1)
       elseif event == EVT_PLUS_BREAK or event == EVT_ROT_LEFT then
          incLine(-1)
@@ -328,7 +314,8 @@ local function run_ui(event)
             gState = EDITING
          end
       end
-   -- editing value
+
+    -- editing value
    elseif gState == EDITING then
       if (event == EVT_EXIT_BREAK) or (event == EVT_ENTER_BREAK) then
          gState = PAGE_DISPLAY
@@ -413,14 +400,14 @@ local function getWriteValuesVTX(values)
    return { bit32.band(channel,0xFF), bit32.rshift(channel,8), values[4], values[5] }
 end
 
-SetupPages[1].read  = MSP_PID
-SetupPages[1].write = MSP_SET_PID
+SetupPages[1].read  = BF_MSP_COMMANDS.MSP_PID
+SetupPages[1].write = BF_MSP_COMMANDS.MSP_SET_PID
 
-SetupPages[2].read  = MSP_RC_TUNING
-SetupPages[2].write = MSP_SET_RC_TUNING 
+SetupPages[2].read  = BF_MSP_COMMANDS.MSP_RC_TUNING
+SetupPages[2].write = BF_MSP_COMMANDS.MSP_SET_RC_TUNING
 
-SetupPages[3].read           = MSP_VTX_CONFIG
-SetupPages[3].write          = MSP_VTX_SET_CONFIG
+SetupPages[3].read           = BF_MSP_COMMANDS.MSP_VTX_CONFIG
+SetupPages[3].write          = BF_MSP_COMMANDS.MSP_VTX_SET_CONFIG
 SetupPages[3].postRead       = postReadVTX
 SetupPages[3].getWriteValues = getWriteValuesVTX
 SetupPages[3].saveMaxRetries = 0
