@@ -1,5 +1,5 @@
 -- load msp.lua
-assert(loadScript("/SCRIPTS/BF/msp_sp.lua"))()
+assert(loadScript("/SCRIPTS/common/msp_sp.lua"))()
 
 -- getter
 local MSP_RC_TUNING     = 111
