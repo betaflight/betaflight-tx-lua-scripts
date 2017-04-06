@@ -70,7 +70,7 @@ backgroundFill = TEXT_BGCOLOR
 foregroundColor = LINE_COLOR
 globalTextOptions = TEXT_COLOR
 
-local run_ui = assert(loadScript("/SCRIPTS/BF/ui.lua"))()
+local run_ui = assert(loadScript("/SCRIPTS/common/ui.lua"))()
 
 drawScreenTitle = function (title)
   lcd.drawFilledRectangle(0, 0, LCD_W, 30, TITLE_BGCOLOR)
