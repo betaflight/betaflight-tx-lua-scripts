@@ -169,13 +169,13 @@ local function drawScreen(page,page_locked)
    local ver, radio, maj, minor, rev = getVersion()
    if (radio == "x12s-simu" or radio == "x12s") then
 		if screen_title  == "PIDs" then
-			lcd.drawBitmap(Bitmap.open("BF/BF_Pg1.png"), 1, 1)
+			lcd.drawBitmap(Bitmap.open("common/BF_Pg1.png"), 1, 1)
 		end
 		if screen_title  == "Rates" then
-			lcd.drawBitmap(Bitmap.open("BF/BF_Pg2.png"), 1, 1)
+			lcd.drawBitmap(Bitmap.open("common/BF_Pg2.png"), 1, 1)
 		end
 		if screen_title  == "VTX" then
-			lcd.drawBitmap(Bitmap.open("BF/BF_Pg3.png"), 1, 1)
+			lcd.drawBitmap(Bitmap.open("common/BF_Pg3.png"), 1, 1)
 		end
 	end
    
