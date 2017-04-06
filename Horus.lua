@@ -15,12 +15,12 @@ SetupPages = {
          { x = 129, y = 124, i =  4 },
          { x = 129, y = 152, i =  7 },
          -- I
-         { x = 209, y =  96, i =  2 },
-         { x = 209, y = 124, i =  5 },
-         { x = 209, y = 152, i =  8 },
+         { x = 204, y =  96, i =  2 },
+         { x = 204, y = 124, i =  5 },
+         { x = 204, y = 152, i =  8 },
          -- D
-         { x = 289, y =  96, i =  3 },
-         { x = 289, y = 124, i =  6 },
+         { x = 282, y =  96, i =  3 },
+         { x = 282, y = 124, i =  6 },
          --{ x = 289, y = 152, i =  9 },
       },
    },
@@ -39,12 +39,12 @@ SetupPages = {
          { x = 129, y = 110, i =  1 },
          { x = 129, y = 152, i = 12 },
          -- Super Rate
-         { x = 209, y =  96, i =  3 },
-         { x = 209, y = 124, i =  4 },
-         { x = 209, y = 152, i =  5 },
+         { x = 204, y =  96, i =  3 },
+         { x = 204, y = 124, i =  4 },
+         { x = 204, y = 152, i =  5 },
          -- RC Expo
-         { x = 289, y = 110, i =  2 },
-         { x = 289, y = 152, i = 11 },
+         { x = 282, y = 110, i =  2 },
+         { x = 282, y = 152, i = 11 },
       },
    },
    {
@@ -64,7 +64,7 @@ SetupPages = {
 
 MenuBox = { x=120, y=100, w=200, x_offset=68, h_line=20, h_offset=6 }
 SaveBox = { x=120, y=100, w=180, x_offset=12,  h=60, h_offset=12 }
-NoTelem = { 192, LCD_H - 28, "No telemetry", TEXT_COLOR + INVERS + BLINK }
+NoTelem = { 195, LCD_H - 26, "No telemetry", TEXT_COLOR + INVERS + BLINK }
 
 backgroundFill = TEXT_BGCOLOR
 foregroundColor = LINE_COLOR
