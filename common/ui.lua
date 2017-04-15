@@ -18,6 +18,8 @@ local MSP_VTX_SET_CONFIG   = 89
 local MSP_EEPROM_WRITE = 250
 
 local REQ_TIMEOUT = 80 -- 800ms request timeout
+local backgroundImage = {}
+local logoImage = {}
 
 --local PAGE_REFRESH = 1
 local PAGE_DISPLAY = 2
@@ -33,6 +35,7 @@ local saveTS = 0
 local saveTimeout = 0
 local saveRetries = 0
 local saveMaxRetries = 0
+local lastPage = 0
 
 backgroundFill = backgroundFill or ERASE
 foregroundColor = foregroundColor or SOLID
@@ -165,18 +168,15 @@ end
 local function drawScreen(page,page_locked)
 
    local screen_title = page.title
-
-   local ver, radio, maj, minor, rev = getVersion()
-   if (radio == "x12s-simu" or radio == "x12s") then
-		if screen_title  == "PIDs" then
-			lcd.drawBitmap(Bitmap.open("common/BF_Pg1.png"), 1, 1)
+   local ActualRadio = radio_type
+   if (ActualRadio == "HORUS") then
+		if lastPage ~= currentPage then
+			backgroundImage = Bitmap.open(page.logo.p)
+			logoImage = Bitmap.open(page.data.p)
+			lastPage = currentPage
 		end
-		if screen_title  == "Rates" then
-			lcd.drawBitmap(Bitmap.open("common/BF_Pg2.png"), 1, 1)
-		end
-		if screen_title  == "VTX" then
-			lcd.drawBitmap(Bitmap.open("common/BF_Pg3.png"), 1, 1)
-		end
+		lcd.drawBitmap(backgroundImage, page.logo.x, page.logo.y)
+		lcd.drawBitmap(logoImage, page.data.x, page.data.y)
 	end
    
    drawScreenTitle("Betaflight / "..screen_title)
