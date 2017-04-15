@@ -23,6 +23,8 @@ SetupPages = {
          { x = 282, y = 124, i =  6 },
          --{ x = 289, y = 152, i =  9 },
       },
+      logo = {p = "common/Logo.png", x = 0, y = 193},
+	   data = {p = "common/Rate.png", x = 102, y = 28},
    },
    {
       title = "Rates",
@@ -46,6 +48,8 @@ SetupPages = {
          { x = 282, y = 110, i =  2 },
          { x = 282, y = 152, i = 11 },
       },
+      logo = {p = "common/Logo.png", x = 0, y = 193},
+	   data = {p = "common/Param.png", x = 102, y = 28},
    },
    {
       title = "VTX",
@@ -54,11 +58,13 @@ SetupPages = {
          -- Super Rate
          { t = "Band",    x = 35,  y = 68, sp = 94, i=2, min=1, max=5, table = { "A", "B", "E", "F", "R" } },
          { t = "Channel", x = 35,  y = 96, sp = 94, i=3, min=1, max=8 },
-         { t = "Power",   x = 35,  y = 124, sp = 94, i=4, min=1 },
-         { t = "Pit",     x = 35,  y = 152, sp = 94, i=5, min=0, max=1, table = { [0]="OFF", "ON" } },
-         { t = "Dev",     x = 240, y = 68, sp = 68, i=1, ro=true, table = {[3]="SmartAudio",[4]="Tramp",[255]="None"} },
-         { t = "Freq",    x = 240, y = 96, sp = 68, i="f", ro=true },
+         { t = "Power",   x = 30,  y = 124, sp = 94, i=4, min=1 },
+         { t = "Pit",     x = 25,  y = 152, sp = 94, i=5, min=0, max=1, table = { [0]="OFF", "ON" } },
+         { t = "Dev",     x = 225, y = 68, sp = 68, i=1, ro=true, table = {[3]="SAudio",[4]="Tramp",[255]="None"} },
+         { t = "Freq",    x = 230, y = 96, sp = 68, i="f", ro=true },
       },
+      logo = {p = "common/Logo.png", x = 0, y = 193},
+	   data = {p = "common/vtx.png", x = 108, y = 42},
    }
 }
 
@@ -69,6 +75,7 @@ NoTelem = { 195, LCD_H - 26, "No telemetry", TEXT_COLOR + INVERS + BLINK }
 backgroundFill = TEXT_BGCOLOR
 foregroundColor = LINE_COLOR
 globalTextOptions = TEXT_COLOR
+radio_type = "HORUS"						-- The Radio used to run the script... in this case the Horus
 
 local run_ui = assert(loadScript("/SCRIPTS/common/ui.lua"))()
 
