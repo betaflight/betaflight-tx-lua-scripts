@@ -1,5 +1,5 @@
 -- load msp.lua
-assert(loadScript("/SCRIPTS/BF/msp_sp.lua"))()
+assert(loadScript("/SCRIPTS/common/msp_sp.lua"))()
 
 -- getter
 local MSP_RC_TUNING     = 111
@@ -18,6 +18,8 @@ local MSP_VTX_SET_CONFIG   = 89
 local MSP_EEPROM_WRITE = 250
 
 local REQ_TIMEOUT = 80 -- 800ms request timeout
+local backgroundImage = {}
+local logoImage = {}
 
 --local PAGE_REFRESH = 1
 local PAGE_DISPLAY = 2
@@ -33,6 +35,7 @@ local saveTS = 0
 local saveTimeout = 0
 local saveRetries = 0
 local saveMaxRetries = 0
+local lastPage = 0
 
 backgroundFill = backgroundFill or ERASE
 foregroundColor = foregroundColor or SOLID
@@ -165,7 +168,17 @@ end
 local function drawScreen(page,page_locked)
 
    local screen_title = page.title
-
+   local ActualRadio = radio_type
+   if (ActualRadio == "HORUS") then
+		if lastPage ~= currentPage then
+			backgroundImage = Bitmap.open(page.logo.p)
+			logoImage = Bitmap.open(page.data.p)
+			lastPage = currentPage
+		end
+		lcd.drawBitmap(backgroundImage, page.logo.x, page.logo.y)
+		lcd.drawBitmap(logoImage, page.data.x, page.data.y)
+	end
+   
    drawScreenTitle("Betaflight / "..screen_title)
 
    for i=1,#(page.text) do
