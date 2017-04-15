@@ -6,4 +6,4 @@ PLEASE NOTE WELL: there is currently an issue in OpenTX (opentx/opentx#4560) whi
 Changelog
 0.4
 Added PNG Image in the screen
-EDIT: The PNG Image are too heavy for the radio... DONT MERGE
+Improved the working of the PNG image for the Horus
