@@ -1,3 +1,6 @@
+G_MIN_FREQ_VAL = 5000
+G_MAX_FREQ_VAL = 5999
+
 SetupPages = {
    {
       title = "PIDs",
@@ -54,13 +57,13 @@ SetupPages = {
       title = "VTX",
       text = {},
       fields = {
-         -- Super Rate
-         { t = "Band", x = 1, y = 12, sp = 34, i=2, min=1, max=5, table = { "A", "B", "E", "F", "R" } },
+         -- VTX Settings
+         { t = "Band", x = 1, y = 12, sp = 34, i=2, min=0, max=5, table = { [0]="U", "A", "B", "E", "F", "R" } },
          { t = "Ch",   x = 1, y = 22, sp = 34, i=3, min=1, max=8 },
          { t = "Pw",   x = 1, y = 32, sp = 34, i=4, min=1 },
          { t = "Pit",  x = 1, y = 42, sp = 34, i=5, min=0, max=1, table = { [0]="OFF", "ON" } },
          { t = "Dev",  x = 60, y = 12, sp = 34, i=1, ro=true, table = {[3]="SA",[4]="Tramp",[255]="None"} },
-         { t = "Freq", x = 60, y = 22, sp = 34, i="f", ro=true },
+         { t = "Freq", x = 60, y = 22, sp = 34, i="f", min=G_MIN_FREQ_VAL, max=G_MAX_FREQ_VAL },
       },
    }
 }
