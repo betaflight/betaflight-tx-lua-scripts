@@ -88,15 +88,16 @@ local function run_bg()
 
     if lastSendTS == 0 or lastSendTS + INTERVAL < getTime() then
         local now = getDateTime()
-        local values = { now.year-2000, now.mon, now.day, now.hour, now.min, now.sec, getRSSI().rssi }
+        local rssi, alarm_low, alarm_high = getRSSI()
+        local values = { now.year-2000, now.mon, now.day, now.hour, now.min, now.sec, rssi }
 
         -- send info
         mspSendRequest(MSP_SET_TX_INFO, values)
 
-        playNumber(getTime(), 0, 0)
-
         lastSendTS = getTime()
     end
+
+    mspProcessTxQ()
 
 end
 
