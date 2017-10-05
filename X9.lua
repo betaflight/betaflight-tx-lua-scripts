@@ -1,3 +1,7 @@
+-- load msp.lua
+assert(loadScript("/SCRIPTS/BF/msp_sp.lua"))()
+
+-- pages
 SetupPages = {
    {
       title = "PIDs",
@@ -69,5 +73,36 @@ MenuBox = { x=40, y=12, w=120, x_offset=36, h_line=8, h_offset=3 }
 SaveBox = { x=40, y=12, w=120, x_offset=4,  h=30, h_offset=5 }
 NoTelem = { 70, 55, "No Telemetry", BLINK }
 
+--
+-- THIS CODE HAS TO BE MOVED TO A SEPERATE LUA FILE
+--
+
+local MSP_SET_TX_INFO      = 187
+
+--
+
+local INTERVAL = 200        -- 100 = 1 second, 200 = 2 seconds, ...
+local lastSendTS = 0
+
+local function run_bg()
+
+    if lastSendTS == 0 or lastSendTS + INTERVAL < getTime() then
+        local now = getDateTime()
+        local values = { now.year-2000, now.mon, now.day, now.hour, now.min, now.sec, getRSSI().rssi }
+
+        -- send info
+        mspSendRequest(MSP_SET_TX_INFO, values)
+
+        playNumber(getTime(), 0, 0)
+
+        lastSendTS = getTime()
+    end
+
+end
+
+--
+-- END
+--
+
 local run_ui = assert(loadScript("/SCRIPTS/BF/ui.lua"))()
-return {run=run_ui}
+return { run=run_ui, background=run_bg }
