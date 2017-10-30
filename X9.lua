@@ -73,40 +73,72 @@ MenuBox = { x=40, y=12, w=120, x_offset=36, h_line=8, h_offset=3 }
 SaveBox = { x=40, y=12, w=120, x_offset=4,  h=30, h_offset=5 }
 NoTelem = { 70, 55, "No Telemetry", BLINK }
 
---
--- THIS CODE HAS TO BE MOVED TO A SEPERATE LUA FILE
---
+-- ---------------------------------------
+-- BACKGROUND PROCESS
+-- ---------------------------------------
 
-local MSP_SET_RTC      = 246
+local INTERVAL          = 100        -- 100 = 1 second, 200 = 2 seconds, ...
+local MSP_SET_RTC       = 246
+local sensorName        = "VFAS"
 
---
+local lastRunTS
+local oldSensorValue
+local sensorId
 
-local INTERVAL = 200        -- 100 = 1 second, 200 = 2 seconds, ...
-local lastSendTS = 0
+local function getTelemetryId(name)
+    local field = getFieldInfo(name)
+    if field then
+      return field['id']
+    else
+      return -1
+    end
+end
+
+local function init()
+    sensorId = getTelemetryId(sensorName)
+    oldSensorValue = 0
+    lastRunTS = 0
+end
 
 local function run_bg()
 
-    if lastSendTS == 0 or lastSendTS + INTERVAL < getTime() then
-        local now = getDateTime()
-        local rssi, alarm_low, alarm_high = getRSSI()
-        local year = now.year;
+    -- run in intervals
+    if lastRunTS == 0 or lastRunTS + INTERVAL < getTime() then
 
-        local values = {}
-        values[1] = bit32.band(year, 0xFF)
-        year = bit32.rshift(year, 8)
-        values[2] = bit32.band(year, 0xFF)
-        values[3] = now.mon
-        values[4] = now.day
-        values[5] = now.hour
-        values[6] = now.min
-        values[7] = now.sec
+        -- get sensor value
+        local newSensorValue = getValue(sensorId)
 
-        -- send info
-        mspSendRequest(MSP_SET_RTC, values)
+        if type(newSensorValue) == "number" then
 
-        lastSendTS = getTime()
+            -- Send datetime when the telemetry connection is available
+            -- assuming when sensor value higher than 0 there is an telemetry connection
+            -- only send datetime one time after telemetry connection became available 
+            -- or when connection is restored after e.g. lipo refresh
+            if oldSensorValue == 0 and newSensorValue > 0 then
+                local now = getDateTime()
+                local year = now.year;
+
+                values = {}
+                values[1] = bit32.band(year, 0xFF)
+                year = bit32.rshift(year, 8)
+                values[2] = bit32.band(year, 0xFF)
+                values[3] = now.mon
+                values[4] = now.day
+                values[5] = now.hour
+                values[6] = now.min
+                values[7] = now.sec
+
+                -- send info
+                mspSendRequest(MSP_SET_RTC, values)
+            end
+
+            oldSensorValue = newSensorValue
+        end
+
+        lastRunTS = getTime()
     end
 
+    -- process queue
     mspProcessTxQ()
 
 end
@@ -116,4 +148,4 @@ end
 --
 
 local run_ui = assert(loadScript("/SCRIPTS/BF/ui.lua"))()
-return { run=run_ui, background=run_bg }
+return { init=init, run=run_ui, background=run_bg }
