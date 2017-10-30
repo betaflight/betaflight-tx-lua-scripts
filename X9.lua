@@ -77,7 +77,7 @@ NoTelem = { 70, 55, "No Telemetry", BLINK }
 -- THIS CODE HAS TO BE MOVED TO A SEPERATE LUA FILE
 --
 
-local MSP_SET_TX_INFO      = 187
+local MSP_SET_RTC      = 246
 
 --
 
@@ -89,10 +89,20 @@ local function run_bg()
     if lastSendTS == 0 or lastSendTS + INTERVAL < getTime() then
         local now = getDateTime()
         local rssi, alarm_low, alarm_high = getRSSI()
-        local values = { now.year-2000, now.mon, now.day, now.hour, now.min, now.sec, rssi }
+        local year = now.year;
+
+        local values = {}
+        values[1] = bit32.band(year, 0xFF)
+        year = bit32.rshift(year, 8)
+        values[2] = bit32.band(year, 0xFF)
+        values[3] = now.mon
+        values[4] = now.day
+        values[5] = now.hour
+        values[6] = now.min
+        values[7] = now.sec
 
         -- send info
-        mspSendRequest(MSP_SET_TX_INFO, values)
+        mspSendRequest(MSP_SET_RTC, values)
 
         lastSendTS = getTime()
     end
