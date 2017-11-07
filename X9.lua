@@ -79,11 +79,13 @@ NoTelem = { 70, 55, "No Telemetry", BLINK }
 
 local INTERVAL          = 100        -- 100 = 1 second, 200 = 2 seconds, ...
 local MSP_SET_RTC       = 246
+local MSP_TX_INFO       = 186
 local sensorName        = "VFAS"
 
 local lastRunTS
 local oldSensorValue
 local sensorId
+local mspMsgQueued = false
 
 local function getTelemetryId(name)
     local field = getFieldInfo(name)
@@ -104,6 +106,12 @@ local function run_bg()
 
     -- run in intervals
     if lastRunTS == 0 or lastRunTS + INTERVAL < getTime() then
+
+        mspMsgQueued = false
+
+        -- ------------------------------------
+        -- SYNC DATE AND TIME
+        -- ------------------------------------
 
         -- get sensor value
         local newSensorValue = getValue(sensorId)
@@ -128,11 +136,27 @@ local function run_bg()
                 values[6] = now.min
                 values[7] = now.sec
 
-                -- send info
+                -- send msp message
                 mspSendRequest(MSP_SET_RTC, values)
+                mspMsgQueued = true
             end
 
             oldSensorValue = newSensorValue
+        end
+
+
+        -- ------------------------------------
+        -- SEND RSSI VALUE
+        -- ------------------------------------
+
+        if mspMsgQueued == false then
+            local rssi, alarm_low, alarm_crit = getRSSI()
+            values = {}
+            values[1] = rssi
+
+            -- send msp message
+            mspSendRequest(MSP_TX_INFO, values)
+            mspMsgQueued = true
         end
 
         lastRunTS = getTime()
