@@ -1,6 +1,3 @@
--- load msp.lua
-assert(loadScript("/SCRIPTS/BF/msp_sp.lua"))()
-
 -- getter
 local MSP_RC_TUNING     = 111
 local MSP_PID           = 112
