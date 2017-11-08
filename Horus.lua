@@ -78,4 +78,6 @@ drawScreenTitle = function (title)
   --lcd.drawText(LCD_W-40, 5, page.."/"..pages, MENU_TITLE_COLOR)
 end
 
-return {run=run_ui}
+local background = assert(loadScript("/SCRIPTS/BF/background.lua"))()
+
+return { init=background.init, run=run_ui, background=background.run_bg }
