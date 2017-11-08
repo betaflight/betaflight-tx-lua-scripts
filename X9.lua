@@ -80,7 +80,7 @@ NoTelem = { 70, 55, "No Telemetry", BLINK }
 local INTERVAL          = 100        -- 100 = 1 second, 200 = 2 seconds, ...
 local MSP_SET_RTC       = 246
 local MSP_TX_INFO       = 186
-local sensorName        = "VFAS"
+local sensorName        = "Tmp1"     -- T1 is never 0 in Betaflight
 
 local lastRunTS
 local oldSensorValue
