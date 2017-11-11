@@ -1,7 +1,7 @@
 -- load msp.lua
 assert(loadScript("/SCRIPTS/BF/msp_sp.lua"))()
 
-local INTERVAL          = 100        -- 100 = 1 second, 200 = 2 seconds, ...
+local INTERVAL          = 50         -- in 1/100th seconds
 local MSP_SET_RTC       = 246
 local MSP_TX_INFO       = 186
 local sensorName        = "Tmp1"     -- T1 is never 0 in Betaflight
@@ -74,6 +74,11 @@ local function run_bg()
 
         if mspMsgQueued == false then
             local rssi, alarm_low, alarm_crit = getRSSI()
+            rssi = rssi * 3 -- scaling of [0, 85] (empirical) DBm value to [0, 255]
+            if rssi > 255 then
+                rssi = 255
+            end
+
             values = {}
             values[1] = rssi
 
