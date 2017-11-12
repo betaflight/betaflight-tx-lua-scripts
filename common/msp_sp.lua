@@ -239,6 +239,10 @@ function mspPollReply()
    return nil
 end
 
+function mspGetLastReqValue()
+   return mspLastReq
+end
+
 --
 -- End of MSP/SPORT code
 --

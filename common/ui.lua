@@ -56,7 +56,7 @@ local function saveSettings(new)
          gState = PAGE_SAVING
          saveRetries = 0
          saveMaxRetries = page.saveMaxRetries or 2 -- default 2
-         saveTimeout = page.saveTimeout or 150     -- default 1.5s
+         saveTimeout = page.saveTimeout or 300     -- default 3s
       end
    end
 end
@@ -92,8 +92,12 @@ local function processMspReply(cmd,rx_buf)
 
    -- ignore replies to write requests for now
    if cmd == page.write then
-      if cmd ~= MSP_VTX_SET_CONFIG then
+      if page.eepromWriteFlag then
          mspSendRequest(MSP_EEPROM_WRITE,{})
+      else
+         gState = PAGE_DISPLAY
+         page.values = nil
+         saveTS = 0
       end
       return
    end
@@ -370,7 +374,19 @@ local function run_ui(event)
    elseif gState == PAGE_SAVING then
       lcd.drawFilledRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,backgroundFill)
       lcd.drawRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,SOLID)
-      lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
+      if saveRetries <= 0 then
+         lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
+      else
+         lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Retrying",DBLSIZE + (globalTextOptions))
+      end
+      -- debug display version
+--      local str;
+--      if saveRetries <= 0 then
+--         str = "S " .. mspGetLastReqValue() .. " " .. mspRequestsSent .. " " .. mspRepliesReceived .. " " .. mspErrorPk .. " " .. mspCRCErrors .. " " .. mspOutOfOrder .. " " .. mspPkRxed .. " " .. mspStartPk
+--      else
+--         str = "R " .. mspGetLastReqValue() .. " " .. mspRequestsSent .. " " .. mspRepliesReceived .. " " .. mspErrorPk .. " " .. mspCRCErrors .. " " .. mspOutOfOrder .. " " .. mspPkRxed .. " " .. mspStartPk
+--      end
+--      lcd.drawText(SaveBox.x+SaveBox.x_offset, SaveBox.y+SaveBox.h_offset, str, (globalTextOptions))
    end
 
    processMspReply(mspPollReply())
@@ -393,7 +409,7 @@ local function updateVTXBandChan(page)
    if page.values[2] > 0 then   -- band != 0
       page.values["f"] = freqLookup[page.values[2]][page.values[3]]
    else   -- band == 0; set freq via channel*100
-      page.values["f"] = 5100 + (math.floor(page.values[3]) * 100)
+      page.values["f"] = math.floor(5100 + (page.values[3] * 100))
    end
   lastFreqVal = page.values["f"]   -- keep track of displayed freq
 end
@@ -498,7 +514,7 @@ local function postReadVTX(page)
    if page.values then
       local rfreq
       if page.values[7] and page.values[7] > 0 then
-         rfreq = page.values[6] + (page.values[7] * 256)
+         rfreq = math.floor(page.values[6] + (page.values[7] * 256))
       else
          rfreq = 0
       end
@@ -507,6 +523,7 @@ local function postReadVTX(page)
             updateVTXBandChan(page)
             if rfreq == 0 then            -- if user freq not supported then
                page.fields[1].min = 1     -- don't allow 'U' band
+               page.eepromWriteFlag = false    -- and don't do EEPROM_WRITE after update
             end
          else
             page.values = nil
@@ -536,16 +553,19 @@ end
 
 SetupPages[1].read  = MSP_PID
 SetupPages[1].write = MSP_SET_PID
+SetupPages[1].eepromWriteFlag = true
 
 SetupPages[2].read  = MSP_RC_TUNING
 SetupPages[2].write = MSP_SET_RC_TUNING 
+SetupPages[2].eepromWriteFlag = true
 
 SetupPages[3].read           = MSP_VTX_CONFIG
 SetupPages[3].write          = MSP_VTX_SET_CONFIG
 SetupPages[3].postRead       = postReadVTX
 SetupPages[3].getWriteValues = getWriteValuesVTX
-SetupPages[3].saveMaxRetries = 0
+SetupPages[3].saveMaxRetries = 1
 SetupPages[3].saveTimeout    = 300 -- 3s
+SetupPages[3].eepromWriteFlag = true  -- set false if older BF firmware
 
 SetupPages[3].fields[1].upd = updateVTXBandChan
 SetupPages[3].fields[2].upd = updateVTXBandChan
