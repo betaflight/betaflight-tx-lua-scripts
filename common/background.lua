@@ -7,7 +7,7 @@ local MSP_TX_INFO       = 186
 local sensorName        = "Tmp1"     -- T1 is never 0 in Betaflight
 
 local lastRunTS
-local oldSensorValue
+local timeIsSet = false
 local sensorId
 local mspMsgQueued = false
 
@@ -22,7 +22,6 @@ end
 
 local function init()
     sensorId = getTelemetryId(sensorName)
-    oldSensorValue = 0
     lastRunTS = 0
 end
 
@@ -39,32 +38,31 @@ local function run_bg()
         -- get sensor value
         local newSensorValue = getValue(sensorId)
 
-        if type(newSensorValue) == "number" then
-
+        if not timeIsSet and type(newSensorValue) == "number" and newSensorValue > 0 then
             -- Send datetime when the telemetry connection is available
             -- assuming when sensor value higher than 0 there is an telemetry connection
             -- only send datetime one time after telemetry connection became available 
             -- or when connection is restored after e.g. lipo refresh
-            if oldSensorValue == 0 and newSensorValue > 0 then
-                local now = getDateTime()
-                local year = now.year;
+            local now = getDateTime()
+            local year = now.year;
 
-                values = {}
-                values[1] = bit32.band(year, 0xFF)
-                year = bit32.rshift(year, 8)
-                values[2] = bit32.band(year, 0xFF)
-                values[3] = now.mon
-                values[4] = now.day
-                values[5] = now.hour
-                values[6] = now.min
-                values[7] = now.sec
+            values = {}
+            values[1] = bit32.band(year, 0xFF)
+            year = bit32.rshift(year, 8)
+            values[2] = bit32.band(year, 0xFF)
+            values[3] = now.mon
+            values[4] = now.day
+            values[5] = now.hour
+            values[6] = now.min
+            values[7] = now.sec
 
-                -- send msp message
-                mspSendRequest(MSP_SET_RTC, values)
-                mspMsgQueued = true
-            end
+            -- send msp message
+            mspSendRequest(MSP_SET_RTC, values)
+            mspMsgQueued = true
 
-            oldSensorValue = newSensorValue
+            timeIsSet = true
+        else
+            timeIsSet = false
         end
 
 
@@ -74,7 +72,8 @@ local function run_bg()
 
         if mspMsgQueued == false then
             local rssi, alarm_low, alarm_crit = getRSSI()
-            rssi = rssi * 3 -- scaling of [0, 85] (empirical) DBm value to [0, 255]
+            -- Scale the [0, 85] (empirical) RSSI values to [0, 255]
+            rssi = rssi * 3
             if rssi > 255 then
                 rssi = 255
             end
