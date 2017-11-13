@@ -50,7 +50,7 @@ local function saveSettings(new)
          gState = PAGE_SAVING
          saveRetries = 0
          saveMaxRetries = page.saveMaxRetries or 2 -- default 2
-         saveTimeout = page.saveTimeout or 150     -- default 1.5s
+         saveTimeout = page.saveTimeout or 300     -- default 3s
       end
    end
 end
@@ -88,6 +88,10 @@ local function processMspReply(cmd,rx_buf)
    if cmd == page.write then
       if cmd ~= MSP_VTX_SET_CONFIG then
          mspSendRequest(MSP_EEPROM_WRITE,{})
+      else
+         gState = PAGE_DISPLAY
+         page.values = nil
+         saveTS = 0
       end
       return
    end
@@ -364,7 +368,19 @@ local function run_ui(event)
    elseif gState == PAGE_SAVING then
       lcd.drawFilledRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,backgroundFill)
       lcd.drawRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,SOLID)
-      lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
+      if saveRetries <= 0 then
+         lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
+      else
+         lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Retrying",DBLSIZE + (globalTextOptions))
+      end
+      -- debug display version
+--      local str;
+--      if saveRetries <= 0 then
+--         str = "S " .. mspGetLastReqValue() .. " " .. mspRequestsSent .. " " .. mspRepliesReceived .. " " .. mspErrorPk .. " " .. mspCRCErrors .. " " .. mspOutOfOrder .. " " .. mspPkRxed .. " " .. mspStartPk
+--      else
+--         str = "R " .. mspGetLastReqValue() .. " " .. mspRequestsSent .. " " .. mspRepliesReceived .. " " .. mspErrorPk .. " " .. mspCRCErrors .. " " .. mspOutOfOrder .. " " .. mspPkRxed .. " " .. mspStartPk
+--      end
+--      lcd.drawText(SaveBox.x+SaveBox.x_offset, SaveBox.y+SaveBox.h_offset, str, (globalTextOptions))
    end
 
    processMspReply(mspPollReply())
@@ -420,7 +436,7 @@ SetupPages[3].read           = MSP_VTX_CONFIG
 SetupPages[3].write          = MSP_VTX_SET_CONFIG
 SetupPages[3].postRead       = postReadVTX
 SetupPages[3].getWriteValues = getWriteValuesVTX
-SetupPages[3].saveMaxRetries = 0
+SetupPages[3].saveMaxRetries = 1
 SetupPages[3].saveTimeout    = 300 -- 3s
 
 SetupPages[3].fields[1].upd = updateVTXFreq
