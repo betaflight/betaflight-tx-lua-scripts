@@ -1,0 +1,29 @@
+{
+  "name": "betaflight-tx-lua-scripts",
+  "version": "0.0.1",
+  "description": "A collection of scripts to configure Betaflight from your TX",
+  "main": "",
+  "dependencies": {
+    "luac": "0.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"No test specified\"",
+    "postinstall": "bin/build.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betaflight/betaflight-tx-lua-scripts.git"
+  },
+  "keywords": [
+    "lua",
+    "opentx",
+    "betaflight"
+  ],
+  "author": "The Betaflight open source project",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/betaflight/betaflight-tx-lua-scripts/issues"
+  },
+  "homepage": "https://github.com/betaflight/betaflight-tx-lua-scripts#readme"
+}

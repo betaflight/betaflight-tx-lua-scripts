@@ -1,0 +1,10 @@
+dist: trusty
+sudo: false
+
+language: node_js
+
+before_install:
+  - npm install -g luamin
+  - git checkout ./bin/travis-test.sh
+install:
+  - ./bin/travis-test.sh

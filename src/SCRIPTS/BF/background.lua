@@ -1,5 +1,6 @@
--- load msp.lua
-assert(loadScript("/SCRIPTS/BF/msp_sp.lua"))()
+SCRIPT_HOME = "/SCRIPTS/BF"
+
+assert(loadScript(SCRIPT_HOME.."/MSP/common.lua"))()
 
 local INTERVAL          = 50         -- in 1/100th seconds
 local MSP_SET_RTC       = 246
