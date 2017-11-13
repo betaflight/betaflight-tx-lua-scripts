@@ -22,6 +22,9 @@ local EDITING      = 3
 local PAGE_SAVING  = 4
 local MENU_DISP    = 5
 
+local NUM_BANDS = 5
+local NUM_CHANS = 8
+
 local gState = PAGE_DISPLAY
 
 local currentPage = 1
@@ -50,7 +53,7 @@ local function saveSettings(new)
          gState = PAGE_SAVING
          saveRetries = 0
          saveMaxRetries = page.saveMaxRetries or 2 -- default 2
-         saveTimeout = page.saveTimeout or 150     -- default 1.5s
+         saveTimeout = page.saveTimeout or 300     -- default 3s
       end
    end
 end
@@ -86,8 +89,12 @@ local function processMspReply(cmd,rx_buf)
 
    -- ignore replies to write requests for now
    if cmd == page.write then
-      if cmd ~= MSP_VTX_SET_CONFIG then
+      if page.eepromWriteFlag then
          mspSendRequest(MSP_EEPROM_WRITE,{})
+      else
+         gState = PAGE_DISPLAY
+         page.values = nil
+         saveTS = 0
       end
       return
    end
@@ -364,7 +371,19 @@ local function run_ui(event)
    elseif gState == PAGE_SAVING then
       lcd.drawFilledRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,backgroundFill)
       lcd.drawRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,SOLID)
-      lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
+      if saveRetries <= 0 then
+         lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
+      else
+         lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Retrying",DBLSIZE + (globalTextOptions))
+      end
+      -- debug display version
+--      local str;
+--      if saveRetries <= 0 then
+--         str = "S " .. mspGetLastReqValue() .. " " .. mspRequestsSent .. " " .. mspRepliesReceived .. " " .. mspErrorPk .. " " .. mspCRCErrors .. " " .. mspOutOfOrder .. " " .. mspPkRxed .. " " .. mspStartPk
+--      else
+--         str = "R " .. mspGetLastReqValue() .. " " .. mspRequestsSent .. " " .. mspRepliesReceived .. " " .. mspErrorPk .. " " .. mspCRCErrors .. " " .. mspOutOfOrder .. " " .. mspPkRxed .. " " .. mspStartPk
+--      end
+--      lcd.drawText(SaveBox.x+SaveBox.x_offset, SaveBox.y+SaveBox.h_offset, str, (globalTextOptions))
    end
 
    processMspReply(mspPollReply())
@@ -379,8 +398,101 @@ local freqLookup = {
     { 5658, 5695, 5732, 5769, 5806, 5843, 5880, 5917 }, -- RaceBand
 }
 
+local lastFreqVal = 0
+local lastFreqUpdTS = 0
+local freqModCntr = 0
+
+local function updateVTXBandChan(page)
+   if page.values[2] > 0 then   -- band != 0
+      page.values["f"] = freqLookup[page.values[2]][page.values[3]]
+   else   -- band == 0; set freq via channel*100
+      page.values["f"] = math.floor(5100 + (page.values[3] * 100))
+   end
+  lastFreqVal = page.values["f"]   -- keep track of displayed freq
+end
+
 local function updateVTXFreq(page)
-   page.values["f"] = freqLookup[page.values[2]][page.values[3]]
+   local newFreq = page.values["f"]
+   if page.values[2] == 0 then   -- band == 0
+      local now = getTime()   -- track rate of change for possible mod speedup
+      if newFreq ~= lastFreqVal and now < lastFreqUpdTS + 15 then
+         freqModCntr = freqModCntr + (15-(lastFreqUpdTS-now))   -- increase counter for mod speedup
+      else
+         freqModCntr = 0   -- no mod speedup
+      end
+      if freqModCntr > 65 then  -- rate is fast enough; do mod speedup
+         if newFreq > lastFreqVal then
+            newFreq = clipValue(newFreq + math.floor(freqModCntr/65), G_MIN_FREQ_VAL, G_MAX_FREQ_VAL)
+         else
+            newFreq = clipValue(newFreq - math.floor(freqModCntr/65), G_MIN_FREQ_VAL, G_MAX_FREQ_VAL)
+         end
+         page.values["f"] = newFreq
+      end
+                        -- set channel value via freq/100:
+      page.values[3] = clipValue(math.floor((newFreq - 5100) / 100), 1, 8)
+      lastFreqUpdTS = now
+      lastFreqVal = newFreq            -- keep track of displayed freq
+   else   -- band != 0; find closest freq in table that is above/below dialed freq
+      if newFreq ~= lastFreqVal then
+         local startBand
+         local endBand
+         local incFlag       -- freq increasing or decreasing
+         if newFreq > lastFreqVal then
+            incFlag = 1
+            startBand = 1
+            endBand = NUM_BANDS
+         else
+            incFlag = -1
+            startBand = NUM_BANDS
+            endBand = 1
+         end
+         local curBand = page.values[2]
+         local curChan = page.values[3]
+         local selBand = 0
+         local selChan = 0
+         local selFreq = 0
+         local diffVal = 9999
+         local fVal
+              -- need to scan bands in same "direction" as 'incFlag'
+              --  so same-freq selections will be handled properly (F8 & R7)
+         for band=startBand,endBand,incFlag do
+            for chan=1,NUM_CHANS do
+               if band ~= curBand or chan ~= curChan then   -- don't reselect same band/chan
+                  fVal = freqLookup[band][chan]
+                  if incFlag > 0 then
+                     if fVal >= lastFreqVal and fVal - lastFreqVal < diffVal then
+                             -- if same freq then only select if "next" band:
+                        if fVal ~= lastFreqVal or band > curBand then
+                           selBand = band
+                           selChan = chan
+                           selFreq = fVal
+                           diffVal = fVal - lastFreqVal
+                        end
+                     end
+                  else
+                     if fVal <= lastFreqVal and lastFreqVal - fVal < diffVal then
+                             -- if same freq then only select if "previous" band:
+                        if fVal ~= lastFreqVal or band < curBand then
+                           selBand = band
+                           selChan = chan
+                           selFreq = fVal
+                           diffVal = lastFreqVal - fVal
+                        end
+                     end
+                  end
+               end
+            end
+         end
+         if selFreq > 0 then
+            page.values["f"] = selFreq      -- using new freq from table
+            page.values[2] = selBand
+            page.values[3] = selChan
+            lastFreqVal = selFreq           -- keep track of displayed freq
+         else
+            page.values["f"] = lastFreqVal  -- if no match then revert freq
+         end
+      end
+   end
 end
 
 local function postReadVTX(page)
@@ -395,35 +507,64 @@ local function postReadVTX(page)
       --page.values = nil
    end
 
-
-   if page.values and page.values[2] and page.values[3] then
-      if page.values[2] > 0 and page.values[3] > 0 then
-         updateVTXFreq(page)
+   if page.values then
+      local rfreq
+      if page.values[7] and page.values[7] > 0 then
+         rfreq = math.floor(page.values[6] + (page.values[7] * 256))
       else
-         page.values = nil
+         rfreq = 0
+      end
+      if page.values[2] and page.values[2] > 0 then   -- band != 0
+         if page.values[3] and page.values[3] > 0 then
+            updateVTXBandChan(page)
+            if rfreq == 0 then            -- if user freq not supported then
+               page.fields[1].min = 1     -- don't allow 'U' band
+               page.eepromWriteFlag = false    -- and don't do EEPROM_WRITE after update
+            end
+         else
+            page.values = nil
+         end
+      else   -- band == 0
+         if rfreq > 0 then
+            page.values["f"] = rfreq
+            lastFreqVal = rfreq           -- keep track of displayed freq
+            updateVTXFreq(page)
+            page.fields[1].min = 0        -- make sure 'U' band allowed
+         else
+            page.values = nil
+         end
       end
    end
 end
 
 local function getWriteValuesVTX(values)
-   local channel = (values[2]-1)*8 + values[3]-1
+   local channel
+   if values[2] > 0 then   -- band != 0
+      channel = (values[2]-1)*8 + values[3]-1
+   else   -- band == 0
+      channel = values["f"]
+   end
    return { bit32.band(channel,0xFF), bit32.rshift(channel,8), values[4], values[5] }
 end
 
 SetupPages[1].read  = MSP_PID
 SetupPages[1].write = MSP_SET_PID
+SetupPages[1].eepromWriteFlag = true
 
 SetupPages[2].read  = MSP_RC_TUNING
 SetupPages[2].write = MSP_SET_RC_TUNING 
+SetupPages[2].eepromWriteFlag = true
 
 SetupPages[3].read           = MSP_VTX_CONFIG
 SetupPages[3].write          = MSP_VTX_SET_CONFIG
 SetupPages[3].postRead       = postReadVTX
 SetupPages[3].getWriteValues = getWriteValuesVTX
-SetupPages[3].saveMaxRetries = 0
+SetupPages[3].saveMaxRetries = 1
 SetupPages[3].saveTimeout    = 300 -- 3s
+SetupPages[3].eepromWriteFlag = true  -- set false if older BF firmware
 
-SetupPages[3].fields[1].upd = updateVTXFreq
-SetupPages[3].fields[2].upd = updateVTXFreq
+SetupPages[3].fields[1].upd = updateVTXBandChan
+SetupPages[3].fields[2].upd = updateVTXBandChan
+SetupPages[3].fields[6].upd = updateVTXFreq
 
 return run_ui
