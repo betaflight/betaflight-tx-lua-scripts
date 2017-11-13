@@ -158,8 +158,13 @@ local function requestPage()
 end
 
 function drawScreenTitle(screen_title)
-    lcd.drawFilledRectangle(0, 0, LCD_W, 10)
-    lcd.drawText(1,1,screen_title,INVERS)
+    if radio.resolution == lcdResolution.low then
+        lcd.drawFilledRectangle(0, 0, LCD_W, 10)
+        lcd.drawText(1,1,screen_title,INVERS)
+    else
+        lcd.drawFilledRectangle(0, 0, LCD_W, 30, TITLE_BGCOLOR)
+        lcd.drawText(5,5,screen_title, MENU_TITLE_COLOR)
+    end
 end
 
 local function drawScreen()
@@ -167,16 +172,13 @@ local function drawScreen()
     drawScreenTitle("Betaflight / "..screen_title)
     for i=1,#(Page.text) do
         local f = Page.text[i]
-        if f.to == nil then
-            lcd.drawText(f.x, f.y, f.t, globalTextOptions)
-        else
-            lcd.drawText(f.x, f.y, f.t, f.to)
-        end
+        local textOptions = (f.to or 0) + globalTextOptions
+        lcd.drawText(f.x, f.y, f.t, textOptions)
     end
     local val = "---"
     for i=1,#(Page.fields) do
         local f = Page.fields[i]
-        local text_options = f.to or globalTextOptions
+        local text_options = (f.to or 0) + globalTextOptions
         local heading_options = text_options
         local value_options = text_options
         if i == currentLine then
