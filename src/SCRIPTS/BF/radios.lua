@@ -22,6 +22,12 @@ local supportedRadios =
         templateHome    = SCRIPT_HOME.."/X9/",
         preLoad         = SCRIPT_HOME.."/X9/x9pre.lua"
     },
+    ["x10"] =
+    {
+        templateHome=SCRIPT_HOME.."/X12S/",
+        preLoad=SCRIPT_HOME.."/X12S/x12spre.lua",
+        resolution      = lcdResolution.high
+    },
     ["x12s"] =
     {
         templateHome=SCRIPT_HOME.."/X12S/",

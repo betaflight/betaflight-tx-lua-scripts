@@ -6,13 +6,13 @@ return {
     title             = "PWM",
     minBytes             = 9,
     text= {
-        { t = "Protocol",    x = 50,  y = 65, to = SMLSIZE },
-        { t = "32K",         x = 50,  y = 110, to = SMLSIZE },
-        { t = "Gyro Rt",     x = 50,  y = 155, to = SMLSIZE },
-        { t = "PID Rt",      x = 50,  y = 200, to = SMLSIZE },
-        { t = "Unsynced",    x = 240, y = 110, to = SMLSIZE },
-        { t = "PWM Rate",    x = 240, y = 155, to = SMLSIZE },
-        { t = "Idle Offset", x = 240, y = 200, to = SMLSIZE }
+        { t = "Protocol",    x = 50,  y = 65  },
+        { t = "32K",         x = 50,  y = 110 },
+        { t = "Gyro Rt",     x = 50,  y = 155 },
+        { t = "PID Rt",      x = 50,  y = 200 },
+        { t = "Unsynced",    x = 240, y = 110 },
+        { t = "PWM Rate",    x = 240, y = 155 },
+        { t = "Idle Offset", x = 240, y = 200 }
     },
     fields = {
         { x = 130, y = 55,  vals = { 4 },    min = 0,   max = 9,     to = MIDSIZE, table = { [0] = "OFF", "ONESHOT125", "ONESHOT42", "MULTISHOT","BRUSHED", "DSHOT150", "DSHOT300", "DSHOT600","DSHOT1200", "PROSHOT1000" } },

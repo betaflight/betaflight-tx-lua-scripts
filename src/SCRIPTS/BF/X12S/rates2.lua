@@ -7,13 +7,13 @@ return {
    eepromWrite    = true,
    minBytes       = 23,
    text = {
-      { t = "Anti-Gravity",       x =  35, y =  68, to = NORMSIZE },
-      { t = "Gain",               x =  35, y = 115, to = SMLSIZE },
-      { t = "Threshold",          x =  35, y = 155, to = SMLSIZE },
-      { t = "Dterm Setpoint",     x = 240, y = 68,  to = NORMSIZE },
-      { t = "Weight",             x = 240, y = 115, to = SMLSIZE },
-      { t = "Transition",         x = 240, y = 155, to = SMLSIZE },
-      { t = "VBAT Compensation",  x =  35, y = 200, to = SMLSIZE }
+      { t = "Anti-Gravity",       x =  35, y =  68, to = MIDSIZE },
+      { t = "Gain",               x =  35, y = 115, to = NORMSIZE },
+      { t = "Threshold",          x =  35, y = 155, to = NORMSIZE },
+      { t = "Dterm Setpoint",     x = 240, y = 68,  to = MIDSIZE },
+      { t = "Weight",             x = 240, y = 115, to = NORMSIZE },
+      { t = "Transition",         x = 240, y = 155, to = NORMSIZE },
+      { t = "VBAT Compensation",  x =  35, y = 200, to = NORMSIZE }
    },
    fields = {
       --  GAIN

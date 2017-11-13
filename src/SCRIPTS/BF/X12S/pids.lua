@@ -7,12 +7,12 @@ return {
    eepromWrite    = true,
    minBytes       = 8,
    text = {
-      { t = "P",      x = 140,  y =  48, to = SMLSIZE },
-      { t = "I",      x = 240,  y =  48, to = SMLSIZE },
-      { t = "D",      x = 340,  y =  48, to = SMLSIZE },
-      { t = "ROLL",   x =  35,  y = 100, to = SMLSIZE },
-      { t = "PITCH",  x =  35,  y = 150, to = SMLSIZE },
-      { t = "YAW",    x =  35,  y = 195, to = SMLSIZE },
+      { t = "P",      x = 140,  y =  48 },
+      { t = "I",      x = 240,  y =  48 },
+      { t = "D",      x = 340,  y =  48 },
+      { t = "ROLL",   x =  35,  y = 100 },
+      { t = "PITCH",  x =  35,  y = 150 },
+      { t = "YAW",    x =  35,  y = 195 },
    },
    fields = {
       -- P
