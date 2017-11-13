@@ -158,8 +158,15 @@ local function requestPage()
 end
 
 function drawScreenTitle(screen_title)
-    lcd.drawFilledRectangle(0, 0, LCD_W, 10)
-    lcd.drawText(1,1,screen_title,INVERS)
+    if radio.resolution == lcdResolution.low then
+        lcd.drawFilledRectangle(0, 0, LCD_W, 10)
+        lcd.drawText(1,1,screen_title,INVERS)
+    else
+        lcd.drawFilledRectangle(0, 0, LCD_W, 30)
+        lcd.setColor(TEXT_COLOR, GREY)
+        lcd.drawText(5,5,screen_title)
+        lcd.setColor(TEXT_COLOR, WHITE)
+    end
 end
 
 local function drawScreen()

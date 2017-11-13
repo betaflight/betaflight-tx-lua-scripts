@@ -1,3 +1,10 @@
+lcdResolution =
+{
+    low = 0,
+    high = 1
+}
+
+
 local supportedRadios =
 {
     ["x7"] =
@@ -14,7 +21,13 @@ local supportedRadios =
     {
         templateHome    = SCRIPT_HOME.."/X9/",
         preLoad         = SCRIPT_HOME.."/X9/x9pre.lua"
-    }
+    },
+    ["x12s"] =
+    {
+        templateHome=SCRIPT_HOME.."/X12S/",
+        preLoad=SCRIPT_HOME.."/X12S/x12spre.lua",
+        resolution      = lcdResolution.high
+    },
 }
 
 local ver, rad, maj, min, rev = getVersion()
