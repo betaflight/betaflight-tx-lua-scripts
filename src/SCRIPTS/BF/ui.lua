@@ -133,22 +133,22 @@ local function processMspReply(cmd,rx_buf)
     end
 end
 
-local function incMax(val,inc,base)
+local function incMax(val, inc, base)
    return ((val + inc + base - 1) % base) + 1
 end
 
 local function incPage(inc)
-   currentPage = incMax(currentPage,inc,#(PageFiles))
+   currentPage = incMax(currentPage, inc, #(PageFiles))
    Page = nil
    collectgarbage()
 end
 
 local function incLine(inc)
-   currentLine = incMax(currentLine,inc,#(Page.fields))
+   currentLine = incMax(currentLine, inc, #(Page.fields))
 end
 
 local function incMenu(inc)
-   menuActive = incMax(menuActive,inc,#(menuList))
+   menuActive = incMax(menuActive, inc, #(menuList))
 end
 
 local function requestPage()
