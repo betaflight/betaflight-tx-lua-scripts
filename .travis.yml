@@ -1,10 +1,13 @@
 dist: trusty
 sudo: false
 
-language: node_js
+addons:
+  apt:
+    packages:
+      - lua5.2
 
-before_install:
-  - npm install -g luamin
-  - git checkout ./bin/travis-test.sh
+language: c
+
 install:
-  - ./bin/travis-test.sh
+
+script: ./bin/build.sh

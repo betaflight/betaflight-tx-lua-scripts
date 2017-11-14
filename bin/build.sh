@@ -17,6 +17,10 @@ for f in ${MANIFEST[@]};
 do
     SRC_NAME=$f
     OBJ_NAME=$(dirname ${f})/$(basename ${f} .lua).luac
-    node -e "var luac = require('luac'); luac.buildToFileSync('${SRC_NAME}', '${OBJ_NAME}');"
+    echo -e "Compiling file \e[1m${SRC_NAME}\e[21m..." || \
+    luac -o ${OBJ_NAME} ${SRC_NAME} || \
+    echo -e "\e[1m\e[39m[\e[31mBUILD FAILED\e[39m]\e[21m Compilation error in file \e[1m${SRC_NAME}\e[21m!" || \
+    exit 1
 done
 
+echo -e "\e[1m\e[39m[\e[32mTEST SUCCESSFUL\e[39m]\e[21m All lua files built successfully!"
