@@ -140,6 +140,7 @@ end
 local function incPage(inc)
    currentPage = incMax(currentPage, inc, #(PageFiles))
    Page = nil
+   currentLine = 1
    collectgarbage()
 end
 
