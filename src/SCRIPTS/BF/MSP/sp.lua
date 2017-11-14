@@ -1,6 +1,7 @@
 
 LOCAL_SENSOR_ID  = 0x0D
-REMOTE_SENSOR_ID = 0x1B
+SMARTPORT_REMOTE_SENSOR_ID = 0x1B
+FPORT_REMOTE_SENSOR_ID = 0x00
 REQUEST_FRAME_ID = 0x30
 REPLY_FRAME_ID   = 0x32
 
@@ -23,7 +24,7 @@ end
 
 protocol.mspPoll = function()
     local sensorId, frameId, dataId, value = sportTelemetryPop()
-    if sensorId == REMOTE_SENSOR_ID and frameId == REPLY_FRAME_ID then
+    if (sensorId == SMARTPORT_REMOTE_SENSOR_ID or sensorId == FPORT_REMOTE_SENSOR_ID) and frameId == REPLY_FRAME_ID then
         local payload = {}
         payload[1] = bit32.band(dataId,0xFF)
         dataId = bit32.rshift(dataId,8)
