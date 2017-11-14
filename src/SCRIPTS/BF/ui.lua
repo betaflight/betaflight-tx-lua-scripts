@@ -133,38 +133,22 @@ local function processMspReply(cmd,rx_buf)
     end
 end
 
-local function MaxLines()
-    return #(Page.fields)
+local function incMax(val,inc,base)
+   return ((val + inc + base - 1) % base) + 1
 end
 
 local function incPage(inc)
-    currentPage = currentPage + inc
-    if currentPage > #(PageFiles) then
-        currentPage = 1
-    elseif currentPage < 1 then
-        currentPage = #(PageFiles)
-    end
-    currentLine = 1
-    Page = nil
-    collectgarbage()
+   currentPage = incMax(currentPage,inc,#(PageFiles))
+   Page = nil
+   collectgarbage()
 end
 
 local function incLine(inc)
-    currentLine = currentLine + inc
-    if currentLine > MaxLines() then
-        currentLine = 1
-    elseif currentLine < 1 then
-        currentLine = MaxLines()
-    end
+   currentLine = incMax(currentLine,inc,#(Page.fields))
 end
 
 local function incMenu(inc)
-    menuActive = menuActive + inc
-     if menuActive > #(menuList) then
-        menuActive = 1
-    elseif menuActive < 1 then
-        menuActive = #(menuList)
-    end
+   menuActive = incMax(menuActive,inc,#(menuList))
 end
 
 local function requestPage()
