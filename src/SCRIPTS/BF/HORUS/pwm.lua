@@ -45,8 +45,10 @@ return {
     end,
     calculatePidRates = function(self, baseRate)
         self.fields[3].table = {}
-        for i=1, 16 do
-            self.fields[3].table[i] = string.format("%.2f",baseRate/i)
+        if (baseRate or 0) > 0 then
+            for i=1, 16 do
+                self.fields[3].table[i] = string.format("%.2f",baseRate/i)
+            end
         end
     end,
     updateRateTables = function(self)
