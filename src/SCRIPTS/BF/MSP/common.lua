@@ -9,6 +9,7 @@ local mspRemoteSeq = 0
 local mspRxBuf = {}
 local mspRxIdx = 1
 local mspRxCRC = 0
+local mspRxReq = 0
 local mspStarted = false
 local mspLastReq = 0
 local mspTxBuf = {}
@@ -96,6 +97,7 @@ function mspReceivedReply(payload)
         mspRxBuf = {}
         mspRxSize = payload[idx]
         mspRxCRC  = bit32.bxor(mspRxSize,mspLastReq)
+        mspRxReq  = mspLastReq
         idx = idx + 1
         mspStarted = true
     elseif not mspStarted then
@@ -129,7 +131,7 @@ function mspPollReply()
     while true do
         ret = protocol.mspPoll()
         if type(ret) == "table" then
-            return mspLastReq, ret
+            return mspRxReq, ret
         else
             break
         end
