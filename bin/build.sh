@@ -1,7 +1,9 @@
-#!/bin/bash 
+#!/bin/bash
 
 if [ -d obj ]; then
     rm -fR obj/*
+else
+    mkdir obj
 fi
 
 cp -fR src/* obj
