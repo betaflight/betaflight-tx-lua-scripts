@@ -62,7 +62,7 @@ local function run_bg()
             mspMsgQueued = true
 
             timeIsSet = true
-        else
+        elseif type(newSensorValue) ~= "number" or newSensorValue == 0 then
             timeIsSet = false
         end
 
