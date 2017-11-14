@@ -112,6 +112,21 @@ local function processMspReply(cmd,rx_buf)
         for i=1,#(rx_buf) do
             Page.values[i] = rx_buf[i]
         end
+
+        for i=1,#(Page.fields) do
+            if (#(Page.values) or 0) >= Page.minBytes then
+               local f = Page.fields[i]
+               if f.vals then
+                  f.value = 0;
+                  for idx=1, #(f.vals) do
+                     local raw_val = Page.values[f.vals[idx]]
+                     raw_val = bit32.lshift(raw_val, (idx-1)*8)
+                     f.value = bit32.bor(f.value, raw_val)
+                  end
+                  f.value = f.value/(f.scale or 1)
+               end
+            end
+        end
         if Page.postLoad then
             Page.postLoad(Page)
         end
@@ -195,16 +210,6 @@ local function drawScreen()
             end
         else
             spacing = 0
-        end
-        if Page.values then
-            if (#(Page.values) or 0) >= Page.minBytes then
-                if not f.value and f.vals then
-                    for idx=1, #(f.vals) do
-                        f.value = bit32.bor((f.value or 0), bit32.lshift(Page.values[f.vals[idx]], (idx-1)*8))
-                    end
-                    f.value = f.value/(f.scale or 1)
-                end
-            end
         end
         if f.value then
             if f.upd and Page.values then
