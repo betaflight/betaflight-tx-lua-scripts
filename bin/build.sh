@@ -1,10 +1,10 @@
 #!/bin/bash 
 
 if [ -d obj ]; then
-    rm -fR obj
+    rm -fR obj/*
 fi
 
-cp -fR src obj
+cp -fR src/* obj
 
 MANIFEST=(`find obj/ -name *.lua -type f`);
 
