@@ -145,6 +145,8 @@ local function incPage(inc)
         currentPage = #(PageFiles)
     end
     currentLine = 1
+    Page = nil
+    collectgarbage()
 end
 
 local function incLine(inc)
@@ -318,10 +320,8 @@ function run_ui(event)
     -- normal page viewing
     elseif currentState <= pageStatus.display then
         if event == userEvent.press.pageUp then
-            Page = nil
             incPage(-1)
         elseif event == userEvent.release.menu or event == userEvent.press.pageDown then
-            Page = nil
             incPage(1)
         elseif event == userEvent.release.plus or event == userEvent.dial.left then
             incLine(-1)
