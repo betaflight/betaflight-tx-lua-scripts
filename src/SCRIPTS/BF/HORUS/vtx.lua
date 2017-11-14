@@ -72,7 +72,13 @@ return {
     updateVTXFreq = function(self)
         if (#(self.values) or 0) >= self.minBytes then
             if (self.fields[2].value or 0) > 0 and (self.fields[3].value or 0) > 0 then
-                self.fields[6].value = self.freqLookup[self.values[2]][self.values[3]]
+                local band = self.values[2]
+                if band < #(self.freqLookup) then
+                    local chan = self.values[3]
+                    if self.values[3] < #(self.freqLookup[band]) then
+                        self.fields[6].value = self.freqLookup[self.values[2]][self.values[3]]
+                    end
+                end
             end
         end
     end
