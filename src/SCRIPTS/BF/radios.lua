@@ -4,39 +4,35 @@ lcdResolution =
     high = 1
 }
 
-
-local supportedRadios =
-{
-    ["x7"] =
+local supportedPlatforms = {
+    x7 =
     {
         templateHome    = SCRIPT_HOME.."/X7/",
         preLoad         = SCRIPT_HOME.."/X7/x7pre.lua",
         resolution      = lcdResolution.low
     },
-    ["x9d"] =
+    x9 =
     {
         templateHome    = SCRIPT_HOME.."/X9/",
         preLoad         = SCRIPT_HOME.."/X9/x9pre.lua",
         resolution      = lcdResolution.low
     },
-    ["x9d+"] =
+    horus =
     {
-        templateHome    = SCRIPT_HOME.."/X9/",
-        preLoad         = SCRIPT_HOME.."/X9/x9pre.lua",
-        resolution      = lcdResolution.low
-    },
-    ["x10"] =
-    {
-        templateHome=SCRIPT_HOME.."/X12S/",
-        preLoad=SCRIPT_HOME.."/X12S/x12spre.lua",
+        templateHome=SCRIPT_HOME.."/HORUS/",
+        preLoad=SCRIPT_HOME.."/HORUS/horuspre.lua",
         resolution      = lcdResolution.high
     },
-    ["x12s"] =
-    {
-        templateHome=SCRIPT_HOME.."/X12S/",
-        preLoad=SCRIPT_HOME.."/X12S/x12spre.lua",
-        resolution      = lcdResolution.high
-    },
+}
+
+local supportedRadios =
+{
+    ["x7"] = supportedPlatforms.x7,
+    ["x9d"] = supportedPlatforms.x9,
+    ["x9d+"] = supportedPlatforms.x9,
+    ["x9e"] = supportedPlatforms.x9,
+    ["x10"] = supportedPlatforms.horus,
+    ["x12s"] = supportedPlatforms.horus,
 }
 
 local ver, rad, maj, min, rev = getVersion()
