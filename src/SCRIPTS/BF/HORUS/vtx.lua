@@ -9,26 +9,33 @@ return {
     title          = "VTX",
     minBytes       = 5,
     text= {
-        { t = "Band",    x = 50,  y =  50 },
-        { t = "Channel", x = 50,  y = 100 },
-        { t = "Power",   x = 50,  y = 150 },
-        { t = "Pit",     x = 50,  y = 200 },
-        { t = "Proto",   x = 240, y =  50 },
-        { t = "Freq",    x = 240, y = 100 },
+        { t = "Band",    x = 36,  y = 110 },
+        { t = "Channel", x = 36,  y = 155 },
+        { t = "Power",   x = 232, y = 110 },
+        { t = "Pit",     x = 232, y = 155 },
+        { t = "Proto",   x = 36,  y =  68 },
+        { t = "Freq",    x = 232, y =  68 },
     },
     fields = {
-        { x = 152,  y = 50, min=1, max=5, vals = { 2 },
+        -- Band
+        { x = 130,  y = 110, min=1, max=5, vals = { 2 },  to = MIDSIZE,
           table = { "A", "B", "E", "F", "R" },
           upd = function(self) self.updateVTXFreq(self) end },
-        { x = 152,  y = 100, min=1, max=8, vals = { 3 },
+        -- Channel
+        { x = 130,  y = 155, min=1, max=8, vals = { 3 },  to = MIDSIZE,
           upd =  function(self) self.updateVTXFreq(self) end },
-        { x = 152,  y = 150,  min=1, vals = { 4 },
+        -- Power
+        { x = 350,  y = 110, min=1, vals = { 4 },         to = MIDSIZE,
           upd = function(self) self.updatePowerTable(self) end },
-        { x = 152,  y = 200,  min=0, max=1, vals = { 5 },
+        -- Pit mode
+        { x = 350,  y = 155, min=0, max=1, vals = { 5 },  to = MIDSIZE,
           table = { [0]="OFF", "ON" } },
-        { x = 332,  y =  50,  write = false, ro = true, vals = { 1 },
+        -- Proto
+        { x = 130,  y =  68, vals = { 1 },                to = MIDSIZE,
+          write = false, ro = true,
           table = {[3]="SmartAudio",[4]="Tramp",[255]="None"} },
-        { x = 332,  y = 100,  min=5000, max=6000, ro=true },
+        -- Freq
+        { x = 350,  y = 68, min=5000, max=6000, ro=true, to = MIDSIZE },
     },
     freqLookup = {
         { 5865, 5845, 5825, 5805, 5785, 5765, 5745, 5725 }, -- Boscam A

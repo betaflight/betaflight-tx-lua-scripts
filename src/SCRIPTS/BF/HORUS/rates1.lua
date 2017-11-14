@@ -24,20 +24,20 @@ return {
    },
    fields = {
       -- RC Rates
-      { x = 102,  y = 125,  vals = { 1 },  min = 0, max = 255, scale = 100 },
-      { x = 102,  y = 200,  vals = { 12 }, min = 0, max = 255, scale = 100 },
+      { x = 102,  y = 125,  vals = { 1 },  min = 0, max = 255, scale = 100, to=MIDSIZE },
+      { x = 102,  y = 200,  vals = { 12 }, min = 0, max = 255, scale = 100, to=MIDSIZE },
       -- Super Rates
-      { x = 158,  y = 100,  vals = { 3 },  min = 0, max = 100, scale = 100 },
-      { x = 158,  y = 150,  vals = { 4 },  min = 0, max = 100, scale = 100 },
-      { x = 158,  y = 200,  vals = { 5 },  min = 0, max = 255, scale = 100 },
+      { x = 158,  y = 100,  vals = { 3 },  min = 0, max = 100, scale = 100, to=MIDSIZE },
+      { x = 158,  y = 150,  vals = { 4 },  min = 0, max = 100, scale = 100, to=MIDSIZE },
+      { x = 158,  y = 200,  vals = { 5 },  min = 0, max = 255, scale = 100, to=MIDSIZE },
       -- RC Expo
-      { x = 216,  y = 125,  vals = { 2 },  min = 0, max = 100, scale = 100 },
-      { x = 216,  y = 200,  vals = { 11 }, min = 0, max = 100, scale = 100 },
+      { x = 216,  y = 125,  vals = { 2 },  min = 0, max = 100, scale = 100, to=MIDSIZE },
+      { x = 216,  y = 200,  vals = { 11 }, min = 0, max = 100, scale = 100, to=MIDSIZE },
       -- Throttle
-      { x = 330,  y = 100,  vals = { 7 },  min = 0, max = 100, scale = 100 },
-      { x = 330,  y = 150,  vals = { 8 },  min = 0, max = 100, scale = 100 },
+      { x = 330,  y = 100,  vals = { 7 },  min = 0, max = 100, scale = 100, to=MIDSIZE },
+      { x = 330,  y = 150,  vals = { 8 },  min = 0, max = 100, scale = 100, to=MIDSIZE },
       -- TPA
-      { x = 416,  y = 100,  vals = { 6 } , min = 0, max = 100, scale = 100 },
-      { x = 416,  y = 150,  vals = { 9, 10 }, min = 1000, max = 2000 }
+      { x = 416,  y = 100,  vals = { 6 } , min = 0, max = 100, scale = 100, to=MIDSIZE },
+      { x = 416,  y = 150,  vals = { 9, 10 }, min = 1000, max = 2000,       to=MIDSIZE }
    },
 }

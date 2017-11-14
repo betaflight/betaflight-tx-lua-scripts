@@ -13,6 +13,6 @@ backgroundFill = TEXT_BGCOLOR
 foregroundColor = LINE_COLOR
 globalTextOptions = TEXT_COLOR
 
-MenuBox = { x=120, y=90, w=210, x_offset=40, h_line=30, h_offset=20 }
-SaveBox = { x=120, y=100, w=210, x_offset=12, h=150, h_offset=12 }
+MenuBox = { x=120, y=100, w=200, x_offset=68, h_line=20, h_offset=6 }
+SaveBox = { x=120, y=100, w=180, x_offset=12, h=60, h_offset=12 }
 NoTelem = {   192,   LCD_H - 28, "No Telemetry", TEXT_COLOR + INVERS + BLINK }
