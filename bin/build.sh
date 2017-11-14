@@ -20,7 +20,7 @@ do
     SRC_NAME=$f
     OBJ_NAME=$(dirname ${f})/$(basename ${f} .lua).luac
     echo -e "Compiling file \e[1m${SRC_NAME}\e[21m..."
-    luac -o ${OBJ_NAME} ${SRC_NAME} || \
+    luac -s -o ${OBJ_NAME} ${SRC_NAME} || \
     echo -e "\e[1m\e[39m[\e[31mBUILD FAILED\e[39m]\e[21m Compilation error in file \e[1m${SRC_NAME}\e[21m!" || \
     exit 1
 done
