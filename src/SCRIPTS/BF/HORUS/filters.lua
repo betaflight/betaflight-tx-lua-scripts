@@ -7,39 +7,38 @@ return {
     title             = "Filters",
     minBytes          = 18,
     text= {
-        { t = "LPF",           x = 38, y = 68  },
-        { t = "Gyro",          x = 12, y = 110 },
-        { t = "DTerm",         x = 12, y = 155 },
-        { t = "Yaw",           x = 12, y = 200 },
+        -- Column headers
+        { t = "Gy LP",         x = 60,  y = 68, to = SMLSIZE },
+        { t = "Gy NF1",        x = 125, y = 68, to = SMLSIZE  },
+        { t = "Gy NF2",        x = 190, y = 68, to = SMLSIZE  },
+        { t = "DT LP",         x = 255, y = 68, to = SMLSIZE  },
+        { t = "DT NF",         x = 315, y = 68, to = SMLSIZE  },
+        { t = "Yaw LP",        x = 385, y = 68, to = SMLSIZE  },
+
+        -- Line titles
+        { t = "Hz",            x = 48,  y = 110, to = SMLSIZE + RIGHT },
+        { t = "COff",          x = 48,  y = 155, to = SMLSIZE + RIGHT },
         
-        { t = "Gyro 1",        x = 138, y = 68  },
-        { t = "Hz",            x = 132, y = 110 },
-        { t = "CO",            x = 132, y = 155 },
-
-        { t = "Gyro 2",        x = 244, y = 68  },
-        { t = "Hz",            x = 238, y = 110 },
-        { t = "CO",            x = 238, y = 155 },
-
-        { t = "DTerm",         x = 344, y = 68  },
-        { t = "Hz",            x = 338, y = 110 },
-        { t = "CO",            x = 338, y = 155 },
-
-        { t = "DTerm LP Type", x = 148, y = 200 },
+        { t = "DTerm LP Type", x = 60,  y = 208 },
     },
     fields = {
-        { x = 80,  y = 110, min = 0, max = 255,   vals = { 1 } },
-        { x = 80,  y = 155, min = 0, max = 16000, vals = { 2, 3 } },
-        { x = 80,  y = 200, min = 0, max = 500,   vals = { 4, 5 } },
+        { x =  60, y = 110, min = 0, max =   255, vals = { 1 },      to = MIDSIZE },
 
-        { x = 172, y = 110, min = 0, max = 16000, vals = { 6, 7 } },
-        { x = 172, y = 155, min = 0, max = 16000, vals = { 8, 9 } },
+        { x = 125, y = 110, min = 0, max = 16000, vals = { 6, 7 },   to = MIDSIZE },
+        { x = 125, y = 155, min = 0, max = 16000, vals = { 8, 9 },   to = MIDSIZE },
 
-        { x = 278, y = 110, min = 0, max = 16000, vals = { 14, 15 } },
-        { x = 278, y = 155, min = 0, max = 16000, vals = { 16, 17 } },
+        { x = 190, y = 110, min = 0, max = 16000, vals = { 14, 15 }, to = MIDSIZE },
+        { x = 190, y = 155, min = 0, max = 16000, vals = { 16, 17 }, to = MIDSIZE },
 
-        { x = 378, y = 110, min = 0, max = 16000, vals = { 10, 11 } },
-        { x = 378, y = 155, min = 0, max = 16000, vals = { 12, 13 } },
+        { x = 255, y = 110, min = 0, max = 16000, vals = { 2, 3 },   to = MIDSIZE },
 
-        { x = 288, y = 200,  min = 0, max = 2,    vals = { 18 }, table = { [0] = "PT1", [1] = "BIQUAD", [2] = "FIR" } },
+        { x = 315, y = 110, min = 0, max = 16000, vals = { 10, 11 }, to = MIDSIZE },
+        { x = 315, y = 155, min = 0, max = 16000, vals = { 12, 13 }, to = MIDSIZE },
+
+        { x = 391, y = 110, min = 0, max =   500, vals = { 4, 5 },   to = MIDSIZE },
+
+        { x = 208, y = 208,  min = 0, max = 2,    vals = { 18 },     to = MIDSIZE,
+          table = { [0] = "PT1", [1] = "BIQUAD", [2] = "FIR" }
+        },
     }
 }

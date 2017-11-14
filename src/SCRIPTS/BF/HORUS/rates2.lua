@@ -17,14 +17,14 @@ return {
    },
    fields = {
       --  GAIN
-      { x = 144, y = 100, min = 1000, max = 30000, vals = { 22, 23 }, scale = 1000, mult = 1000 },
+      { x = 144, y = 100, min = 1000, max = 30000, vals = { 22, 23 }, to = MIDSIZE, scale = 1000, mult = 1000 },
       --  THRESHOLD
-      { x = 144, y = 142, min = 20, max = 1000, vals = { 20, 21 } },
+      { x = 144, y = 142, min = 20,   max = 1000,  vals = { 20, 21 }, to = MIDSIZE },
       --  WEIGHT
-      { x = 348, y = 100, min = 0, max = 254, vals = { 10 }, scale = 100 },
+      { x = 348, y = 100, min = 0,    max = 254,   vals = { 10 },     to = MIDSIZE, scale = 100 },
       --  TRANSITION
-      { x = 348, y = 142, min = 0, max = 100, vals = { 9 }, scale = 100 },
+      { x = 348, y = 142, min = 0,    max = 100,   vals = { 9 },      to = MIDSIZE, scale = 100 },
       --  VBAT COMPENSATION
-      { x = 236, y = 200, min = 0, max = 1, vals = { 8 }, table = { [0]="OFF", "ON" } },
+      { x = 236, y = 200, min = 0,    max = 1,     vals = { 8 },      to = MIDSIZE, table = { [0]="OFF", "ON" } },
    }
 }

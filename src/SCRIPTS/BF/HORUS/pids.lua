@@ -16,15 +16,15 @@ return {
    },
    fields = {
       -- P
-      { x = 140, y = 100, min = 0, max = 200, vals = { 1 } },
-      { x = 140, y = 150, min = 0, max = 200, vals = { 4 } },
-      { x = 140, y = 200, min = 0, max = 200, vals = { 7 } },
+      { x = 140, y = 100, min = 0, max = 200, vals = { 1 }, to = MIDSIZE },
+      { x = 140, y = 150, min = 0, max = 200, vals = { 4 }, to = MIDSIZE },
+      { x = 140, y = 200, min = 0, max = 200, vals = { 7 }, to = MIDSIZE },
       -- I
-      { x = 240, y = 100, min = 0, max = 200, vals = { 2 } },
-      { x = 240, y = 150, min = 0, max = 200, vals = { 5 } },
-      { x = 240, y = 200, min = 0, max = 200, vals = { 8 } },
+      { x = 240, y = 100, min = 0, max = 200, vals = { 2 }, to = MIDSIZE },
+      { x = 240, y = 150, min = 0, max = 200, vals = { 5 }, to = MIDSIZE },
+      { x = 240, y = 200, min = 0, max = 200, vals = { 8 }, to = MIDSIZE },
       -- D
-      { x = 340, y = 100, min = 0, max = 200, vals = { 3 } },
-      { x = 340, y = 150, min = 0, max = 200, vals = { 6 } },
+      { x = 340, y = 100, min = 0, max = 200, vals = { 3 }, to = MIDSIZE },
+      { x = 340, y = 150, min = 0, max = 200, vals = { 6 }, to = MIDSIZE },
    },
 }
