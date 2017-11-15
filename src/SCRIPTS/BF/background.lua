@@ -1,48 +1,33 @@
-SCRIPT_HOME = "/SCRIPTS/BF"
-
-assert(loadScript(SCRIPT_HOME.."/MSP/common.lua"))()
-
 local INTERVAL          = 50         -- in 1/100th seconds
 local MSP_SET_RTC       = 246
 local MSP_TX_INFO       = 186
-local sensorName        = "Tmp1"     -- T1 is never 0 in Betaflight
 
 local lastRunTS
 local timeIsSet = false
-local sensorId
 local mspMsgQueued = false
 
-local function getTelemetryId(name)
-    local field = getFieldInfo(name)
-    if field then
-      return field['id']
-    else
-      return -1
-    end
+local function modelActive()
+    local telemId = (getFieldInfo(protocol.stateSensor)['id'] or -1)
+    local sensorValue = getValue(telemId)
+    return type(sensorValue) == "number" and sensorValue > 0
 end
 
 local function init()
-    sensorId = getTelemetryId(sensorName)
     lastRunTS = 0
 end
 
 local function run_bg()
     -- run in intervals
+
     if lastRunTS == 0 or lastRunTS + INTERVAL < getTime() then
-
         mspMsgQueued = false
-
         -- ------------------------------------
         -- SYNC DATE AND TIME
         -- ------------------------------------
-
-        -- get sensor value
-        local newSensorValue = getValue(sensorId)
-
-        if not timeIsSet and type(newSensorValue) == "number" and newSensorValue > 0 then
+        if not timeIsSet and modelActive() then
             -- Send datetime when the telemetry connection is available
             -- assuming when sensor value higher than 0 there is an telemetry connection
-            -- only send datetime one time after telemetry connection became available 
+            -- only send datetime one time after telemetry connection became available
             -- or when connection is restored after e.g. lipo refresh
             local now = getDateTime()
             local year = now.year;
@@ -58,11 +43,11 @@ local function run_bg()
             values[7] = now.sec
 
             -- send msp message
-            mspSendRequest(MSP_SET_RTC, values)
+            protocol.mspWrite(MSP_SET_RTC, values)
             mspMsgQueued = true
 
             timeIsSet = true
-        elseif type(newSensorValue) ~= "number" or newSensorValue == 0 then
+        elseif not modelActive() then
             timeIsSet = false
         end
 
@@ -83,7 +68,7 @@ local function run_bg()
             values[1] = rssi
 
             -- send msp message
-            mspSendRequest(MSP_TX_INFO, values)
+            protocol.mspWrite(MSP_TX_INFO, values)
             mspMsgQueued = true
         end
 
