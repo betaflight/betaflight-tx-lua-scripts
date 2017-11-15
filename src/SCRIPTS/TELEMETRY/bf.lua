@@ -26,5 +26,4 @@ function run_bg()
   end
 end
 
---return { init=background.init, run=run, background=run_bg }
-return { run=run_ui }
+return { init=background.init, run=run, background=run_bg }
