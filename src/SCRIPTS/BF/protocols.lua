@@ -2,6 +2,7 @@ local supportedProtocols =
 {
     smartPort =
     {
+        name            = "SmartPort",
         transport       = SCRIPT_HOME.."/MSP/sp.lua",
         rssi            = function() return getValue("RSSI") end,
         exitFunc        = function() return 0 end,
@@ -13,6 +14,7 @@ local supportedProtocols =
     },
     crsf =
     {
+        name            = "Crossfire",
         transport       = SCRIPT_HOME.."/MSP/crsf.lua",
         rssi            = function() return getValue("TQly") end,
         exitFunc        = function() return "/CROSSFIRE/crossfire.lua" end,
