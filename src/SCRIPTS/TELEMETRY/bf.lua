@@ -26,5 +26,8 @@ function run_bg()
   end
 end
 
---return { init=background.init, run=run, background=run_bg }
-return { run=run_ui }
+if protocol.name == "SmartPort" then
+    return { init=background.init, run=run, background=run_bg }
+else
+    return { run=run_ui }
+end
