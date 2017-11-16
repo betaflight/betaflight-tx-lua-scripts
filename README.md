@@ -45,14 +45,3 @@ Setting up the script as a telemetry page will enable access at the press of a b
 7. Long-press [EXIT] to return to your model screen.
 
 To invoke the script, simply long-press the [PAGE] button from the model screen.
-
-## Invoking from the OpenTX Crossfire configuration script
-This package contains a slight modification to the standard OpenTx crossfire.lua script that will load the configuration pages while configuring your Crossfire devices.
-1. From your model screen, long-press [MENU] to reveal the [RADIO SETUP] screen.
-2. Press the [PAGE] button to open the [SD CARD] browser.
-3. Navigate to the [CROSSFIRE] directory using [-] or [+] and press [ENT].
-4. Navigate to the 'crossfire.lua' file, long-press [ENT], and select [Execute] by pressing [ENT].
-
-If your flight controller is running the proper firmware, you will see 'Betaflight X.X.X: ABCD' in the list of Crossfire devices, where X.X.X is the Betaflight version (3.2.0 or greater) and ABCD is the board identifier (ie. BFF3 for Betaflight F3).
-
-Select this device by pressing [-] or [+], press [ENT] and the configuration pages will load.  To exit back to the device list, hit the [EXIT] button at any time.
