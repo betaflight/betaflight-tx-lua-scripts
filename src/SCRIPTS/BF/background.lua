@@ -3,12 +3,18 @@ local MSP_SET_RTC       = 246
 local MSP_TX_INFO       = 186
 
 local lastRunTS
+local sensorId = -1
 local timeIsSet = false
 local mspMsgQueued = false
 
-local function modelActive()
-    local telemId = (getFieldInfo(protocol.stateSensor)['id'] or -1)
-    local sensorValue = getValue(telemId)
+local function getSensorValue()
+    if sensorId == -1 then
+        sensorId = getFieldInfo(protocol.stateSensor)['id'] or -1
+    end
+    return getValue(sensorId)
+end
+
+local function modelActive(sensorValue)
     return type(sensorValue) == "number" and sensorValue > 0
 end
 
@@ -24,7 +30,9 @@ local function run_bg()
         -- ------------------------------------
         -- SYNC DATE AND TIME
         -- ------------------------------------
-        if not timeIsSet and modelActive() then
+        local sensorValue = getSensorValue()
+
+        if not timeIsSet and modelActive(sensorValue) then
             -- Send datetime when the telemetry connection is available
             -- assuming when sensor value higher than 0 there is an telemetry connection
             -- only send datetime one time after telemetry connection became available
@@ -47,7 +55,7 @@ local function run_bg()
             mspMsgQueued = true
 
             timeIsSet = true
-        elseif not modelActive() then
+        elseif not modelActive(sensorValue) then
             timeIsSet = false
         end
 
