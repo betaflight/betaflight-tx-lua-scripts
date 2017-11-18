@@ -2,7 +2,7 @@
 
 ### How to download the scripts
 
-[Click here](http://null.eastus.cloudapp.azure.com/job/Betaflight%20Lua%20-%20X7,%20X9,%20X9D,%20X9D+/lastSuccessfulBuild/artifact/obj/SCRIPTS/*zip*/SCRIPTS.zip) to download a zip file containing latest version.
+Please visit the [releases page](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) to download a zip file containing latest version.
 
 ## Firmware Considerations
 - Betaflight - As a best practice, it is recommended to use the most recent stable release of Betaflight to obtain the best possible results.
