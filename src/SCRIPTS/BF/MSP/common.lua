@@ -101,10 +101,8 @@ function mspReceivedReply(payload)
         idx = idx + 1
         mspStarted = true
     elseif not mspStarted then
-        mspOutOfOrder = mspOutOfOrder + 1
         return nil
     elseif bit32.band(mspRemoteSeq + 1, 0x0F) ~= seq then
-        mspOutOfOrder = mspOutOfOrder + 1
         mspStarted = false
         return nil
     end
