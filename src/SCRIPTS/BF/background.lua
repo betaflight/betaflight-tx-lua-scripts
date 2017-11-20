@@ -9,7 +9,10 @@ local mspMsgQueued = false
 
 local function getSensorValue()
     if sensorId == -1 then
-        sensorId = getFieldInfo(protocol.stateSensor)['id'] or -1
+        local sensor = getFieldInfo(protocol.stateSensor)
+        if type(sensor) == "table" then
+            sensorId = sensor['id'] or -1
+        end
     end
     return getValue(sensorId)
 end
