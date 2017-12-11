@@ -119,7 +119,7 @@ local function processMspReply(cmd,rx_buf)
                if f.vals then
                   f.value = 0;
                   for idx=1, #(f.vals) do
-                     local raw_val = Page.values[f.vals[idx]]
+                     local raw_val = (Page.values[f.vals[idx]] or 0)
                      raw_val = bit32.lshift(raw_val, (idx-1)*8)
                      f.value = bit32.bor(f.value, raw_val)
                   end
@@ -211,7 +211,7 @@ local function drawScreen()
     end
 end
 
-local function clipValue(val,min,max)
+function clipValue(val,min,max)
     if val < min then
         val = min
     elseif val > max then
