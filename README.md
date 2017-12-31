@@ -1,5 +1,11 @@
 # betaflight-tx-lua-scripts
 
+### Important:
+
+Some changes in the recently released OpenTX 2.2.1 cause this version to have less RAM available for lua scripts than previous versions. This often leads to problems when using the Betaflight TX lua scripts on the Taranis X9D. A discussion of these problems can be found [here](betaflight/betaflight-tx-lua-scripts#97).
+A potential fix to increase the amount of RAM available has been identified: opentx/opentx#5579.
+For now, the recommendation is for users wanting to update OpenTX from 2.2.0 to 2.2.1 on a Taranis X9D (and keep using the Betaflight TX lua scripts) to hold on and monitor the situation, in the hope that OpenTX will release a version with this bugfix in the near future.
+
 ### How to download the scripts
 
 Please visit the [releases page](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) to download a zip file containing latest version.
