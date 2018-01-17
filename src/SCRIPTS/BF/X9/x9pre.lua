@@ -4,7 +4,7 @@ PageFiles =
     "rates1.lua",
     "rates2.lua",
     "filters.lua",
-    "advanced filters",
+    "advanced_filters",
     "pwm.lua",
     "rx.lua",
     "vtx.lua"
