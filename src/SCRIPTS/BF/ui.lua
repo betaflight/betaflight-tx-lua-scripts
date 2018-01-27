@@ -279,7 +279,7 @@ function run_ui(event)
     -- process send queue
     mspProcessTxQ()
     -- navigation
-    if (event == userEvent.longPress.menu) then -- Taranis QX7 / X9
+    if (event == userEvent.longPress.menu) and Page and Page.write then -- Taranis QX7 / X9
         menuActive = 1
         currentState = pageStatus.displayMenu
     elseif userEvent.press.pageUp and (event == userEvent.longPress.enter) then -- Horus
@@ -333,6 +333,9 @@ function run_ui(event)
     end
     if Page == nil then
         Page = assert(loadScript(radio.templateHome .. PageFiles[currentPage]))()
+    end
+    if not Page.write then
+        Page.values = nil
     end
     if not Page.values and currentState == pageStatus.display then
         requestPage()

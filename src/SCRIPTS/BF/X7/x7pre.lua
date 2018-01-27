@@ -8,7 +8,8 @@ PageFiles =
     "filters1.lua",
     "filters2.lua",
     "pwm.lua",
-    "vtx.lua"
+    "vtx.lua",
+    "esc.lua",
 }
 
 MenuBox = { x=15, y=12, w=100, x_offset=36, h_line=8, h_offset=3 }
