@@ -1,0 +1,13 @@
+dist: trusty
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - lua5.2
+
+language: c
+
+install:
+
+script: ./bin/build.sh
