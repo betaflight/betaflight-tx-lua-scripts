@@ -17,7 +17,7 @@ return {
    },
    fields = {
       --  GAIN
-      { x = 144, y = 100, min = 1000, max = 30000, vals = { 22, 23 }, to = MIDSIZE, scale = 1000, mult = 1000 },
+      { x = 144, y = 100, min = 1000, max = 30000, vals = { 22, 23 }, to = MIDSIZE, scale = 1000, mult = 10 },
       --  THRESHOLD
       { x = 144, y = 142, min = 20,   max = 1000,  vals = { 20, 21 }, to = MIDSIZE },
       --  WEIGHT
