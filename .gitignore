@@ -39,3 +39,9 @@ luac.out
 *.x86_64
 *.hex
 
+# Eclipse
+.project
+
+#directories
+tmp
+obj
