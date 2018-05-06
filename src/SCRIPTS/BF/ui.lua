@@ -1,5 +1,3 @@
-local userEvent = assert(loadScript(SCRIPT_HOME.."/events.lua"))()
-
 local pageStatus =
 {
     display     = 2,
@@ -119,7 +117,7 @@ local function processMspReply(cmd,rx_buf)
                if f.vals then
                   f.value = 0;
                   for idx=1, #(f.vals) do
-                     local raw_val = (Page.values[f.vals[idx]] or 0)
+                     local raw_val = Page.values[f.vals[idx]]
                      raw_val = bit32.lshift(raw_val, (idx-1)*8)
                      f.value = bit32.bor(f.value, raw_val)
                   end
@@ -211,7 +209,7 @@ local function drawScreen()
     end
 end
 
-function clipValue(val,min,max)
+local function clipValue(val,min,max)
     if val < min then
         val = min
     elseif val > max then
@@ -279,22 +277,22 @@ function run_ui(event)
     -- process send queue
     mspProcessTxQ()
     -- navigation
-    if (event == userEvent.longPress.menu) then -- Taranis QX7 / X9
+    if (event == EVT_MENU_LONG) then -- Taranis QX7 / X9
         menuActive = 1
         currentState = pageStatus.displayMenu
-    elseif userEvent.press.pageUp and (event == userEvent.longPress.enter) then -- Horus
+    elseif EVT_PAGEUP_FIRST and (event == EVT_ENTER_LONG) then -- Horus
         menuActive = 1
         killEnterBreak = 1
         currentState = pageStatus.displayMenu
     -- menu is currently displayed
     elseif currentState == pageStatus.displayMenu then
-        if event == userEvent.release.exit then
+        if event == EVT_EXIT_BREAK then
             currentState = pageStatus.display
-        elseif event == userEvent.release.plus or event == userEvent.dial.left then
+        elseif event == EVT_PLUS_BREAK or event == EVT_ROT_LEFT then
             incMenu(-1)
-        elseif event == userEvent.release.minus or event == userEvent.dial.right then
+        elseif event == EVT_MINUS_BREAK or event == EVT_ROT_RIGHT then
             incMenu(1)
-        elseif event == userEvent.release.enter then
+        elseif event == EVT_ENTER_BREAK then
             if killEnterBreak == 1 then
                 killEnterBreak = 0
             else
@@ -304,30 +302,30 @@ function run_ui(event)
         end
     -- normal page viewing
     elseif currentState <= pageStatus.display then
-        if event == userEvent.press.pageUp then
+        if event == EVT_PAGEUP_FIRST then
             incPage(-1)
-        elseif event == userEvent.release.menu or event == userEvent.press.pageDown then
+        elseif event == EVT_MENU_BREAK or event == EVT_PAGEDN_FIRST then
             incPage(1)
-        elseif event == userEvent.release.plus or event == userEvent.dial.left then
+        elseif event == EVT_PLUS_BREAK or event == EVT_ROT_LEFT then
             incLine(-1)
-        elseif event == userEvent.release.minus or event == userEvent.dial.right then
+        elseif event == EVT_MINUS_BREAK or event == EVT_ROT_RIGHT then
             incLine(1)
-        elseif event == userEvent.release.enter then
+        elseif event == EVT_ENTER_BREAK then
             local field = Page.fields[currentLine]
             local idx = field.i or currentLine
             if Page.values and Page.values[idx] and (field.ro ~= true) then
                 currentState = pageStatus.editing
             end
-        elseif event == userEvent.release.exit then
+        elseif event == EVT_EXIT_BREAK then
             return protocol.exitFunc();
         end
     -- editing value
     elseif currentState == pageStatus.editing then
-        if (event == userEvent.release.exit) or (event == userEvent.release.enter) then
+        if (event == EVT_EXIT_BREAK) or (event == EVT_ENTER_BREAK) then
             currentState = pageStatus.display
-        elseif event == userEvent.press.plus or event == userEvent.repeatPress.plus or event == userEvent.dial.right then
+        elseif event == EVT_PLUS_FIRST or event == EVT_PLUS_REPT or event == EVT_ROT_RIGHT then
             incValue(1)
-        elseif event == userEvent.press.minus or event == userEvent.repeatPress.minus or event == userEvent.dial.left then
+        elseif event == EVT_MINUS_FIRST or event == EVT_MINUS_REPT or event == EVT_ROT_LEFT then
             incValue(-1)
         end
     end
