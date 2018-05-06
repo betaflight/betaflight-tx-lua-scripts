@@ -12,7 +12,7 @@ return {
       { t = "VBAT Compens", x = 15, y = 43, to = SMLSIZE }
    },
    fields = {
-      { x = 90,  y = 17, to=SMLSIZE, min = 1000, max = 30000, vals = { 22, 23 }, scale = 1000, mult = 1000 },
+      { x = 90,  y = 17, to=SMLSIZE, min = 1000, max = 30000, vals = { 22, 23 }, scale = 1000, mult = 10 },
       { x = 90,  y = 30, to=SMLSIZE, min = 20, max = 1000, vals = { 20, 21 } },
       { x = 90, y = 43, to=SMLSIZE, min = 0, max = 1, vals = { 8 }, table = { [0]="OFF", "ON" } },
    }
