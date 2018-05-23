@@ -1,10 +1,17 @@
-dist: trusty
+os:
+  - linux
+
 sudo: false
+
+dist: trusty
 
 addons:
   apt:
     packages:
       - lua5.2
+
+git:
+  depth: 5
 
 language: c
 
