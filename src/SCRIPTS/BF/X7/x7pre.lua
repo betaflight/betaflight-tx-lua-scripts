@@ -1,5 +1,7 @@
 PageFiles = 
 {
+    "rescue.lua",
+    "gpspids.lua",
     "pids.lua",
     "rates1.lua",
     "rates2.lua",
