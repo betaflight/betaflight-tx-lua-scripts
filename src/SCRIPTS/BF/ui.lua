@@ -282,7 +282,7 @@ function run_ui(event)
     if (event == userEvent.longPress.menu) then -- Taranis QX7 / X9
         menuActive = 1
         currentState = pageStatus.displayMenu
-    elseif userEvent.press.pageUp and (event == userEvent.longPress.enter) then -- Horus
+    elseif userEvent.press.pageDown and (event == userEvent.longPress.enter) then -- Horus
         menuActive = 1
         killEnterBreak = 1
         currentState = pageStatus.displayMenu
