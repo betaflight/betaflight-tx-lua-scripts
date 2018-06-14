@@ -6,6 +6,7 @@ return {
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 23,
+   outputBytes    = 23,
    text = {
       { t = "Dterm Setpoint", x = 28, y = 15, to = SMLSIZE },
       { t = "Weight", x = 33, y = 28, to = SMLSIZE },

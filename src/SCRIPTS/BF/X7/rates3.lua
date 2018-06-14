@@ -6,6 +6,7 @@ return {
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 23,
+   outputBytes    = 23,
    text = {
       { t = "Anti-Grav Gain", x = 15, y = 17, to = SMLSIZE },
       { t = "Anti-Grav Thr",  x = 15, y = 30, to = SMLSIZE },
