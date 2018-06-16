@@ -6,6 +6,7 @@ return {
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 23,
+   outputBytes    = 23,
    text = {
       { t = "Anti-Gravity",       x =  28, y =  62 },
       { t = "Gain",               x =  38, y = 100 },

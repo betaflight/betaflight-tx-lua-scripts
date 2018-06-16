@@ -32,6 +32,7 @@ Page = nil
 
 backgroundFill = backgroundFill or ERASE
 foregroundColor = foregroundColor or SOLID
+
 globalTextOptions = globalTextOptions or 0
 
 local function saveSettings(new)
@@ -39,7 +40,10 @@ local function saveSettings(new)
         if Page.preSave then
             payload = Page.preSave(Page)
         else
-            payload = Page.values
+            payload = {}
+            for i=1,(Page.outputBytes or #Page.values) do
+                payload[i] = Page.values[i]
+            end
         end
         protocol.mspWrite(Page.write, payload)
         saveTS = getTime()
