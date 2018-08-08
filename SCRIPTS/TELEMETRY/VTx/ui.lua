@@ -32,7 +32,6 @@ Page = nil
 
 backgroundFill = backgroundFill or ERASE
 foregroundColor = foregroundColor or SOLID
-
 globalTextOptions = globalTextOptions or 0
 
 local function saveSettings(new)
@@ -40,10 +39,7 @@ local function saveSettings(new)
         if Page.preSave then
             payload = Page.preSave(Page)
         else
-            payload = {}
-            for i=1,(Page.outputBytes or #Page.values) do
-                payload[i] = Page.values[i]
-            end
+            payload = Page.values
         end
         protocol.mspWrite(Page.write, payload)
         saveTS = getTime()
@@ -141,13 +137,6 @@ local function incMax(val, inc, base)
    return ((val + inc + base - 1) % base) + 1
 end
 
-local function incPage(inc)
-   currentPage = incMax(currentPage, inc, #(PageFiles))
-   Page = nil
-   currentLine = 1
-   collectgarbage()
-end
-
 local function incLine(inc)
    currentLine = incMax(currentLine, inc, #(Page.fields))
 end
@@ -164,18 +153,13 @@ local function requestPage()
 end
 
 function drawScreenTitle(screen_title)
-    if radio.resolution == lcdResolution.low then
-        lcd.drawFilledRectangle(0, 0, LCD_W, 10)
-        lcd.drawText(1,1,screen_title,INVERS)
-    else
-        lcd.drawFilledRectangle(0, 0, LCD_W, 30, TITLE_BGCOLOR)
-        lcd.drawText(5,5,screen_title, MENU_TITLE_COLOR)
-    end
+    lcd.drawFilledRectangle(0, 0, LCD_W, 10)
+    lcd.drawText(1,1,screen_title,INVERS)
 end
 
 local function drawScreen()
     local screen_title = Page.title
-    drawScreenTitle("Betaflight / "..screen_title)
+    drawScreenTitle(screen_title)
     for i=1,#(Page.text) do
         local f = Page.text[i]
         local textOptions = (f.to or 0) + globalTextOptions
@@ -308,11 +292,7 @@ function run_ui(event)
         end
     -- normal page viewing
     elseif currentState <= pageStatus.display then
-        if event == userEvent.press.pageUp then
-            incPage(-1)
-        elseif event == userEvent.release.menu or event == userEvent.press.pageDown then
-            incPage(1)
-        elseif event == userEvent.release.plus or event == userEvent.dial.left then
+        if event == userEvent.release.plus or event == userEvent.dial.left then
             incLine(-1)
         elseif event == userEvent.release.minus or event == userEvent.dial.right then
             incLine(1)
@@ -336,7 +316,7 @@ function run_ui(event)
         end
     end
     if Page == nil then
-        Page = assert(loadScript(radio.templateHome .. PageFiles[currentPage]))()
+        Page = assert(loadScript(SCRIPT_HOME .. "/VTx.lua"))()
     end
     if not Page.values and currentState == pageStatus.display then
         requestPage()
