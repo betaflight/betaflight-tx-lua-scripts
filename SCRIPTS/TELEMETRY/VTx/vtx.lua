@@ -4,7 +4,7 @@ return {
     write          = 89, -- MSP_VTX_SET_CONFIG
     eepromWrite    = true,
     reboot         = false,
-    title          = "VTX",
+    title          = "Taranis VTX",
     minBytes       = 5,
     prevBandVal    = 0,
     prevChanVal    = 0,
