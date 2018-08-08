@@ -342,7 +342,7 @@ function run_ui(event)
         end
     end
     if Page == nil then
-        Page = assert(loadScript(SCRIPT_HOME .. "/VTx.lua"))()
+        Page = assert(loadScript(SCRIPT_HOME .. "/VTx.luac", "T"))()
     end
     if not Page.values and currentState == pageStatus.display then
         requestPage()

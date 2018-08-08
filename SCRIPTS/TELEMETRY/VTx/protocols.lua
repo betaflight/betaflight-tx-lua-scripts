@@ -2,7 +2,7 @@ local supportedProtocols =
 {
     smartPort =
     {
-        transport       = SCRIPT_HOME.."/sp.lua",
+        transport       = SCRIPT_HOME.."/sp.luac",
         rssi            = function() return getValue("RSSI") end,
         exitFunc        = function() return 0 end,
         stateSensor     = "Tmp1",
@@ -14,9 +14,9 @@ local supportedProtocols =
     },
     crsf =
     {
-        transport       = SCRIPT_HOME.."/crsf.lua",
+        transport       = SCRIPT_HOME.."/crsf.luac",
         rssi            = function() return getValue("TQly") end,
-        --exitFunc        = function() return "/crossfire.lua" end,
+        --exitFunc        = function() return "/crossfire.luac" end,
         exitFunc        = function() return 0 end,
         stateSensor     = "1RSS",
         push            = crossfireTelemetryPush,
@@ -28,11 +28,11 @@ local supportedProtocols =
 }
 
 function getProtocol()
-    --if supportedProtocols.smartPort.push() then
+    if supportedProtocols.smartPort.push() then
         return supportedProtocols.smartPort
-    --elseif supportedProtocols.crsf.push() then
-    --    return supportedProtocols.crsf
-    --end
+    elseif supportedProtocols.crsf.push() then
+        return supportedProtocols.crsf
+    end
 end
 
 local protocol = getProtocol()
