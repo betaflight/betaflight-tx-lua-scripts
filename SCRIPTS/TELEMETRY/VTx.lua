@@ -1,4 +1,5 @@
 SCRIPT_HOME = "/SCRIPTS/TELEMETRY/VTx"
+
 LOCAL_SENSOR_ID  = 0x0D
 SMARTPORT_REMOTE_SENSOR_ID = 0x1B
 FPORT_REMOTE_SENSOR_ID = 0x00
@@ -60,23 +61,24 @@ assert(loadScript(SCRIPT_HOME.."/common.luac", "T"))()
 collectgarbage()
 
 local run_ui = assert(loadScript(SCRIPT_HOME.."/ui.luac", "T"))()
+collectgarbage()
+
 local background = assert(loadScript(SCRIPT_HOME.."/background.luac", "T"))()
+collectgarbage()
 
 local MENU_TIMESLICE = 100
-
 local lastMenuEvent = 0
 
 function run(event)
   lastMenuEvent = getTime()
-
   collectgarbage()
   run_ui(event)
 end
 
 function run_bg()
-  collectgarbage()
   if lastMenuEvent + MENU_TIMESLICE < getTime() then
     background.run_bg()
+    collectgarbage()
   end
 end
 
