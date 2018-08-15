@@ -1,7 +1,7 @@
 return {
    read           = 111, -- MSP_RC_TUNING
    write          = 204, -- MSP_SET_RC_TUNING
-   title          = "Rates (1/4)",
+   title          = "Rates (1/3)",
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 12,
