@@ -202,6 +202,12 @@ return {
             elseif self.values[1] == 4 then      -- Tramp
                 self.fields[3].table = { 25, 100, 200, 400, 600 }
                 self.fields[3].max = 5
+            elseif self.values[1] == 255 then    -- None/Unknown
+                self.fields[3].t = nil       -- don't display Power field
+                self.fields[3].max = 1
+                self.fields[3].table = { [1]="" }
+                self.fields[4].t = nil       -- don't display Pit field
+                self.fields[4].table = { [0]="", "" }
             end
         end
     end,
