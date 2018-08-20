@@ -2,7 +2,7 @@
 return {
    read           = 94, -- MSP_PID_ADVANCED
    write          = 95, -- MSP_SET_PID_ADVANCED
-   title          = "Rates (3/4)",
+   title          = "Rates (3/3)",
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 23,

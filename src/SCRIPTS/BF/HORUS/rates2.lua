@@ -8,24 +8,16 @@ return {
    minBytes       = 23,
    outputBytes    = 23,
    text = {
-      { t = "Anti-Gravity",       x =  28, y =  62 },
-      { t = "Gain",               x =  38, y = 100 },
-      { t = "Threshold",          x =  38, y = 142 },
-      { t = "Dterm Setpoint",     x = 232, y =  62 },
-      { t = "Weight",             x = 242, y = 100 },
-      { t = "Transition",         x = 242, y = 142 },
-      { t = "VBAT Compensation",  x =  28, y = 200 }
+      { t = "Anti-Gravity Gain",      x = 45, y = 68 },
+      { t = "Anti-Gravity Threshold", x = 45, y = 110 },
+      { t = "VBAT Compensation",      x = 45, y = 155 }
    },
    fields = {
       --  GAIN
-      { x = 144, y = 100, min = 1000, max = 30000, vals = { 22, 23 }, to = MIDSIZE, scale = 1000, mult = 100 },
-      --  THRESHOLD
-      { x = 144, y = 142, min = 20,   max = 1000,  vals = { 20, 21 }, to = MIDSIZE },
-      --  WEIGHT
-      { x = 348, y = 100, min = 0,    max = 254,   vals = { 10 },     to = MIDSIZE, scale = 100 },
-      --  TRANSITION
-      { x = 348, y = 142, min = 0,    max = 100,   vals = { 9 },      to = MIDSIZE, scale = 100 },
-      --  VBAT COMPENSATION
-      { x = 236, y = 200, min = 0,    max = 1,     vals = { 8 },      to = MIDSIZE, table = { [0]="OFF", "ON" } },
+      { x = 300, y = 68,  min = 1000, max = 30000, vals = { 22, 23 }, to = MIDSIZE, scale = 1000, mult = 100 },
+      --   THRESHOLD
+      { x = 300, y = 110, min = 20,   max = 1000,  vals = { 20, 21 }, to = MIDSIZE },
+      --   VBAT COMPENSATION
+      { x = 300, y = 155, min = 0,    max = 1,     vals = { 8 },      to = MIDSIZE,  table = { [0]="OFF", "ON" } },
    }
 }
