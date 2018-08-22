@@ -25,6 +25,7 @@ return {
    fields = {
       -- RC Rates
       { x = 102,  y = 125,  vals = { 1 },  min = 0, max = 255, scale = 100, to=MIDSIZE },
+      { x = 102,  y = 150,  vals = { 13 }, min = 0, max = 255, scale = 100, to=MIDSIZE },
       { x = 102,  y = 200,  vals = { 12 }, min = 0, max = 255, scale = 100, to=MIDSIZE },
       -- Super Rates
       { x = 158,  y = 100,  vals = { 3 },  min = 0, max = 100, scale = 100, to=MIDSIZE },
@@ -32,6 +33,7 @@ return {
       { x = 158,  y = 200,  vals = { 5 },  min = 0, max = 255, scale = 100, to=MIDSIZE },
       -- RC Expo
       { x = 216,  y = 125,  vals = { 2 },  min = 0, max = 100, scale = 100, to=MIDSIZE },
+      { x = 216,  y = 150,  vals = { 14 }, min = 0, max = 100, scale = 100, to=MIDSIZE },
       { x = 216,  y = 200,  vals = { 11 }, min = 0, max = 100, scale = 100, to=MIDSIZE },
       -- Throttle
       { x = 330,  y = 100,  vals = { 7 },  min = 0, max = 100, scale = 100, to=MIDSIZE },
