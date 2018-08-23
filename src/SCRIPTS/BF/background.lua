@@ -40,6 +40,8 @@ local function run_bg()
             -- assuming when sensor value higher than 0 there is an telemetry connection
             -- only send datetime one time after telemetry connection became available
             -- or when connection is restored after e.g. lipo refresh
+
+            --[[ Uncomment for firmware versions before 4.0:
             local now = getDateTime()
             local year = now.year;
 
@@ -52,6 +54,21 @@ local function run_bg()
             values[5] = now.hour
             values[6] = now.min
             values[7] = now.sec
+            ]]
+
+            --[[ Uncomment for firmware versions 4.0 and up:]]
+            local now = getRtcTime()
+
+            values = {}
+            values[1] = bit32.band(now, 0xFF)
+            now = bit32.rshift(now, 8)
+            values[2] = bit32.band(now, 0xFF)
+            now = bit32.rshift(now, 8)
+            values[3] = bit32.band(now, 0xFF)
+            now = bit32.rshift(now, 8)
+            values[4] = bit32.band(now, 0xFF)
+            values[5] = 0 -- we don't have milliseconds
+            values[6] = 0
 
             -- send msp message
             protocol.mspWrite(MSP_SET_RTC, values)
