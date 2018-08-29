@@ -6,6 +6,7 @@ return {
     reboot            = false,
     title             = "Filters",
     minBytes          = 18,
+    outputBytes       = 18,
     text= {
         { t = "LPF", x = 43, y = 14, to = SMLSIZE },
         { t = "Gyro", x = 15, y = 24, to = SMLSIZE },

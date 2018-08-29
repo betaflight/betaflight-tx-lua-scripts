@@ -6,6 +6,7 @@ return {
     reboot            = false,
     title             = "Filters",
     minBytes          = 18,
+    outputBytes       = 18,
     text= {
         -- Column headers
         { t = "Gy LP",         x = 60,  y = 68, to = SMLSIZE },
