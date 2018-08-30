@@ -1,5 +1,14 @@
 SCRIPT_HOME = "/SCRIPTS/BF"
 
+-- Change this to match the API version of the firmware you are using
+-- (you can have multiple copies of this script with different values
+-- for API_VERSION, and select different versions for different models
+-- on your TX)
+-- Version mapping:
+--  1.041: Betaflight 4.0 and newer
+-- <1.041: Betaflight 3.5 and older
+API_VERSION = 1.041
+
 protocol = assert(loadScript(SCRIPT_HOME.."/protocols.lua"))()
 radio = assert(loadScript(SCRIPT_HOME.."/radios.lua"))()
 
