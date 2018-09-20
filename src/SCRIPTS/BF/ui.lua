@@ -233,6 +233,7 @@ local function incValue(inc)
     local idx = f.i or currentLine
     local scale = (f.scale or 1)
     f.value = clipValue(f.value + ((inc*(f.mult or 1))/scale), (f.min/scale) or 0, (f.max/scale) or 255)
+    f.value = math.floor((f.value*scale)/(f.mult or 1) + 0.5)/(scale/(f.mult or 1))
     for idx=1, #(f.vals) do
         Page.values[f.vals[idx]] = bit32.rshift(f.value * scale, (idx-1)*8)
     end
