@@ -42,6 +42,7 @@ local function run_bg()
             -- or when connection is restored after e.g. lipo refresh
 
             if API_VERSION < 1.041 then
+                -- format: year (16) / month (8) / day (8) / hour (8) / min (8) / sec (8)
                 local now = getDateTime()
                 local year = now.year;
 
@@ -55,16 +56,16 @@ local function run_bg()
                 values[6] = now.min
                 values[7] = now.sec
             else
+                -- format: seconds after the epoch (32) / milliseconds (16)
                 local now = getRtcTime()
 
                 values = {}
-                values[1] = bit32.band(now, 0xFF)
-                now = bit32.rshift(now, 8)
-                values[2] = bit32.band(now, 0xFF)
-                now = bit32.rshift(now, 8)
-                values[3] = bit32.band(now, 0xFF)
-                now = bit32.rshift(now, 8)
-                values[4] = bit32.band(now, 0xFF)
+
+                for i = 1, 4 do
+                    values[i] = bit32.band(now, 0xFF)
+                    now = bit32.rshift(now, 8)
+                end
+
                 values[5] = 0 -- we don't have milliseconds
                 values[6] = 0
             end

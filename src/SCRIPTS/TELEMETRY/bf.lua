@@ -7,7 +7,7 @@ SCRIPT_HOME = "/SCRIPTS/BF"
 -- Version mapping:
 --  1.041: Betaflight 4.0 and newer
 -- <1.041: Betaflight 3.5 and older
-API_VERSION = 1.041
+API_VERSION = 1.040
 
 protocol = assert(loadScript(SCRIPT_HOME.."/protocols.lua"))()
 radio = assert(loadScript(SCRIPT_HOME.."/radios.lua"))()
