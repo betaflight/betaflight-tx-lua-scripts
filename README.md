@@ -15,6 +15,11 @@ Please visit the [releases page](https://github.com/betaflight/betaflight-tx-lua
 - Crossfire - v2.11 or greater
 - FrSky - While most receivers work fine, it's recommended to update the XSR family of receivers to their most recent firmware version to correct any known bugs in SmartPort telemetry.
 
+## Building from source
+- Be sure to have `LUA 5.2` installed in the path
+- Run `./bin/build.sh` from the root folder
+- Compiled files will be created a the `obj` in the root folder. Copy the files to your transmitter as instructed in the `Installing` section below as if you unzipped from a downloaded file.
+
 ## Installing
 
 !! IMPORTANT: DON'T COPY THE CONTENTS OF THIS REPOSITORY ONTO YOUR SDCARD !!
