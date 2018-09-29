@@ -8,7 +8,7 @@ This stripped-down fork of [betaflight-tx-lua-scripts](https://github.com/betafl
 * Allows for multiple Lua scripts to be run on the same model (for example [Lua Telemetry](https://github.com/iNavFlight/LuaTelemetry))
 * Only allows for VTx control (no PID adjustments)
 * Works only on Taranis transmitters running SmartPort or F.Port telemetry
-* Works with [INAV](https://github.com/iNavFlight/inav) and probably [Betaflight](https://github.com/betaflight/betaflight) (untested)
+* Works with [INAV](https://github.com/iNavFlight/inav) and [Betaflight](https://github.com/betaflight/betaflight)
 
 ### Installation instructions
 
