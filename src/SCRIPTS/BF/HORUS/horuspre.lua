@@ -7,7 +7,9 @@ PageFiles =
     "filters.lua",
     "pwm.lua",
     "rx.lua",
-    "vtx.lua"
+    "vtx.lua",
+    "rescue.lua",
+    "gpspids.lua",
 }
 
 backgroundFill = TEXT_BGCOLOR

@@ -7,7 +7,9 @@ PageFiles =
     "filters.lua",
     "pwm.lua",
     "rx.lua",
-    "vtx.lua"
+    "vtx.lua",
+    "rescue.lua",
+    "gpspids.lua",
 }
 
 MenuBox = { x=40, y=12, w=120, x_offset=36, h_line=8, h_offset=3 }
