@@ -6,6 +6,7 @@ return {
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 16,
+   requiredVersion = 1.041,
    text = {
 
       { t = "Min Sats.",      x =  3,  y = 10, to=SMLSIZE },

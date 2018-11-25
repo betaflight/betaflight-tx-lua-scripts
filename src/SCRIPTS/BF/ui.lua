@@ -336,8 +336,11 @@ function run_ui(event)
             incValue(-1)
         end
     end
-    if Page == nil then
+    while Page == nil do
         Page = assert(loadScript(radio.templateHome .. PageFiles[currentPage]))()
+        if Page.requiredVersion and Page.requiredVersion > apiVersion then
+            incPage(1)
+        end
     end
     if not Page.values and currentState == pageStatus.display then
         requestPage()

@@ -5,6 +5,7 @@ return {
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 16,
+   requiredVersion = 1.041,
    
  
    text = {
