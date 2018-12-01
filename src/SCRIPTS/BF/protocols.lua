@@ -10,7 +10,7 @@ local supportedProtocols =
         maxTxBufferSize = 6,
         maxRxBufferSize = 6,
         saveMaxRetries  = 2,
-        saveTimeout     = 300
+        saveTimeout     = 500
     },
     crsf =
     {
