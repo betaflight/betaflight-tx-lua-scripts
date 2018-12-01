@@ -5,6 +5,7 @@ return {
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 16,
+   requiredVersion = 1.041,
    text = {
       { t = "Min Sats.",        x =130,  y =  40, to = MIDSIZE },
       { t = "Angle",            x =150,  y =  80, to = MIDSIZE },

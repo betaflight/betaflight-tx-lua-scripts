@@ -5,6 +5,7 @@ return {
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 14,
+   requiredVersion = 1.041,
    text = {
       { t = "P",        x = 142,  y =  48, to = MIDSIZE },
       { t = "I",        x = 244,  y =  48, to = MIDSIZE },

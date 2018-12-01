@@ -6,6 +6,7 @@ return {
    reboot         = false,
    eepromWrite    = true,
    minBytes       = 14,
+   requiredVersion = 1.041,
    text = {
       { t = "P",        x =  55,  y = 14, to=SMLSIZE },
       { t = "I",        x =  83,  y = 14, to=SMLSIZE },
