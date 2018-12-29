@@ -18,3 +18,16 @@ language: c
 install:
 
 script: ./bin/build.sh
+
+# Notifications are encrypted to betaflight/betaflight to avoid spam from forks
+# Command: `travis encrypt "<secret>" --com -r betaflight/blackbox-log-viewer
+notifications:
+  slack:
+    rooms:
+      - secure: O3Wc0/JyHXJHbTKNqNqf05zZuYNa57TcmXTuml/CSpnEHzoCuphq9N769HSg9szZPvyw27VdK2VZ7bXl28i/thXmPjkGkKnCk0mV3Jd2rnn6UNMF2E33Qymjup02cActNWSxmPQEDPmIZIC0qTyZ9HBs/9Fun/BXQpIKl0SBDe/N1Cz3YIclF3RkGIk8GwDE9IChQi6f6vf+nXaUXOgVMqDG0ZfuIFdW/sEuDjqBPx+GXQrnHgJLpVb/tFrTtQz69A6zsUwcxODaxVYavtLgTgWV7dTufnSo1cM/2hIjXaV0BO2mwbgeAM4thaKnUkfywy4yBTd7m3W80pdsV5/amyok7VsjynkLKKtyQAnNv47/kAeEbzlOmh666LdI9hnFI/HPg2n0zfI7rsX3reU13tkQHbJJSxaxSPA/61fQ1qYxNsr2OJ+MVkyuSUlCczyVzvAsT4eNAA16EDpCat6HeiIXgkrRpiPMWIBh62EUxbI/hirhlv31GAAkl5AuEGx23gSW6bDQrT+W8qJQVA3ClYDZ+HL34zS+JQ4MzVRQRqxF57Jnuxz4evhaVVa7rgKBylOn5IzpIQanmxEM0H0CEpzt7+zFb3OFAQDsVdPR0xXBmA/ATW78xYLgwkjiwmrITIwTTa6scPiSjGWij1L2mnvVepHGdqhpfKNddlDiEkY=
+  webhooks:
+    urls:
+      - secure: pjDcl+AVC2Nppo49jmGGv61cgbDBQRUq/B/eAE23kord/W9WeIPEw0BV5fj4Mt5KTDDkfqyLaKgo6UO0XFcWLbqp0HRzWVsBNSc6PLzWlO3ZpuwrhtH8TrhH18iJLoGJcb6kHvCLqLf6PO6LKihVG9TG6MKl41grZD5auw/0iKzweFSxZts01Z83xzZkmOYgTQzaLMeGozV2P3x1C1cjFD8woInKG8YQhxDyYacXcdFKboQXAjD8lRNrE0nrHmLXQx6q7Dwf15lg0xkFsvKB0NivBGwBQY+zUBankweghVAazOahtO9m1w20iEZS9jhekmodAHWrMEH9TSkWMt+T1S0EqPp9/i2ZiPh5WSLfWQ32GQkOGGA05GxTQMK0xxwPe0yEtORS2tEoluERq/xQaIx5HYubG7QrF1bo8K+KoNaHrLOuNKcdTbiDc9GUQW24zbD85S1UFhO3+H5It/aHBIWSQuNgENw6tp5i9O79ZIJbLjA23J2GY43Red0rTrSAsM3JMO6ktQhAP2IJ3NOvoOpoI/rH1c+PGzxFJnhc42Xo/Npyfdr3L7zNPiKhsGkY8QUe3sd5T6iPOXeUWhx1PdVqExjzJiTyzyGe5PGtZAB1vIjpRY5Jl7wbGYzxpBO3qhBukapWGy+UqUyEj9g5x2lT6W1AcwA0cbwFhAMmulA=
+    on_success: always  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: always     # options: [always|never|change] default: always
