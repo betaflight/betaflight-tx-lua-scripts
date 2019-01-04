@@ -1,5 +1,6 @@
-PageFiles = 
+PageFiles =
 {
+    "vtx.lua",
     "pids1.lua",
     "pids2.lua",
     "rates1.lua",
@@ -8,9 +9,6 @@ PageFiles =
     "filters1.lua",
     "filters2.lua",
     "pwm.lua",
-    "vtx.lua",
-    "rescue.lua",
-    "gpspids.lua",
 }
 
 MenuBox = { x=15, y=12, w=100, x_offset=36, h_line=8, h_offset=3 }
