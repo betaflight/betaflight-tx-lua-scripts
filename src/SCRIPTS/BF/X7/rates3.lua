@@ -9,7 +9,7 @@ return {
    outputBytes    = 23,
    text = {
       { t = "Anti-Grav Gain", x = 15, y = 17, to = SMLSIZE },
-      { t = "Anti-Grav Thr",  x = 15, y = 30, to = SMLSIZE },
+      { t = "Anti-Grav Thrsh",  x = 15, y = 30, to = SMLSIZE },
       { t = "VBAT Compens", x = 15, y = 43, to = SMLSIZE }
    },
    fields = {
