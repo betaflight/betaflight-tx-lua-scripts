@@ -6,7 +6,7 @@ else
 	mkdir obj
 fi
 
-cp -fR SCRIPTS/TELEMETRY/*.lua obj
+cp -fR SCRIPTS/TELEMETRY/* obj
 
 MANIFEST=(`find obj/ -name *.lua -type f`);
 LAST_FAILURE=0
