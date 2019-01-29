@@ -1,4 +1,4 @@
--- Home path
+-- Home path 1
 SCRIPT_HOME = "/SCRIPTS/TELEMETRY/VTx"
 
 LOCAL_SENSOR_ID  = 0x0D
