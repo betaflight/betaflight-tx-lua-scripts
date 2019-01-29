@@ -16,8 +16,6 @@ git:
 language: c
 
 env:
-	- LUA=""
-	- LUA="luajit"
 
 install:
 	- sudo apt-get install luajit
