@@ -1,20 +1,30 @@
 os:
-  - linux
+	- linux
 
 sudo: false
 
 dist: trusty
 
 addons:
-  apt:
-    packages:
-      - lua5.2
+	apt:
+		packages:
+			- lua5.2
 
 git:
-  depth: 5
+	depth: 5
 
-language: c
+language: erlang
+
+env:
+	- LUA=""
+	- LUA="luajit"
 
 install:
+	- sudo apt-get install luajit
+	- sudo apt-get install luarocks
+	- sudo luarocks install luafilesystem
+	- sudo luarocks install busted
 
-script: ./bin/build.sh
+script:
+	- ./bin/build.sh
+	- "busted test"
