@@ -13,7 +13,7 @@ addons:
 git:
 	depth: 5
 
-language: erlang
+language: c
 
 env:
 	- LUA=""
@@ -27,4 +27,3 @@ install:
 
 script:
 	- ./bin/build.sh
-	- "busted test"
