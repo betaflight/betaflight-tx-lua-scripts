@@ -13,18 +13,8 @@ addons:
 git:
 	depth: 5
 
-language: erlang
-
-env:
-	- LUA=""
-	- LUA="luajit"
+language: c
 
 install:
-	- sudo apt-get install luajit
-	- sudo apt-get install luarocks
-	- sudo luarocks install luafilesystem
-	- sudo luarocks install busted
 
-script:
-	- ./bin/build.sh
-	- "busted test"
+script: ./bin/build.sh
