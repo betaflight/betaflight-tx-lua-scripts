@@ -60,6 +60,7 @@ end
 
 local function invalidatePages()
     Page = nil
+    dataInitialised = false
     currentState = pageStatus.display
     saveTS = 0
 end
@@ -266,6 +267,19 @@ end
 
 function run_ui(event)
     local now = getTime()
+    
+    if not dataInitialised then
+        if data_init == nil then
+          data_init = assert(loadScript(SCRIPT_HOME .. "/data_init.lua"))()
+        end
+        dataInitialised = data_init.init();
+
+        if dataInitialised then
+           data_init = nil
+           collectgarbage()
+        end
+    end
+
     -- if lastRunTS old than 500ms
     if lastRunTS + 50 < now then
         invalidatePages()
