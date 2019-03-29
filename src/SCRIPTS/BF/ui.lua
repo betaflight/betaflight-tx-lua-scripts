@@ -27,6 +27,7 @@ local telemetryScreenActive = false
 local menuActive = false
 local lastRunTS = 0
 local killEnterBreak = 0
+local scrollPixelsY = 0
 
 Page = nil
 
@@ -174,12 +175,24 @@ function drawScreenTitle(screen_title)
 end
 
 local function drawScreen()
+    local yMinLim = Page.yMinLimit or 0
+    local yMaxLim = Page.yMaxLimit or LCD_H
+    local currentLineY = Page.fields[currentLine].y
     local screen_title = Page.title
     drawScreenTitle("Betaflight / "..screen_title)
+    if currentLine == 1 then
+        scrollPixelsY = 0
+    elseif currentLineY - scrollPixelsY <= yMinLim then
+        scrollPixelsY = currentLineY - yMinLim
+    elseif currentLineY - scrollPixelsY >= yMaxLim then
+        scrollPixelsY = currentLineY - yMaxLim
+    end
     for i=1,#(Page.text) do
         local f = Page.text[i]
         local textOptions = (f.to or 0) + globalTextOptions
-        lcd.drawText(f.x, f.y, f.t, textOptions)
+        if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
+            lcd.drawText(f.x, f.y - scrollPixelsY, f.t, textOptions)
+        end
     end
     local val = "---"
     for i=1,#(Page.fields) do
@@ -195,7 +208,9 @@ local function drawScreen()
         end
         local spacing = 20
         if f.t ~= nil then
-            lcd.drawText(f.x, f.y, f.t, heading_options)
+            if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
+                lcd.drawText(f.x, f.y - scrollPixelsY, f.t, heading_options)
+            end
             if f.sp ~= nil then
                 spacing = f.sp
             end
@@ -211,7 +226,9 @@ local function drawScreen()
                 val = f.table[f.value]
             end
         end
-        lcd.drawText(f.x + spacing, f.y, val, value_options)
+        if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
+            lcd.drawText(f.x + spacing, f.y - scrollPixelsY, val, value_options)
+        end
     end
 end
 
