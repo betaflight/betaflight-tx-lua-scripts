@@ -1,45 +1,95 @@
-
 return {
     read              = 92, -- MSP_FILTER_CONFIG
     write             = 93, -- MSP_SET_FILTER_CONFIG
     eepromWrite       = true,
     reboot            = false,
     title             = "Filters",
-    minBytes          = 18,
-    outputBytes       = 18,
+    minBytes          = 37,
+    outputBytes       = 37,
+    yMinLimit         = 35,
+    yMaxLimit         = 215,
     text= {
-        -- Column headers
-        { t = "Gy LP",         x = 60,  y = 68, to = SMLSIZE },
-        { t = "Gy NF1",        x = 125, y = 68, to = SMLSIZE  },
-        { t = "Gy NF2",        x = 190, y = 68, to = SMLSIZE  },
-        { t = "DT LP",         x = 255, y = 68, to = SMLSIZE  },
-        { t = "DT NF",         x = 315, y = 68, to = SMLSIZE  },
-        { t = "Yaw LP",        x = 385, y = 68, to = SMLSIZE  },
+        { t = "Gyro Lowpass 1 Dynamic",   x = 5,  y = 35 },
+        { t = "Min Cutoff",               x = 35, y = 55,  to = SMLSIZE },
+        { t = "Max Cutoff",               x = 35, y = 75,  to = SMLSIZE },
+        { t = "Filter Type",              x = 35, y = 95,  to = SMLSIZE },
 
-        -- Line titles
-        { t = "Hz",            x = 48,  y = 110, to = SMLSIZE + RIGHT },
-        { t = "COff",          x = 48,  y = 155, to = SMLSIZE + RIGHT },
-        
-        { t = "DTerm LP Type", x = 60,  y = 208 },
+        { t = "Gyro Lowpass 1",           x = 5,  y = 115 },
+        { t = "Cutoff",                   x = 35, y = 135, to = SMLSIZE },
+        { t = "Filter Type",              x = 35, y = 155, to = SMLSIZE },
+
+        { t = "Gyro Lowpass 2",           x = 5,  y = 175 },
+        { t = "Cutoff",                   x = 35, y = 195, to = SMLSIZE },
+        { t = "Filter Type",              x = 35, y = 215, to = SMLSIZE },
+
+        { t = "Gyro Notch 1",             x = 5,  y = 235 },
+        { t = "Center",                   x = 35, y = 255, to = SMLSIZE },
+        { t = "Cutoff",                   x = 35, y = 275, to = SMLSIZE },
+
+        { t = "Gyro Notch 2",             x = 5,  y = 295 },
+        { t = "Center",                   x = 35, y = 315, to = SMLSIZE },
+        { t = "Cutoff",                   x = 35, y = 335, to = SMLSIZE },
+
+        { t = "D Term Lowpass 1 Dynamic", x = 5,  y = 355 },
+        { t = "Min Cutoff",               x = 35, y = 375, to = SMLSIZE },
+        { t = "Max Cutoff",               x = 35, y = 395, to = SMLSIZE },
+        { t = "Filter Type",              x = 35, y = 415, to = SMLSIZE },
+
+        { t = "D Term Lowpass 1",         x = 5,  y = 435 },
+        { t = "Cutoff",                   x = 35, y = 455, to = SMLSIZE },
+        { t = "Filter Type",              x = 35, y = 475, to = SMLSIZE },
+
+        { t = "D Term Lowpass 2",         x = 5,  y = 495 },
+        { t = "Cutoff",                   x = 35, y = 515, to = SMLSIZE },
+        { t = "Filter Type",              x = 35, y = 535, to = SMLSIZE },
+
+        { t = "D Term Notch",             x = 5,  y = 555 },
+        { t = "Center",                   x = 35, y = 575, to = SMLSIZE },
+        { t = "Cutoff",                   x = 35, y = 595, to = SMLSIZE },
+
+        { t = "Yaw Lowpass",              x = 5,  y = 615 },
+        { t = "Cutoff",                   x = 35, y = 635, to = SMLSIZE },
     },
     fields = {
-        { x =  60, y = 110, min = 0, max =   255, vals = { 1 },      to = MIDSIZE },
+        -- Gyro Lowpass 1 Dynamic
+        { x = 200, y = 55,  min = 0, max = 1000,  vals = { 30, 31 } },
+        { x = 200, y = 75,  min = 0, max = 1000,  vals = { 32, 33 } },
+        { x = 200, y = 95,  min = 0, max = 1,     vals = { 25 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
 
-        { x = 125, y = 110, min = 0, max = 16000, vals = { 6, 7 },   to = MIDSIZE },
-        { x = 125, y = 155, min = 0, max = 16000, vals = { 8, 9 },   to = MIDSIZE },
+        -- Gyro Lowpass 1
+        { x = 200, y = 135, min = 0, max = 16000, vals = { 21, 22 } },
+        { x = 200, y = 155, min = 0, max = 1,     vals = { 25 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
 
-        { x = 190, y = 110, min = 0, max = 16000, vals = { 14, 15 }, to = MIDSIZE },
-        { x = 190, y = 155, min = 0, max = 16000, vals = { 16, 17 }, to = MIDSIZE },
+        -- Gyro Lowpass 2
+        { x = 200, y = 195, min = 0, max = 16000, vals = { 23, 24 } },
+        { x = 200, y = 215, min = 0, max = 1,     vals = { 26 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
 
-        { x = 255, y = 110, min = 0, max = 16000, vals = { 2, 3 },   to = MIDSIZE },
+        -- Gyro Notch 1
+        { x = 200, y = 255, min = 0, max = 16000, vals = { 6, 7 } },
+        { x = 200, y = 275, min = 0, max = 16000, vals = { 8, 9 } },
 
-        { x = 315, y = 110, min = 0, max = 16000, vals = { 10, 11 }, to = MIDSIZE },
-        { x = 315, y = 155, min = 0, max = 16000, vals = { 12, 13 }, to = MIDSIZE },
+        -- Gyro Notch 2
+        { x = 200, y = 315, min = 0, max = 16000, vals = { 14, 15 } },
+        { x = 200, y = 335, min = 0, max = 16000, vals = { 16, 17 } },
 
-        { x = 391, y = 110, min = 0, max =   500, vals = { 4, 5 },   to = MIDSIZE },
+        -- D Term Lowpass 1 Dynamic
+        { x = 200, y = 375, min = 0, max = 1000,  vals = { 34, 35 } },
+        { x = 200, y = 395, min = 0, max = 1000,  vals = { 36, 37 } },
+        { x = 200, y = 415, min = 0, max = 1,     vals = { 18 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
 
-        { x = 208, y = 208,  min = 0, max = 2,    vals = { 18 },     to = MIDSIZE,
-          table = { [0] = "PT1", [1] = "BIQUAD", [2] = "FIR" }
-        },
+        -- D Term Lowpass 1
+        { x = 200, y = 455, min = 0, max = 16000, vals = { 2, 3 } },
+        { x = 200, y = 475, min = 0, max = 1,     vals = { 18 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
+
+        -- D Term Lowpass 2
+        { x = 200, y = 515, min = 0, max = 16000, vals = { 27, 28 } },
+        { x = 200, y = 535, min = 0, max = 1,     vals = { 29 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
+
+        -- D Term Notch
+        { x = 200, y = 575, min = 0, max = 16000, vals = { 10, 11 } },
+        { x = 200, y = 595, min = 0, max = 16000, vals = { 12, 13 } },
+
+        -- Yaw Lowpass
+        { x = 200, y = 635, min = 0, max = 500,   vals = { 4, 5 } },
     }
 }
