@@ -6,8 +6,6 @@ return {
    eepromWrite    = true,
    minBytes       = 16,
    requiredVersion = 1.041,
-   
- 
    text = {
       { t = "Min Sats.",      x = 30,  y = 16, to = SMLSIZE },
       { t = "Angle",          x = 45,  y = 26, to = SMLSIZE },
