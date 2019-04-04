@@ -18,6 +18,7 @@ local currentState = pageStatus.display
 local requestTimeout = 80 -- 800ms request timeout
 local currentPage = 1
 local currentLine = 1
+local availablePages = #(PageFiles)
 local saveTS = 0
 local saveTimeout = 0
 local saveRetries = 0
@@ -355,9 +356,22 @@ function run_ui(event)
         end
     end
     while Page == nil do
-        Page = assert(loadScript(radio.templateHome .. PageFiles[currentPage]))()
-        if Page.requiredVersion and Page.requiredVersion > apiVersion then
+        if PageFiles[currentPage] then 
+            Page = assert(loadScript(radio.templateHome .. PageFiles[currentPage]))()
+            if Page.requiredVersion and apiVersion > 0 then
+                if Page.requiredVersion > apiVersion then
+                    PageFiles[currentPage] = nil
+                    availablePages = availablePages - 1
+                    incPage(1)
+                end
+            end
+        else
             incPage(1)
+        end
+        if availablePages < 1 then
+            lcd.clear()
+            lcd.drawText(NoTelem[1], NoTelem[2], "No Pages Available!", NoTelem[4])
+            return 1
         end
     end
     if not Page.values and currentState == pageStatus.display then
