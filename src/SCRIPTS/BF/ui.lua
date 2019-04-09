@@ -354,10 +354,18 @@ function run_ui(event)
             incValue(-1)
         end
     end
+    local nextPage = currentPage
     while Page == nil do
         Page = assert(loadScript(radio.templateHome .. PageFiles[currentPage]))()
-        if Page.requiredVersion and Page.requiredVersion > apiVersion then
+        if Page.requiredVersion and apiVersion > 0 and Page.requiredVersion > apiVersion then
             incPage(1)
+
+            if currentPage == nextPage then
+                lcd.clear()
+                lcd.drawText(NoTelem[1], NoTelem[2], "No Pages! API: " .. apiVersion, NoTelem[4])
+
+                return 1
+            end
         end
     end
     if not Page.values and currentState == pageStatus.display then
