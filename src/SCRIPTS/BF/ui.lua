@@ -150,11 +150,11 @@ local function incPage(inc)
 end
 
 local function incLine(inc)
-   currentLine = incMax(currentLine, inc, #(Page.fields))
+   currentLine = clipValue(currentLine + inc, 1, #(Page.fields))
 end
 
 local function incMenu(inc)
-   menuActive = incMax(menuActive, inc, #(menuList))
+   menuActive = clipValue(menuActive + inc, 1, #(menuList))
 end
 
 local function requestPage()
