@@ -150,11 +150,11 @@ local function incPage(inc)
 end
 
 local function incLine(inc)
-   currentLine = incMax(currentLine, inc, #(Page.fields))
+   currentLine = clipValue(currentLine + inc, 1, #(Page.fields))
 end
 
 local function incMenu(inc)
-   menuActive = incMax(menuActive, inc, #(menuList))
+   menuActive = clipValue(menuActive + inc, 1, #(menuList))
 end
 
 local function requestPage()
@@ -331,9 +331,9 @@ function run_ui(event)
             incPage(-1)
         elseif event == userEvent.release.menu or event == userEvent.press.pageDown then
             incPage(1)
-        elseif event == userEvent.release.plus or event == userEvent.dial.left then
+        elseif event == userEvent.release.plus or event == userEvent.repeatPress.plus or event == userEvent.dial.left then
             incLine(-1)
-        elseif event == userEvent.release.minus or event == userEvent.dial.right then
+        elseif event == userEvent.release.minus or event == userEvent.repeatPress.minus or event == userEvent.dial.right then
             incLine(1)
         elseif event == userEvent.release.enter then
             local field = Page.fields[currentLine]
