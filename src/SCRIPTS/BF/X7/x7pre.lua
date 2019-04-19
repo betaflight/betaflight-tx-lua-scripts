@@ -2,8 +2,7 @@ PageFiles =
 {
     "pids1.lua",
     "pids2.lua",
-    "rates1.lua",
-    "rates2.lua",
+    "rates.lua",
     "pid_advanced.lua",
     "filters.lua",
     "pwm.lua",
