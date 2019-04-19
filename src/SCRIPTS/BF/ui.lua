@@ -180,7 +180,7 @@ local function drawScreen()
     local currentLineY = Page.fields[currentLine].y
     local screen_title = Page.title
     drawScreenTitle("Betaflight / "..screen_title)
-    if currentLine == 1 then
+    if currentLineY <= Page.fields[1].y then
         scrollPixelsY = 0
     elseif currentLineY - scrollPixelsY <= yMinLim then
         scrollPixelsY = currentLineY - yMinLim
