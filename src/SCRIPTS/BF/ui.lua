@@ -120,16 +120,16 @@ local function processMspReply(cmd,rx_buf)
 
         for i=1,#(Page.fields) do
             if (#(Page.values) or 0) >= Page.minBytes then
-               local f = Page.fields[i]
-               if f.vals then
-                  f.value = 0;
-                  for idx=1, #(f.vals) do
-                     local raw_val = (Page.values[f.vals[idx]] or 0)
-                     raw_val = bit32.lshift(raw_val, (idx-1)*8)
-                     f.value = bit32.bor(f.value, raw_val)
-                  end
-                  f.value = f.value/(f.scale or 1)
-               end
+                local f = Page.fields[i]
+                if f.vals then
+                    f.value = 0;
+                    for idx=1, #(f.vals) do
+                        local raw_val = (Page.values[f.vals[idx]] or 0)
+                        raw_val = bit32.lshift(raw_val, (idx-1)*8)
+                        f.value = bit32.bor(f.value, raw_val)
+                    end
+                    f.value = f.value/(f.scale or 1)
+                end
             end
         end
         if Page.postLoad then
@@ -139,22 +139,22 @@ local function processMspReply(cmd,rx_buf)
 end
 
 local function incMax(val, inc, base)
-   return ((val + inc + base - 1) % base) + 1
+    return ((val + inc + base - 1) % base) + 1
 end
 
 local function incPage(inc)
-   currentPage = incMax(currentPage, inc, #(PageFiles))
-   Page = nil
-   currentLine = 1
-   collectgarbage()
+    currentPage = incMax(currentPage, inc, #(PageFiles))
+    Page = nil
+    currentLine = 1
+    collectgarbage()
 end
 
 local function incLine(inc)
-   currentLine = clipValue(currentLine + inc, 1, #(Page.fields))
+    currentLine = clipValue(currentLine + inc, 1, #(Page.fields))
 end
 
 local function incMenu(inc)
-   menuActive = clipValue(menuActive + inc, 1, #(menuList))
+    menuActive = clipValue(menuActive + inc, 1, #(menuList))
 end
 
 local function requestPage()
@@ -201,7 +201,7 @@ local function drawScreen()
         local heading_options = text_options
         local value_options = text_options
         if i == currentLine then
-                value_options = text_options + INVERS
+            value_options = text_options + INVERS
             if currentState == pageStatus.editing then
                 value_options = value_options + BLINK
             end
