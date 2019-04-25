@@ -29,12 +29,12 @@ local lastRunTS = 0
 local killEnterBreak = 0
 local scrollPixelsY = 0
 
-Page = nil
+local Page = nil
 
-backgroundFill = backgroundFill or ERASE
-foregroundColor = foregroundColor or SOLID
+local backgroundFill = TEXT_BGCOLOR or ERASE
+local foregroundColor = LINE_COLOR or SOLID
 
-globalTextOptions = globalTextOptions or 0
+local globalTextOptions = TEXT_COLOR or 0
 
 local function saveSettings(new)
     if Page.values then
