@@ -1,5 +1,7 @@
 SCRIPT_HOME = "/SCRIPTS/BF"
 
+apiVersion = 0
+
 protocol = assert(loadScript(SCRIPT_HOME.."/protocols.lua"))()
 radio = assert(loadScript(SCRIPT_HOME.."/radios.lua"))()
 
