@@ -12,7 +12,7 @@ return {
         { t = "Prot", x = 58, y = 14, to = SMLSIZE },
         { t = "Unsync", x = 58, y = 24, to = SMLSIZE },
         { t = "PWM", x = 58, y = 34, to = SMLSIZE },
-        { t = "Offset", x = 48, y = 44, to = SMLSIZE }
+        { t = "Idle", x = 58, y = 44, to = SMLSIZE }
     },
     fields = {
         { x = 32, y = 14, vals = { 9 }, min = 0, max = 1, to = SMLSIZE, table = { [0] = "OFF", "ON" }, upd = function(self) self.updateRateTables(self) end },
