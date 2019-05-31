@@ -45,3 +45,4 @@ luac.out
 #directories
 tmp
 obj
+.vscode
