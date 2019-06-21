@@ -313,9 +313,9 @@ function run_ui(event)
     elseif currentState == pageStatus.displayMenu then
         if event == userEvent.release.exit then
             currentState = pageStatus.display
-        elseif event == userEvent.release.plus or event == userEvent.dial.left then
+        elseif event == userEvent.release.plus or event == userEvent.dial.right then
             incMenu(-1)
-        elseif event == userEvent.release.minus or event == userEvent.dial.right then
+        elseif event == userEvent.release.minus or event == userEvent.dial.left then
             incMenu(1)
         elseif event == userEvent.release.enter then
             if killEnterBreak == 1 then
@@ -331,9 +331,9 @@ function run_ui(event)
             incPage(-1)
         elseif event == userEvent.release.menu or event == userEvent.press.pageDown then
             incPage(1)
-        elseif event == userEvent.release.plus or event == userEvent.repeatPress.plus or event == userEvent.dial.left then
+        elseif event == userEvent.release.plus or event == userEvent.repeatPress.plus or event == userEvent.dial.right then
             incLine(-1)
-        elseif event == userEvent.release.minus or event == userEvent.repeatPress.minus or event == userEvent.dial.right then
+        elseif event == userEvent.release.minus or event == userEvent.repeatPress.minus or event == userEvent.dial.left then
             incLine(1)
         elseif event == userEvent.release.enter then
             local field = Page.fields[currentLine]
