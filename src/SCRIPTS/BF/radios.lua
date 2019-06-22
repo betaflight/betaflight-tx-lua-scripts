@@ -19,14 +19,14 @@ local supportedPlatforms = {
     },
     horus =
     {
-        templateHome=SCRIPT_HOME.."/HORUS/",
-        preLoad=SCRIPT_HOME.."/HORUS/horuspre.lua",
+        templateHome    = SCRIPT_HOME.."/HORUS/",
+        preLoad         = SCRIPT_HOME.."/HORUS/horuspre.lua",
         resolution      = lcdResolution.high
     },
-	nv14 =
+    nv14 =
     {
-        templateHome=SCRIPT_HOME.."/NV14/",
-        preLoad=SCRIPT_HOME.."/NV14/nv14pre.lua",
+        templateHome    = SCRIPT_HOME.."/NV14/",
+        preLoad         = SCRIPT_HOME.."/NV14/nv14pre.lua",
         resolution      = lcdResolution.high
     },
 }
@@ -44,7 +44,7 @@ local supportedRadios =
     ["x9e"] = supportedPlatforms.x9,
     ["x10"] = supportedPlatforms.horus,
     ["x12s"] = supportedPlatforms.horus,
-	["NV14"] = supportedPlatforms.nv14,
+    ["NV14"] = supportedPlatforms.nv14,
 }
 
 local ver, rad, maj, min, rev = getVersion()
