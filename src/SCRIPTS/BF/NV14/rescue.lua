@@ -12,7 +12,7 @@ return {
       { t = "Initial Altitude", x = 10,  y = 120 },
       { t = "Descent Distance", x = 10,  y = 160 },
       { t = "Ground Speed",     x = 10,  y = 200 },
-                                                 
+
       { t = "Snty.",            x =  10, y = 240 },
       { t = "Throttle",         x =  10, y = 280 },
       { t = "Min",              x =  10, y = 320 },

@@ -12,36 +12,34 @@ return {
     lastFreqUpdTS  = 0,
     freqModCounter = 0,
     text= {
-		{ t = "Proto",   x = 36,  y =  68 },
-        { t = "Band",    x = 36,  y = 110 },
-        { t = "Channel", x = 36,  y = 155 },
-		{ t = "Freq",    x = 36,  y = 200 },
+        { t = "Band",    x = 36,  y = 155 },
+        { t = "Channel", x = 36,  y = 200 },
         { t = "Power",   x = 36,  y = 242 },
         { t = "Pit",     x = 36,  y = 284 },
-        
-        
+        { t = "Proto",   x = 36,  y =  68 },
+        { t = "Freq",    x = 36,  y = 110 },
     },
     fields = {
-	    -- Proto
-        { x = 150,  y =  68, vals = { 1 },                to = MIDSIZE,
-          write = false, ro = true,
-          table = { [1]="RTC6705",[3]="SmartAudio",[4]="Tramp",[255]="None"} },
         -- Band
-        { x = 150,  y = 110, min=0, max=5, vals = { 2 },  to = MIDSIZE,
+        { x = 150,  y = 155, min=0, max=5, vals = { 2 },  to = MIDSIZE,
           table = { [0]="U", "A", "B", "E", "F", "R" },
           upd = function(self) self.handleBandChanUpdate(self) end },
         -- Channel
-        { x = 150,  y = 155, min=1, max=8, vals = { 3 },  to = MIDSIZE,
+        { x = 150,  y = 200, min=1, max=8, vals = { 3 },  to = MIDSIZE,
           upd =  function(self) self.handleBandChanUpdate(self) end },
-        -- Freq
-        { x = 150,  y = 200, min = 5000, max = 5999, vals = { 6 }, to = MIDSIZE,
-          upd = function(self) self.handleFreqValUpdate(self) end },
-		-- Power
+        -- Power
         { x = 150,  y = 242, min=1, vals = { 4 },         to = MIDSIZE,
           upd = function(self) self.updatePowerTable(self) end },
         -- Pit mode
         { x = 150,  y = 284, min=0, max=1, vals = { 5 },  to = MIDSIZE,
           table = { [0]="OFF", "ON" } },
+        -- Proto
+        { x = 150,  y =  68, vals = { 1 },                to = MIDSIZE,
+          write = false, ro = true,
+          table = { [1]="RTC6705",[3]="SmartAudio",[4]="Tramp",[255]="None"} },
+        -- Freq
+        { x = 150,  y = 110, min = 5000, max = 5999, vals = { 6 }, to = MIDSIZE,
+          upd = function(self) self.handleFreqValUpdate(self) end },
     },
     freqLookup = {
         { 5865, 5845, 5825, 5805, 5785, 5765, 5745, 5725 }, -- Boscam A
