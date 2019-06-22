@@ -16,7 +16,7 @@ return
         plus = EVT_PLUS_REPT
     },
     release = {
-        enter = EVT_ENTER_BREAK,
+        enter = EVT_ENTER_BREAK or EVT_ROT_BREAK,
         exit = EVT_EXIT_BREAK,
         menu = EVT_MENU_BREAK or EVT_RIGHT_BREAK,
         minus = EVT_MINUS_BREAK,
