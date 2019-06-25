@@ -30,6 +30,7 @@ local supportedRadios =
     ["x3"] = supportedPlatforms.x7,
     ["x7"] = supportedPlatforms.x7,
     ["x7s"] = supportedPlatforms.x7,
+    ["t12"] = supportedPlatforms.x7,
     ["xlite"] = supportedPlatforms.x7,
     ["xlites"] = supportedPlatforms.x7,
     ["x9lite"] = supportedPlatforms.x7,
