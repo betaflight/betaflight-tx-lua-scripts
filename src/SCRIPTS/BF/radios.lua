@@ -36,8 +36,10 @@ local supportedRadios =
     ["x9lite"] = supportedPlatforms.x7,
     ["x9d"] = supportedPlatforms.x9,
     ["x9d+"] = supportedPlatforms.x9,
+    ["x9d+2019"] = supportedPlatforms.x9,
     ["x9e"] = supportedPlatforms.x9,
     ["x10"] = supportedPlatforms.horus,
+    ["x10express"] = supportedPlatforms.horus,
     ["x12s"] = supportedPlatforms.horus,
 }
 
