@@ -1,4 +1,4 @@
-SCRIPT_HOME = "/SCRIPTS/BF"
+SCRIPT_HOME = "/SCRIPTS/TOOLS/BF"
 
 assert(loadScript(SCRIPT_HOME.."/MSP/messages.lua"))()
 

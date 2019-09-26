@@ -1,4 +1,5 @@
-SCRIPT_HOME = "/SCRIPTS/BF"
+local toolName = "TNS|Betaflight setup|TNE"
+SCRIPT_HOME = "/SCRIPTS/TOOLS/BF"
 
 apiVersion = 0
 
