@@ -33,26 +33,14 @@ local supportedPlatforms = {
 
 local supportedRadios =
 {
-    ["x3"] = supportedPlatforms.x7,
-    ["x7"] = supportedPlatforms.x7,
-    ["x7s"] = supportedPlatforms.x7,
-    ["t12"] = supportedPlatforms.x7,
-    ["xlite"] = supportedPlatforms.x7,
-    ["xlites"] = supportedPlatforms.x7,
-    ["x9lite"] = supportedPlatforms.x7,
-    ["x9d"] = supportedPlatforms.x9,
-    ["x9d+"] = supportedPlatforms.x9,
-    ["x9d+2019"] = supportedPlatforms.x9,
-    ["x9e"] = supportedPlatforms.x9,
-    ["x10"] = supportedPlatforms.horus,
-    ["x10express"] = supportedPlatforms.horus,
-    ["x12s"] = supportedPlatforms.horus,
-    ["NV14"] = supportedPlatforms.nv14,
-    ["t16"] = supportedPlatforms.horus,
+    ["128x64"]  = supportedPlatforms.x7,
+    ["212x64"]  = supportedPlatforms.x9,
+    ["480x272"] = supportedPlatforms.horus,
+    ["320x480"] = supportedPlatforms.nv14,
 }
 
 local ver, rad, maj, min, rev = getVersion()
-local radio = supportedRadios[rad]
+local radio = supportedRadios[tostring(LCD_W) .. "x" .. tostring(LCD_H)]
 
 if not radio then
     error("Radio not supported: "..rad)
