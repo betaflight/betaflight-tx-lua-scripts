@@ -352,6 +352,7 @@ function run_ui(event)
             incValue(1)
         elseif event == userEvent.press.minus or event == userEvent.repeatPress.minus or event == userEvent.dial.left then
             incValue(-1)
+            killEvents(event)
         end
     end
     local nextPage = currentPage
