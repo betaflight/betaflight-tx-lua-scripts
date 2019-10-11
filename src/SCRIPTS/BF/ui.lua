@@ -367,6 +367,7 @@ function run_ui(event)
             incValue(1)
         elseif event == EVT_VIRTUAL_DEC or event == EVT_VIRTUAL_DEC_REPT then
             incValue(-1)
+            killEvents(event)
         end
     end
     local nextPage = currentPage
