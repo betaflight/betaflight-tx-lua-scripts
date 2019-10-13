@@ -291,10 +291,10 @@ function run_ui(event)
     -- if lastRunTS old than 500ms
     if lastRunTS + 50 < now then
         invalidatePages()
-        if useMenu then
-            currentState = pageStatus.mainMenu
-        else
+        if isTelemetryScript then
             currentState = pageStatus.display
+        else
+            currentState = pageStatus.mainMenu
         end
     end
     lastRunTS = now
@@ -353,11 +353,11 @@ function run_ui(event)
                 currentState = pageStatus.editing
             end
         elseif event == EVT_VIRTUAL_EXIT then
-            if useMenu then 
-	        stopDisplay = true
-	    else
-                return protocol.exitFunc();
-	    end
+            if isTelemetryScript then 
+                return protocol.exitFunc();	            
+	        else
+                stopDisplay = true
+	        end
         end
     -- editing value
     elseif currentState == pageStatus.editing then
@@ -406,7 +406,7 @@ function run_ui(event)
             lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Retrying",DBLSIZE + (globalTextOptions))
         end
     end
-    if currentState == pageStatus.mainMenu and useMenu then
+    if currentState == pageStatus.mainMenu and (not isTelemetryScript) then
         if event == EVT_VIRTUAL_EXIT then
             return 2
         elseif event == EVT_VIRTUAL_NEXT then

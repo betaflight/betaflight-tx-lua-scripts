@@ -20,7 +20,6 @@ local lastMenuEvent = 0
 
 function run(event)
   lastMenuEvent = getTime()
-
   run_ui(event)
 end
 

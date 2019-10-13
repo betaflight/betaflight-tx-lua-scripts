@@ -2,7 +2,7 @@ local toolName = "TNS|Betaflight setup|TNE"
 SCRIPT_HOME = "/SCRIPTS/BF"
 
 apiVersion = 0
-useMenu = true
+isTelemetryScript = false
 
 protocol = assert(loadScript(SCRIPT_HOME.."/protocols.lua"))()
 radio = assert(loadScript(SCRIPT_HOME.."/radios.lua"))()
