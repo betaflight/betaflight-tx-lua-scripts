@@ -354,10 +354,10 @@ function run_ui(event)
             end
         elseif event == EVT_VIRTUAL_EXIT then
             if isTelemetryScript then 
-                return protocol.exitFunc();	            
-	        else
+                return protocol.exitFunc();
+            else
                 stopDisplay = true
-	        end
+            end
         end
     -- editing value
     elseif currentState == pageStatus.editing then
