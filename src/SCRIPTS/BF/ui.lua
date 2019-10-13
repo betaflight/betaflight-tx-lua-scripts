@@ -438,7 +438,7 @@ function run_ui(event)
             end
         end
     end
-    if stopDisplay then
+    if stopDisplay and (not isTelemetryScript) then
         currentState = pageStatus.mainMenu
         stopDisplay = false
     end
