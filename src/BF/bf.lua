@@ -9,6 +9,8 @@ assert(loadScript(radio.preLoad))()
 assert(loadScript(protocol.transport))()
 assert(loadScript(SCRIPT_HOME.."/MSP/common.lua"))()
 
+isTelemetryScript = false
+
 local run_ui = assert(loadScript(SCRIPT_HOME.."/ui.lua"))()
 
 return { run=run_ui }

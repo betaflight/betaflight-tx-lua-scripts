@@ -1,5 +1,3 @@
-local userEvent = assert(loadScript(SCRIPT_HOME.."/events.lua"))()
-
 local pageStatus =
 {
     display     = 2,
@@ -302,22 +300,22 @@ function run_ui(event)
     -- process send queue
     mspProcessTxQ()
     -- navigation
-    if (event == userEvent.longPress.menu) then -- Taranis QX7 / X9
+    if isTelemetryScript and event == EVT_VIRTUAL_MENU_LONG then -- telemetry script
         menuActive = 1
         currentState = pageStatus.displayMenu
-    elseif userEvent.press.pageDown and (event == userEvent.longPress.enter) then -- Horus
+    elseif (not isTelemetryScript) and event == EVT_VIRTUAL_ENTER_LONG then -- standalone
         menuActive = 1
         killEnterBreak = 1
         currentState = pageStatus.displayMenu
     -- menu is currently displayed
     elseif currentState == pageStatus.displayMenu then
-        if event == userEvent.release.exit then
+        if event == EVT_VIRTUAL_EXIT then
             currentState = pageStatus.display
-        elseif event == userEvent.release.plus or event == userEvent.dial.left then
+        elseif event == EVT_VIRTUAL_PREV then
             incMenu(-1)
-        elseif event == userEvent.release.minus or event == userEvent.dial.right then
+        elseif event == EVT_VIRTUAL_NEXT then
             incMenu(1)
-        elseif event == userEvent.release.enter then
+        elseif event == EVT_VIRTUAL_ENTER then
             if killEnterBreak == 1 then
                 killEnterBreak = 0
             else
@@ -327,30 +325,31 @@ function run_ui(event)
         end
     -- normal page viewing
     elseif currentState <= pageStatus.display then
-        if event == userEvent.press.pageUp then
+        if event == EVT_VIRTUAL_PREV_PAGE then
             incPage(-1)
-        elseif event == userEvent.release.menu or event == userEvent.press.pageDown then
+            killEvents(event) -- X10/T16 issue: pageUp is a long press
+        elseif event == EVT_VIRTUAL_NEXT_PAGE or event == EVT_VIRTUAL_MENU then
             incPage(1)
-        elseif event == userEvent.release.plus or event == userEvent.repeatPress.plus or event == userEvent.dial.left then
+        elseif event == EVT_VIRTUAL_PREV or event == EVT_VIRTUAL_PREV_REPT then
             incLine(-1)
-        elseif event == userEvent.release.minus or event == userEvent.repeatPress.minus or event == userEvent.dial.right then
+        elseif event == EVT_VIRTUAL_NEXT or event == EVT_VIRTUAL_NEXT_REPT then
             incLine(1)
-        elseif event == userEvent.release.enter then
+        elseif event == EVT_VIRTUAL_ENTER then
             local field = Page.fields[currentLine]
             local idx = field.i or currentLine
             if Page.values and Page.values[idx] and (field.ro ~= true) then
                 currentState = pageStatus.editing
             end
-        elseif event == userEvent.release.exit then
+        elseif event == EVT_VIRTUAL_EXIT then
             return protocol.exitFunc();
         end
     -- editing value
     elseif currentState == pageStatus.editing then
-        if (event == userEvent.release.exit) or (event == userEvent.release.enter) then
+        if event == EVT_VIRTUAL_EXIT or event == EVT_VIRTUAL_ENTER then
             currentState = pageStatus.display
-        elseif event == userEvent.press.plus or event == userEvent.repeatPress.plus or event == userEvent.dial.right then
+        elseif event == EVT_VIRTUAL_INC or event == EVT_VIRTUAL_INC_REPT then
             incValue(1)
-        elseif event == userEvent.press.minus or event == userEvent.repeatPress.minus or event == userEvent.dial.left then
+        elseif event == EVT_VIRTUAL_DEC or event == EVT_VIRTUAL_DEC_REPT then
             incValue(-1)
             killEvents(event)
         end
