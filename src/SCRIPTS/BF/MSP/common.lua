@@ -129,6 +129,7 @@ function mspPollReply()
     while true do
         ret = protocol.mspPoll()
         if type(ret) == "table" then
+            mspLastReq = 0
             return mspRxReq, ret
         else
             break
