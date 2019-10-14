@@ -325,10 +325,10 @@ function run_ui(event)
         end
     -- normal page viewing
     elseif currentState <= pageStatus.display then
-        if event == EVT_VIRTUAL_PREV_PAGE then
+        if not isTelemetryScript and event == EVT_VIRTUAL_PREV_PAGE then
             incPage(-1)
             killEvents(event) -- X10/T16 issue: pageUp is a long press
-        elseif event == EVT_VIRTUAL_NEXT_PAGE or event == EVT_VIRTUAL_MENU then
+        elseif (not isTelemetryScript and event == EVT_VIRTUAL_NEXT_PAGE) or (isTelemetryScript and event == EVT_VIRTUAL_MENU) then
             incPage(1)
         elseif event == EVT_VIRTUAL_PREV or event == EVT_VIRTUAL_PREV_REPT then
             incLine(-1)
