@@ -5,4 +5,7 @@ frequencyTable = {
     { 5740, 5760, 5780, 5800, 5820, 5840, 5860, 5880 }, -- FatShark
     { 5658, 5695, 5732, 5769, 5806, 5843, 5880, 5917 }, -- RaceBand
 }
-bandTable = { "U", "A", "B", "E", "F", "R" }
+frequenciesPerBand = 8
+bandTable = { [0]="U", "A", "B", "E", "F", "R" }
+deviceTable = { [1]="6705",[3]="SA",[4]="Tramp",[255]="None"}
+pitModeTable = { [0]="OFF", "ON" }

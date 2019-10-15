@@ -1,5 +1,3 @@
-
-
 local display = assert(loadScript(radio.templateHome.."vtx.lua"))()
 assert(loadScript("/BF/VTX/vtx_defaults.lua"))()
 local md = model.getInfo();
@@ -7,13 +5,14 @@ vtx_tables = loadScript("/BF/VTX/"..md.name..".lua")
 if (vtx_tables ~= nil) then
     vtx_tables()
 end
--- Vals
--- 1 Device Type
--- 2 Band
--- 3 Channel
--- 4 Power
--- 5 Pit
--- 6 Freq
+
+-- Vals                     Fields
+-- 1 Device Type            Band
+-- 2 Band                   Channel
+-- 3 Channel                Power
+-- 4 Power                  Pit
+-- 5 Pit                    Device Type
+-- 6 Freq                   Frequency
 
 return {
     read           = 88, -- MSP_VTX_CONFIG
@@ -30,11 +29,11 @@ return {
     labels         = display.labels,
     fieldLayout    = display.fieldLayout,
     fields = {
-        { min=0, max=5, vals = { 2 }, table = { [0]="U", "A", "B", "E", "F", "R" }, upd = function(self) self.handleBandChanUpdate(self) end },
-        { min=1, max=8, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end },
+        { min=0, max=#(bandTable), vals = { 2 }, table = bandTable, upd = function(self) self.handleBandChanUpdate(self) end },
+        { min=1, max=frequenciesPerBand, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end },
         { min=1, vals = { 4 }, upd = function(self) self.updatePowerTable(self) end },
-        { min=0, max=1, vals = { 5 }, table = { [0]="OFF", "ON" } },
-        { vals = { 1 }, write = false, ro = true, table = { [1]="RTC6705",[3]="SmartAudio",[4]="Tramp",[255]="None"} },
+        { min=0, max=#(pitModeTable), vals = { 5 }, table = pitModeTable },
+        { vals = { 1 }, write = false, ro = true, table = deviceTable },
         { min = 5000, max = 5999, vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end },
     },
     freqLookup = frequencyTable,
