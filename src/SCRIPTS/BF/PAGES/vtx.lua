@@ -1,4 +1,20 @@
+
+
 local display = assert(loadScript(radio.templateHome.."vtx.lua"))()
+assert(loadScript("/BF/VTX/vtx_defaults.lua"))()
+local md = model.getInfo();
+vtx_tables = loadScript("/BF/VTX/"..md.name..".lua")
+if (vtx_tables ~= nil) then
+    vtx_tables()
+end
+-- Vals
+-- 1 Device Type
+-- 2 Band
+-- 3 Channel
+-- 4 Power
+-- 5 Pit
+-- 6 Freq
+
 return {
     read           = 88, -- MSP_VTX_CONFIG
     write          = 89, -- MSP_VTX_SET_CONFIG
@@ -21,13 +37,7 @@ return {
         { vals = { 1 }, write = false, ro = true, table = { [1]="RTC6705",[3]="SmartAudio",[4]="Tramp",[255]="None"} },
         { min = 5000, max = 5999, vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end },
     },
-    freqLookup = {
-        { 5865, 5845, 5825, 5805, 5785, 5765, 5745, 5725 }, -- Boscam A
-        { 5733, 5752, 5771, 5790, 5809, 5828, 5847, 5866 }, -- Boscam B
-        { 5705, 5685, 5665, 5645, 5885, 5905, 5925, 5945 }, -- Boscam E
-        { 5740, 5760, 5780, 5800, 5820, 5840, 5860, 5880 }, -- FatShark
-        { 5658, 5695, 5732, 5769, 5806, 5843, 5880, 5917 }, -- RaceBand
-    },
+    freqLookup = frequencyTable,
     postLoad = function (self)
         if (self.values[2] or 0) < 0 or (self.values[3] or 0) == 0 or (self.values[4] or 0) == 0 then
             self.values = {}
@@ -171,23 +181,28 @@ return {
     end,
     updatePowerTable = function(self)
         if self.values and not self.fields[3].table then
-            if self.values[1] == 1 then          -- RTC6705
-                self.fields[3].table = { 25, 200 }
-                self.fields[3].max = 2
-                self.fields[4].t = nil       -- don't display Pit field
-                self.fields[4].table = { [0]="", "" }
-            elseif self.values[1] == 3 then      -- SmartAudio
-                self.fields[3].table = { 25, 200, 500, 800 }
-                self.fields[3].max = 4
-            elseif self.values[1] == 4 then      -- Tramp
-                self.fields[3].table = { 25, 100, 200, 400, 600 }
-                self.fields[3].max = 5
-            elseif self.values[1] == 255 then    -- None/Unknown
-                self.fields[3].t = nil       -- don't display Power field
-                self.fields[3].max = 1
-                self.fields[3].table = { [1]="" }
-                self.fields[4].t = nil       -- don't display Pit field
-                self.fields[4].table = { [0]="", "" }
+            if powerTable then
+                self.fields[3].table = powerTable
+                self.fields[3].max = #(powerTable)
+            else
+                if self.values[1] == 1 then          -- RTC6705
+                    self.fields[3].table = { 25, 200 }
+                    self.fields[3].max = 2
+                    self.fields[4].t = nil       -- don't display Pit field
+                    self.fields[4].table = { [0]="", "" }
+                elseif self.values[1] == 3 then      -- SmartAudio
+                    self.fields[3].table = { 25, 200, 500, 800 }
+                    self.fields[3].max = 4
+                elseif self.values[1] == 4 then      -- Tramp
+                    self.fields[3].table = { 25, 100, 200, 400, 600 }
+                    self.fields[3].max = 5
+                elseif self.values[1] == 255 then    -- None/Unknown
+                    self.fields[3].t = nil       -- don't display Power field
+                    self.fields[3].max = 1
+                    self.fields[3].table = { [1]="" }
+                    self.fields[4].t = nil       -- don't display Pit field
+                    self.fields[4].table = { [0]="", "" }
+                end
             end
         end
     end,
