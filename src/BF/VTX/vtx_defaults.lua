@@ -7,5 +7,5 @@ frequencyTable = {
 }
 frequenciesPerBand = 8
 bandTable = { [0]="U", "A", "B", "E", "F", "R" }
-deviceTable = { [1]="6705",[3]="SA",[4]="Tramp",[255]="None"}
+deviceTable = { [1]="6705", [3]="SA", [4]="Tramp", [255]="None" }
 pitModeTable = { [0]="OFF", "ON" }
