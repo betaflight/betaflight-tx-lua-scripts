@@ -4,39 +4,32 @@ lcdResolution =
     high = 1
 }
 
-local supportedPlatforms = {
-    x7 =
-    {
-        templateHome    = SCRIPT_HOME.."/X7/",
-        preLoad         = SCRIPT_HOME.."/X7/x7pre.lua",
-        resolution      = lcdResolution.low
-    },
-    x9 =
-    {
-        templateHome    = SCRIPT_HOME.."/X9/",
-        preLoad         = SCRIPT_HOME.."/X9/x9pre.lua",
-        resolution      = lcdResolution.low
-    },
-    horus =
-    {
-        templateHome    = SCRIPT_HOME.."/HORUS/",
-        preLoad         = SCRIPT_HOME.."/HORUS/horuspre.lua",
-        resolution      = lcdResolution.high
-    },
-    nv14 =
-    {
-        templateHome    = SCRIPT_HOME.."/NV14/",
-        preLoad         = SCRIPT_HOME.."/NV14/nv14pre.lua",
-        resolution      = lcdResolution.high
-    },
-}
-
 local supportedRadios =
 {
-    ["128x64"]  = supportedPlatforms.x7,
-    ["212x64"]  = supportedPlatforms.x9,
-    ["480x272"] = supportedPlatforms.horus,
-    ["320x480"] = supportedPlatforms.nv14,
+    ["128x64"]  = 
+    {
+        templateHome    = SCRIPT_HOME.."/128x64/",
+        preLoad         = SCRIPT_HOME.."/128x64/pre.lua",
+        resolution      = lcdResolution.low
+    },
+    ["212x64"]  = 
+    {
+        templateHome    = SCRIPT_HOME.."/212x64/",
+        preLoad         = SCRIPT_HOME.."/212x64/pre.lua",
+        resolution      = lcdResolution.low
+    },
+    ["480x272"] = 
+    {
+        templateHome    = SCRIPT_HOME.."/480x272/",
+        preLoad         = SCRIPT_HOME.."/480x272/pre.lua",
+        resolution      = lcdResolution.high
+    },
+    ["320x480"] = 
+    {
+        templateHome    = SCRIPT_HOME.."/320x480/",
+        preLoad         = SCRIPT_HOME.."/320x480/pre.lua",
+        resolution      = lcdResolution.high
+    },
 }
 
 local ver, rad, maj, min, rev = getVersion()
