@@ -1,12 +1,15 @@
+local display = assert(loadScript(radio.templateHome.."pwm.lua"))()
 return {
     read              = 90, -- MSP_ADVANCED_CONFIG
     write             = 91, -- MSP_SET_ADVANCED_CONFIG
     reboot            = true,
     eepromWrite       = true,
     title             = "PWM",
-    minBytes             = 9,
-    text= { },
-    fields = { },
+    minBytes          = 9,
+    yMinLimit         = display.yMinLimit,
+    yMaxLimit         = display.yMaxLimit,
+    text              = display.text,
+    fields            = display.fields,
     calculateGyroRates = function(self, baseRate)
         self.gyroRates = {}
         self.fields[2].table = {}

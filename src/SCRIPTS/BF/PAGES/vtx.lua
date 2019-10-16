@@ -1,4 +1,4 @@
-
+local display = assert(loadScript(radio.templateHome.."vtx.lua"))()
 return {
     read           = 88, -- MSP_VTX_CONFIG
     write          = 89, -- MSP_VTX_SET_CONFIG
@@ -11,8 +11,10 @@ return {
     prevFreqVal    = 0,
     lastFreqUpdTS  = 0,
     freqModCounter = 0,
-    text= { },
-    fields = { },
+    yMinLimit         = display.yMinLimit,
+    yMaxLimit         = display.yMaxLimit,
+    text              = display.text,
+    fields            = display.fields,
     freqLookup = {
         { 5865, 5845, 5825, 5805, 5785, 5765, 5745, 5725 }, -- Boscam A
         { 5733, 5752, 5771, 5790, 5809, 5828, 5847, 5866 }, -- Boscam B

@@ -1,4 +1,4 @@
-
+local display = assert(loadScript(radio.templateHome.."pids1.lua"))()
 return {
     read           = 112, -- MSP_PID
     write          = 202, -- MSP_SET_PID
@@ -6,6 +6,6 @@ return {
     reboot         = false,
     eepromWrite    = true,
     minBytes       = 9,
-    text = { },
-    fields = { },
+    text = display.text,
+    fields = display.fields,
 }
