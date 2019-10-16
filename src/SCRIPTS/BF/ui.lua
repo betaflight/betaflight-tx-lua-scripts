@@ -194,7 +194,7 @@ local function drawScreen()
     end
     for i=1,#(Page.text) do
         local f = Page.text[i]
-        local textOptions = (f.to or 0) + globalTextOptions
+        local textOptions = radio.textSize + globalTextOptions
         if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
             lcd.drawText(f.x, f.y - scrollPixelsY, f.t, textOptions)
         end
@@ -202,7 +202,7 @@ local function drawScreen()
     local val = "---"
     for i=1,#(Page.fields) do
         local f = Page.fields[i]
-        local text_options = (f.to or 0) + globalTextOptions
+        local text_options = radio.textSize + globalTextOptions
         local heading_options = text_options
         local value_options = text_options
         if i == currentLine then
