@@ -8,14 +8,11 @@ return {
       { t = "Yaw"     , x =  10,  y = 200 },
    },
    fields = {
-      -- P
       { x = 100, y = 100, min = 0, max = 200, vals = { 1, 3  }, to = MIDSIZE },
       { x = 100, y = 150, min = 0, max = 200, vals = { 7, 8  }, to = MIDSIZE },
       { x = 100, y = 200, min = 0, max = 500, vals = {13,14  }, to = MIDSIZE },
-      -- I
       { x = 180, y = 100, min = 0, max = 200, vals = { 3, 4  }, to = MIDSIZE },
       { x = 180, y = 150, min = 0, max = 200, vals = { 9,10  }, to = MIDSIZE },
-      -- D
       { x = 260, y = 100, min = 0, max = 200, vals = { 5, 6  }, to = MIDSIZE },
       { x = 260, y = 150, min = 0, max = 200, vals = { 11,12 }, to = MIDSIZE },
    },

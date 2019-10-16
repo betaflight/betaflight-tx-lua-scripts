@@ -1,10 +1,4 @@
 return {
-    read              = 90, -- MSP_ADVANCED_CONFIG
-    write             = 91, -- MSP_SET_ADVANCED_CONFIG
-    reboot            = true,
-    eepromWrite       = true,
-    title             = "PWM",
-    minBytes             = 9,
     text= {
         { t = "32K", x = 48, y = 14, to = SMLSIZE },
         { t = "Gyro Rt", x = 29, y = 24, to = SMLSIZE },
@@ -23,33 +17,4 @@ return {
         { x = 148, y = 34, vals = { 5, 6 }, min = 200, max = 32000, to = SMLSIZE },
         { x = 148, y = 44, vals = { 7, 8 }, min = 0, max = 2000, to = SMLSIZE, scale = 100 },
     },
-    calculateGyroRates = function(self, baseRate)
-        self.gyroRates = {}
-        self.fields[2].table = {}
-        for i=1, 32 do
-            self.gyroRates[i] = baseRate/i
-            local fmt = nil
-            self.fields[2].table[i] = string.format("%.2f",baseRate/i)
-        end
-    end,
-    calculatePidRates = function(self, baseRate)
-        self.fields[3].table = {}
-        for i=1, 16 do
-            self.fields[3].table[i] = string.format("%.2f",baseRate/i)
-        end
-    end,
-    updateRateTables = function(self)
-        if self.values[9] == 0 then
-            self.calculateGyroRates(self, 8)
-            self.calculatePidRates(self, 8)
-        elseif self.values[9] == 1 then
-            self.calculateGyroRates(self, 32)
-            self.calculatePidRates(self, 32)
-        end
-    end,
-    updatePidRateTable = function(self)
-        local newRateIdx = self.values[1]
-        local newRate = self.gyroRates[newRateIdx]
-        self.calculatePidRates(self, newRate)
-    end
 }

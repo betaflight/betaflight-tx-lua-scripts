@@ -1,10 +1,4 @@
 return {
-	read           = 44, -- MSP_RX_CONFIG
-	write          = 45, -- MSP_SET_RX_CONFIG
-	title          = "RX",
-	reboot         = false,
-	eepromWrite    = true,
-	minBytes       = 23,
 	text= {
 		{ t = "Stick Min",  x = 36,   y = 68  },
 		{ t = "Stick Mid",  x = 36,   y = 110 },

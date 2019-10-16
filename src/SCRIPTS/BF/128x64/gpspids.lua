@@ -8,14 +8,11 @@ return {
       { t = "Yaw"     , x =   5,  y = 46, to=SMLSIZE },
    },
    fields = {
-      -- P
       { x =  51, y = 26, min = 0, max = 200, vals = { 1,2 }, to=SMLSIZE },
       { x =  51, y = 36, min = 0, max = 200, vals = { 7,8 }, to=SMLSIZE },
       { x =  51, y = 46, min = 0, max = 500, vals = {13,14}, to = SMLSIZE },
-      -- I
       { x =  79, y = 26, min = 0, max = 200, vals = { 3,4 }, to=SMLSIZE },
       { x =  79, y = 36, min = 0, max = 200, vals = { 9,10 }, to=SMLSIZE },
-      -- D
       { x = 107, y = 26, min = 0, max = 200, vals = { 5,6 }, to=SMLSIZE },
       { x = 107, y = 36, min = 0, max = 200, vals = { 11,12 }, to=SMLSIZE },
    },
