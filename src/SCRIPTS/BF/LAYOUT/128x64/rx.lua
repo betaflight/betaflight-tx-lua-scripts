@@ -1,4 +1,6 @@
 return {
+   yMinLimit      = 11,
+   yMaxLimit      = 52,
    text= {
       { t = "Stick Min",  x = 10, y = 20 },
       { t = "Stick Mid",  x = 10, y = 30 },

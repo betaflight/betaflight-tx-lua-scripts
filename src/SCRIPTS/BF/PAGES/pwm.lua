@@ -6,8 +6,6 @@ return {
     eepromWrite       = true,
     title             = "PWM",
     minBytes          = 9,
-    yMinLimit         = display.yMinLimit,
-    yMaxLimit         = display.yMaxLimit,
     text              = display.text,
     fieldLayout       = display.fieldLayout,
     fields            = {

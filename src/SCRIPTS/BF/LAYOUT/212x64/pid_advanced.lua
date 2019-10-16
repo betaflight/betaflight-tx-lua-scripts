@@ -1,6 +1,4 @@
 return {
-    yMinLimit      = 12,
-    yMaxLimit      = 52,
     text = {
         { t = "Acro Trainer",      x = 2,  y = 12,  },
         { t = "Angle Limit",       x = 12, y = 20,  },

@@ -6,8 +6,8 @@ return {
     reboot         = false,
     eepromWrite    = true,
     minBytes       = 9,
-    text = display.text,
-    fieldLayout = display.fieldLayout,
+    text           = display.text,
+    fieldLayout    = display.fieldLayout,
     fields = {
         { min = 0, max = 200, vals = { 1 }, },
         { min = 0, max = 200, vals = { 4 }, },

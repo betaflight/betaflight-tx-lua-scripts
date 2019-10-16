@@ -6,8 +6,6 @@ return {
     reboot          = false,
     eepromWrite     = true,
     minBytes        = 44,
-    yMinLimit       = display.yMinLimit,
-    yMaxLimit       = display.yMaxLimit,
     text            = display.text,
     fieldLayout     = display.fieldLayout,
     fields          = {

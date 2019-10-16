@@ -11,8 +11,6 @@ return {
     prevFreqVal    = 0,
     lastFreqUpdTS  = 0,
     freqModCounter = 0,
-    yMinLimit      = display.yMinLimit,
-    yMaxLimit      = display.yMaxLimit,
     text           = display.text,
     fieldLayout    = display.fieldLayout,
     fields = {

@@ -14,6 +14,8 @@ local supportedRadios =
         SaveBox         = { x=15, y=12, w=100, x_offset=4,  h=30, h_offset=5 },
         NoTelem         = { 30, 55, "No Telemetry", BLINK },
         textSize        = SMLSIZE,
+        yMinLimit       = 11,
+        yMaxLimit       = 52,
     },
     ["212x64"]  = 
     {
@@ -23,6 +25,8 @@ local supportedRadios =
         SaveBox         = { x=40, y=12, w=120, x_offset=4,  h=30, h_offset=5 },
         NoTelem         = { 70, 55, "No Telemetry", BLINK },
         textSize        = SMLSIZE,
+        yMinLimit       = 12,
+        yMaxLimit       = 52,
     },
     ["480x272"] = 
     {
@@ -32,6 +36,8 @@ local supportedRadios =
         SaveBox         = { x=120, y=100, w=180, x_offset=12, h=60, h_offset=12 },
         NoTelem         = {   192,   LCD_H - 28, "No Telemetry", BLINK },
         textSize        = MIDSIZE,
+        yMinLimit       = 35,
+        yMaxLimit       = 215,
     },
     ["320x480"] = 
     {
@@ -41,6 +47,8 @@ local supportedRadios =
         SaveBox         = { x= (LCD_W -200)/2, y=LCD_H/2, w=180, x_offset=12, h=60, h_offset=12 },
         NoTelem         = { LCD_W/2 - 50, LCD_H - 28, "No Telemetry", BLINK },
         textSize        = MIDSIZE,
+        yMinLimit       = 35,
+        yMaxLimit       = 215,
     },
 }
 

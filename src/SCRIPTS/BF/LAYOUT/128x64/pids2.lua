@@ -1,6 +1,4 @@
 return {
-    yMinLimit      = 11,
-    yMaxLimit      = 52,
     text = {
         { t = "Feed",        x = 45,  y = 11, },
         { t = "forward",     x = 37,  y = 18, },

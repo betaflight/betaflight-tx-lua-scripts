@@ -180,8 +180,8 @@ function drawScreenTitle(screen_title)
 end
 
 local function drawScreen()
-    local yMinLim = Page.yMinLimit or 0
-    local yMaxLim = Page.yMaxLimit or LCD_H
+    local yMinLim = radio.yMinLimit or 0
+    local yMaxLim = radio.yMaxLimit or LCD_H
     local currentLineY = Page.fieldLayout[currentLine].y
     local screen_title = Page.title
     drawScreenTitle("Betaflight / "..screen_title)

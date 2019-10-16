@@ -7,8 +7,6 @@ return {
     eepromWrite     = true,
     minBytes        = 46,
     outputBytes     = 46,
-    yMinLimit       = display.yMinLimit,
-    yMaxLimit       = display.yMaxLimit,
     text            = display.text,
     fieldLayout     = display.fieldLayout,
     fields          = {

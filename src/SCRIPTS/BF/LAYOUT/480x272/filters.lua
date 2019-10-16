@@ -1,6 +1,4 @@
 return {
-    yMinLimit         = 35,
-    yMaxLimit         = 215,
     text= {
         { t = "Gyro Lowpass 1 Dynamic",   x = 5,  y = 35 },
         { t = "Min Cutoff",               x = 35, y = 55,  },
