@@ -9,5 +9,16 @@ return {
     yMinLimit       = display.yMinLimit,
     yMaxLimit       = display.yMaxLimit,
     text            = display.text,
-    fields          = display.fields,
+    fieldLayout     = display.fieldLayout,
+    fields          = {
+        { min = 0, max = 2000, vals = { 33, 34 }, },
+        { min = 0, max = 2000, vals = { 35, 36 }, },
+        { min = 0, max = 2000, vals = { 37, 38 }, },
+        { min = 0, max = 100,  vals = { 40 },     },
+        { min = 0, max = 100,  vals = { 41 },     },
+        { min = 0, max = 100,  vals = { 42 },     },
+        { min = 0, max = 100,  vals = { 9 }, scale = 100 },
+        { min = 0, max = 100,  vals = { 43 },     },
+        { min = 0, max = 200,  vals = { 44 },     },
+    },
 }

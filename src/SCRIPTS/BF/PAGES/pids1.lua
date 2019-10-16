@@ -7,5 +7,16 @@ return {
     eepromWrite    = true,
     minBytes       = 9,
     text = display.text,
-    fields = display.fields,
+    fieldLayout = display.fieldLayout,
+    fields = {
+        { min = 0, max = 200, vals = { 1 }, },
+        { min = 0, max = 200, vals = { 4 }, },
+        { min = 0, max = 200, vals = { 7 }, },
+        { min = 0, max = 200, vals = { 2 }, },
+        { min = 0, max = 200, vals = { 5 }, },
+        { min = 0, max = 200, vals = { 8 }, },
+        { min = 0, max = 200, vals = { 3 }, },
+        { min = 0, max = 200, vals = { 6 }, },
+        { min = 0, max = 200, vals = { 9 }, },
+    },
 }

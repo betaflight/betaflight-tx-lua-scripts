@@ -182,10 +182,10 @@ end
 local function drawScreen()
     local yMinLim = Page.yMinLimit or 0
     local yMaxLim = Page.yMaxLimit or LCD_H
-    local currentLineY = Page.fields[currentLine].y
+    local currentLineY = Page.fieldLayout[currentLine].y
     local screen_title = Page.title
     drawScreenTitle("Betaflight / "..screen_title)
-    if currentLineY <= Page.fields[1].y then
+    if currentLineY <= Page.fieldLayout[1].y then
         scrollPixelsY = 0
     elseif currentLineY - scrollPixelsY <= yMinLim then
         scrollPixelsY = currentLineY - yMinLim
@@ -202,6 +202,7 @@ local function drawScreen()
     local val = "---"
     for i=1,#(Page.fields) do
         local f = Page.fields[i]
+        local pos = Page.fieldLayout[i]
         local text_options = radio.textSize + globalTextOptions
         local heading_options = text_options
         local value_options = text_options
@@ -210,18 +211,7 @@ local function drawScreen()
             if currentState == pageStatus.editing then
                 value_options = value_options + BLINK
             end
-        end
-        local spacing = 20
-        if f.t ~= nil then
-            if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
-                lcd.drawText(f.x, f.y - scrollPixelsY, f.t, heading_options)
-            end
-            if f.sp ~= nil then
-                spacing = f.sp
-            end
-        else
-            spacing = 0
-        end
+        end 
         if f.value then
             if f.upd and Page.values then
                 f.upd(Page)
@@ -231,8 +221,8 @@ local function drawScreen()
                 val = f.table[f.value]
             end
         end
-        if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
-            lcd.drawText(f.x + spacing, f.y - scrollPixelsY, val, value_options)
+        if (pos.y - scrollPixelsY) >= yMinLim and (pos.y - scrollPixelsY) <= yMaxLim then
+            lcd.drawText(pos.x, pos.y - scrollPixelsY, val, value_options)
         end
     end
 end

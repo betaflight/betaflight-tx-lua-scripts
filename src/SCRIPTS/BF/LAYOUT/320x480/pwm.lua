@@ -1,25 +1,20 @@
 return {
     text= {
-        { t = "Protocol",    x = 36,  y = 68  },
-        { t = "32K",         x = 36,  y = 110 },
-        { t = "Gyro Rt",     x = 36,  y = 155 },
-        { t = "PID Rt",      x = 36,  y = 200 },
+        { t = "Protocol",    x = 36, y = 68  },
+        { t = "32K",         x = 36, y = 110 },
+        { t = "Gyro Rt",     x = 36, y = 155 },
+        { t = "PID Rt",      x = 36, y = 200 },
         { t = "Unsynced",    x = 36, y = 242 },
         { t = "PWM Rate",    x = 36, y = 284 },
         { t = "Idle Offset", x = 36, y = 326 }
     },
-    fields = {
-        { x = 150, y = 68,  vals = { 4 },    min = 0,   max = 9,
-          table = { [0] = "OFF", "ONESHOT125", "ONESHOT42",
-                          "MULTISHOT","BRUSHED",
-                          "DSHOT150", "DSHOT300", "DSHOT600","DSHOT1200",
-                          "PROSHOT1000" }
-        },
-        { x = 150, y = 110,  vals = { 9 },   min = 0,   max = 1, table = { [0] = "OFF", "ON" }, upd = function(self) self.updateRateTables(self) end },
-        { x = 150, y = 155, vals = { 1 },    min = 1,   max = 32, upd = function(self) self.updatePidRateTable(self) end },
-        { x = 150, y = 200, vals = { 2 },    min = 1,   max = 16, },
-        { x = 150, y = 242, vals = { 3 },    min = 0,   max =  1, table = { [0] = "OFF", "ON" } },
-        { x = 150, y = 284, vals = { 5, 6 }, min = 200, max = 32000, },
-        { x = 150, y = 326, vals = { 7, 8 }, min = 0,   max = 2000, scale = 100,  },
+    fieldLayout = {
+        { x = 150, y = 68,  },
+        { x = 150, y = 110, },
+        { x = 150, y = 155, },
+        { x = 150, y = 200, },
+        { x = 150, y = 242, },
+        { x = 150, y = 284, },
+        { x = 150, y = 326, },
     },
 }

@@ -11,10 +11,18 @@ return {
     prevFreqVal    = 0,
     lastFreqUpdTS  = 0,
     freqModCounter = 0,
-    yMinLimit         = display.yMinLimit,
-    yMaxLimit         = display.yMaxLimit,
-    text              = display.text,
-    fields            = display.fields,
+    yMinLimit      = display.yMinLimit,
+    yMaxLimit      = display.yMaxLimit,
+    text           = display.text,
+    fieldLayout    = display.fieldLayout,
+    fields = {
+        { min=0, max=5, vals = { 2 }, table = { [0]="U", "A", "B", "E", "F", "R" }, upd = function(self) self.handleBandChanUpdate(self) end },
+        { min=1, max=8, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end },
+        { min=1, vals = { 4 }, upd = function(self) self.updatePowerTable(self) end },
+        { min=0, max=1, vals = { 5 }, table = { [0]="OFF", "ON" } },
+        { vals = { 1 }, write = false, ro = true, table = { [1]="RTC6705",[3]="SmartAudio",[4]="Tramp",[255]="None"} },
+        { min = 5000, max = 5999, vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end },
+    },
     freqLookup = {
         { 5865, 5845, 5825, 5805, 5785, 5765, 5745, 5725 }, -- Boscam A
         { 5733, 5752, 5771, 5790, 5809, 5828, 5847, 5866 }, -- Boscam B

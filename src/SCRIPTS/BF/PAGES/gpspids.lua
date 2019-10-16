@@ -10,5 +10,14 @@ return {
     yMinLimit        = display.yMinLimit,
     yMaxLimit        = display.yMaxLimit,
     text             = display.text,
-    fields           = display.fields,
+    fieldLayout      = display.fieldLayout,
+    fields           = {
+        { min = 0, max = 200, vals = { 1,2 },   },
+        { min = 0, max = 200, vals = { 7,8 },   },
+        { min = 0, max = 500, vals = { 13,14 }, },
+        { min = 0, max = 200, vals = { 3,4 },   },
+        { min = 0, max = 200, vals = { 9,10 },  },
+        { min = 0, max = 200, vals = { 5,6 },   },
+        { min = 0, max = 200, vals = { 11,12 }, },
+     },
 }

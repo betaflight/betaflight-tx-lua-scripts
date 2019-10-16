@@ -9,7 +9,16 @@ return {
     yMinLimit         = display.yMinLimit,
     yMaxLimit         = display.yMaxLimit,
     text              = display.text,
-    fields            = display.fields,
+    fieldLayout       = display.fieldLayout,
+    fields            = {
+        { vals = { 9 }, min = 0, max = 1, table = { [0] = "OFF", "ON" }, upd = function(self) self.updateRateTables(self) end },
+        { vals = { 1 }, min = 1, max = 32, upd = function(self) self.updatePidRateTable(self) end },
+        { vals = { 2 }, min = 1, max = 16, },
+        { vals = { 4 }, min = 0, max = 9, table = { [0] = "OFF", "OS125", "OS42", "MSHOT","BRSH", "DS150", "DS300", "DS600","DS1200", "PS1000" } },
+        { vals = { 3 }, min = 0, max = 1, table = { [0] = "OFF", "ON" } },
+        { vals = { 5, 6 }, min = 200, max = 32000, },
+        { vals = { 7, 8 }, min = 0, max = 2000, scale = 100 },
+    },
     calculateGyroRates = function(self, baseRate)
         self.gyroRates = {}
         self.fields[2].table = {}
