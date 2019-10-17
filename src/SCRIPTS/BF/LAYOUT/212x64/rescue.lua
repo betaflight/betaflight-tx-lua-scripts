@@ -1,5 +1,5 @@
 return {
-   text = {
+   labels = {
       { t = "Min Sats.",      x = 30,  y = 16, },
       { t = "Angle",          x = 45,  y = 26, },
       { t = "Initial Alt.",   x = 18,  y = 36, },

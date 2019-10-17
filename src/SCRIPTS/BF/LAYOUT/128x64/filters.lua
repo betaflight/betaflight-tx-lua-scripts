@@ -1,5 +1,5 @@
 return {
-    text= {
+    labels = {
         { t = "Gyro Lowpass 1 Dynamic",   x = 2,  y = 12,  },
         { t = "Min Cutoff",               x = 12, y = 20,  },
         { t = "Max Cutoff",               x = 12, y = 28,  },

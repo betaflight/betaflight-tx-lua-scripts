@@ -11,7 +11,7 @@ return {
     prevFreqVal    = 0,
     lastFreqUpdTS  = 0,
     freqModCounter = 0,
-    text           = display.text,
+    labels         = display.labels,
     fieldLayout    = display.fieldLayout,
     fields = {
         { min=0, max=5, vals = { 2 }, table = { [0]="U", "A", "B", "E", "F", "R" }, upd = function(self) self.handleBandChanUpdate(self) end },

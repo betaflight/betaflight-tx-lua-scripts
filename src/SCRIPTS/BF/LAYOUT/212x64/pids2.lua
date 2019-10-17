@@ -1,5 +1,5 @@
 return {
-    text = {
+    labels = {
         { t = "Feed",        x = 46,  y = 11, },
         { t = "forward",     x = 38,  y = 18, },
         { t = "D",           x = 86,  y = 11, },

@@ -6,7 +6,7 @@ return {
     reboot            = false,
     eepromWrite       = true,
     minBytes          = 16,
-    text              = display.text,
+    labels            = display.labels,
     fieldLayout       = display.fieldLayout,
     fields            = {
         { vals = { 1 },     min = 0,    max = 255, scale = 100, },

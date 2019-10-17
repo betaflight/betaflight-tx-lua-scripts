@@ -1,5 +1,5 @@
 return {
-    text= {
+    labels = {
         { t = "Band",    x = 36,  y = 110 },
         { t = "Channel", x = 36,  y = 155 },
         { t = "Power",   x = 232, y = 110 },

@@ -1,5 +1,5 @@
 return {
-    text = {
+    labels = {
         { t = "RC",         x = 43,  y = 11, },
         { t = "Rate",       x = 38,  y = 18, },
         { t = "Super",      x = 63,  y = 11, },

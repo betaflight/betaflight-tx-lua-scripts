@@ -7,7 +7,7 @@ return {
     title             = "Filters",
     minBytes          = 37,
     outputBytes       = 37,
-    text              = display.text,
+    labels            = display.labels,
     fieldLayout       = display.fieldLayout,
     fields            = {
         { min = 0, max = 1000,   vals = { 30, 31 } },

@@ -1,5 +1,5 @@
 return {
-   text= {
+   labels = {
       { t = "Stick Min",  x = 30,  y = 20 },
       { t = "Stick Mid",  x = 30,  y = 30 },
       { t = "Stick Max",  x = 30,  y = 40 },

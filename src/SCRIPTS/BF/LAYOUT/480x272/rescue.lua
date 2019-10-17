@@ -1,5 +1,5 @@
 return {
-   text = {
+   labels = {
       { t = "Min Sats.",        x =130,  y =  40, },
       { t = "Angle",            x =150,  y =  80, },
       { t = "Initial Altitude", x = 60,  y = 120, },

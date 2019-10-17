@@ -7,7 +7,7 @@ return {
     eepromWrite     = true,
     minBytes        = 46,
     outputBytes     = 46,
-    text            = display.text,
+    labels          = display.labels,
     fieldLayout     = display.fieldLayout,
     fields          = {
         { min = 20,   max = 80,    vals = { 32 } },

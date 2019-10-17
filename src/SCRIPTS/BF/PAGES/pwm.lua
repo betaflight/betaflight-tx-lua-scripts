@@ -6,7 +6,7 @@ return {
     eepromWrite       = true,
     title             = "PWM",
     minBytes          = 9,
-    text              = display.text,
+    labels            = display.labels,
     fieldLayout       = display.fieldLayout,
     fields            = {
         { vals = { 9 }, min = 0, max = 1, table = { [0] = "OFF", "ON" }, upd = function(self) self.updateRateTables(self) end },

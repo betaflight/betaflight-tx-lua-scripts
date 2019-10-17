@@ -1,5 +1,5 @@
 return {
-    text = {
+    labels = {
         { t = "Acro Trainer",      x = 5,  y = 35,  },
         { t = "Angle Limit",       x = 15, y = 55,  },
         { t = "Throttle Boost",    x = 5,  y = 75,  },

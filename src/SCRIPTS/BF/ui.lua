@@ -192,8 +192,8 @@ local function drawScreen()
     elseif currentLineY - scrollPixelsY >= yMaxLim then
         scrollPixelsY = currentLineY - yMaxLim
     end
-    for i=1,#(Page.text) do
-        local f = Page.text[i]
+    for i=1,#(Page.labels) do
+        local f = Page.labels[i]
         local textOptions = radio.textSize + globalTextOptions
         if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
             lcd.drawText(f.x, f.y - scrollPixelsY, f.t, textOptions)
