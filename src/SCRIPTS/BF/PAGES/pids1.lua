@@ -8,7 +8,7 @@ return {
     minBytes       = 9,
     labels         = display.labels,
     fieldLayout    = display.fieldLayout,
-    fields = {
+    fields         = {
         { min = 0, max = 200, vals = { 1 }, },
         { min = 0, max = 200, vals = { 4 }, },
         { min = 0, max = 200, vals = { 7 }, },

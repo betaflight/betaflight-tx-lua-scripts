@@ -8,7 +8,7 @@ return {
         { t = "PWM", x = 58, y = 34,    },
         { t = "Idle", x = 58, y = 44,   }
     },
-    fields = {
+    fieldLayout = {
         { x = 32, y = 14, },
         { x = 32, y = 24, },
         { x = 32, y = 34, },

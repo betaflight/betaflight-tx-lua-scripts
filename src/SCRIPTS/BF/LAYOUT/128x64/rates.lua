@@ -18,7 +18,7 @@ return {
         { t = "Rate",       x = 20, y = 108, },
         { t = "Breakpoint", x = 20, y = 116, },
     },
-    fields = {
+    fieldLayout = {
         { x = 39, y = 26, },
         { x = 39, y = 36, },
         { x = 39, y = 46, },
