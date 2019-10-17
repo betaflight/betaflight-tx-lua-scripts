@@ -362,14 +362,12 @@ function run_ui(event)
     end
     local nextPage = currentPage
     while Page == nil do
-    Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[currentPage].script))()
+        Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[currentPage].script))()
         if Page.requiredVersion and apiVersion > 0 and Page.requiredVersion > apiVersion then
             incPage(1)
-
             if currentPage == nextPage then
                 lcd.clear()
                 lcd.drawText(radio.NoTelem[1], radio.NoTelem[2], "No Pages! API: " .. apiVersion, radio.NoTelem[4])
-
                 return 1
             end
         end
@@ -405,26 +403,32 @@ function run_ui(event)
             incMainMenu(-1)
         end
         lcd.clear()
-        lcd.drawScreenTitle("Betaflight Config", 0, 0)
+        drawScreenTitle("Betaflight Config", 0, 0)
+        local yMinLim = radio.yMinLimit
+        local yMaxLim = radio.yMaxLimit
+        local lineSpacing = 10
+        if radio.resolution == lcdResolution.high then
+            lineSpacing = 25
+        end
         for i=1, #PageFiles do
-            local yMinLim = 10
-            local yMaxLim = LCD_H - 8
-            local currentLineY = (menuLine-1)*8 + yMinLim
-            if currentLineY <= yMaxLim then
-                scrollPixelsY = 0
-            elseif currentLineY - scrollPixelsY <= yMinLim then
-                scrollPixelsY = currentLineY - yMinLim*2
-            elseif currentLineY - scrollPixelsY >= yMaxLim then
-                scrollPixelsY = currentLineY - yMaxLim + 6
-            end
-            local attr = (menuLine == i and INVERS or 0)
-            if event == EVT_VIRTUAL_ENTER and attr == INVERS then
-                Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[i].script))()
-                currentPage = i
-                currentState = pageStatus.display   
-            end
-            if ((i-1)*8 + yMinLim - scrollPixelsY) >= yMinLim and ((i-1)*8 + yMinLim - scrollPixelsY) <= yMaxLim then
-                lcd.drawText(6, (i-1)*8 + yMinLim - scrollPixelsY, PageFiles[i].title, attr)
+            if not Page.requiredVersion or (apiVersion > 0 and Page.requiredVersion < apiVersion) then
+                local currentLineY = (menuLine-1)*lineSpacing + yMinLim
+                if currentLineY <= yMaxLim then
+                    scrollPixelsY = 0
+                elseif currentLineY - scrollPixelsY <= yMinLim then
+                    scrollPixelsY = currentLineY - yMinLim
+                elseif currentLineY - scrollPixelsY >= yMaxLim then
+                    scrollPixelsY = currentLineY - yMaxLim
+                end
+                local attr = (menuLine == i and INVERS or 0)
+                if event == EVT_VIRTUAL_ENTER and attr == INVERS then
+                    Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[i].script))()
+                    currentPage = i
+                    currentState = pageStatus.display
+                end
+                if ((i-1)*lineSpacing + yMinLim - scrollPixelsY) >= yMinLim and ((i-1)*lineSpacing + yMinLim - scrollPixelsY) <= yMaxLim then
+                    lcd.drawText(6, (i-1)*lineSpacing + yMinLim - scrollPixelsY, PageFiles[i].title, attr)
+                end
             end
         end
     end
