@@ -1,0 +1,25 @@
+return {
+   labels = {
+      { t = "Min Sats.",      x = 30,  y = 16, },
+      { t = "Angle",          x = 45,  y = 26, },
+      { t = "Initial Alt.",   x = 18,  y = 36, },
+      { t = "Descent Dist.",  x = 10,  y = 46, },
+      { t = "Ground Speed",   x = 10,  y = 56, },
+      { t = "Sanity Ch.",     x = 125, y = 16, },
+      { t = "Throttle",       x = 125, y = 26, },
+      { t = "Min",            x = 128, y = 36, },
+      { t = "Hover",          x = 120, y = 46, },
+      { t = "Max",            x = 128, y = 56, },
+   },
+   fieldLayout = {
+      { x = 75, y = 16,  },
+      { x = 75, y = 26,  },
+      { x = 75, y = 36,  },
+      { x = 75, y = 46,  },
+      { x = 75, y = 56,  },
+      { x = 180, y = 16, },
+      { x = 150, y = 36, },
+      { x = 150, y = 46, },
+      { x = 150, y = 56, },
+   },
+}

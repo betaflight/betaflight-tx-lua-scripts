@@ -180,21 +180,21 @@ function drawScreenTitle(screen_title)
 end
 
 local function drawScreen()
-    local yMinLim = Page.yMinLimit or 0
-    local yMaxLim = Page.yMaxLimit or LCD_H
-    local currentLineY = Page.fields[currentLine].y
+    local yMinLim = radio.yMinLimit or 0
+    local yMaxLim = radio.yMaxLimit or LCD_H
+    local currentLineY = Page.fieldLayout[currentLine].y
     local screen_title = Page.title
     drawScreenTitle("Betaflight / "..screen_title)
-    if currentLineY <= Page.fields[1].y then
+    if currentLineY <= Page.fieldLayout[1].y then
         scrollPixelsY = 0
     elseif currentLineY - scrollPixelsY <= yMinLim then
         scrollPixelsY = currentLineY - yMinLim
     elseif currentLineY - scrollPixelsY >= yMaxLim then
         scrollPixelsY = currentLineY - yMaxLim
     end
-    for i=1,#(Page.text) do
-        local f = Page.text[i]
-        local textOptions = (f.to or 0) + globalTextOptions
+    for i=1,#(Page.labels) do
+        local f = Page.labels[i]
+        local textOptions = radio.textSize + globalTextOptions
         if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
             lcd.drawText(f.x, f.y - scrollPixelsY, f.t, textOptions)
         end
@@ -202,7 +202,8 @@ local function drawScreen()
     local val = "---"
     for i=1,#(Page.fields) do
         local f = Page.fields[i]
-        local text_options = (f.to or 0) + globalTextOptions
+        local pos = Page.fieldLayout[i]
+        local text_options = radio.textSize + globalTextOptions
         local heading_options = text_options
         local value_options = text_options
         if i == currentLine then
@@ -210,18 +211,7 @@ local function drawScreen()
             if currentState == pageStatus.editing then
                 value_options = value_options + BLINK
             end
-        end
-        local spacing = 20
-        if f.t ~= nil then
-            if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
-                lcd.drawText(f.x, f.y - scrollPixelsY, f.t, heading_options)
-            end
-            if f.sp ~= nil then
-                spacing = f.sp
-            end
-        else
-            spacing = 0
-        end
+        end 
         if f.value then
             if f.upd and Page.values then
                 f.upd(Page)
@@ -231,8 +221,8 @@ local function drawScreen()
                 val = f.table[f.value]
             end
         end
-        if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
-            lcd.drawText(f.x + spacing, f.y - scrollPixelsY, val, value_options)
+        if (pos.y - scrollPixelsY) >= yMinLim and (pos.y - scrollPixelsY) <= yMaxLim then
+            lcd.drawText(pos.x, pos.y - scrollPixelsY, val, value_options)
         end
     end
 end
@@ -266,11 +256,11 @@ local function incValue(inc)
 end
 
 local function drawPopupMenu()
-    local x = MenuBox.x
-    local y = MenuBox.y
-    local w = MenuBox.w
-    local h_line = MenuBox.h_line
-    local h_offset = MenuBox.h_offset
+    local x = radio.MenuBox.x
+    local y = radio.MenuBox.y
+    local w = radio.MenuBox.w
+    local h_line = radio.MenuBox.h_line
+    local h_offset = radio.MenuBox.h_offset
     local h = #(popupMenuList) * h_line + h_offset*2
 
     lcd.drawFilledRectangle(x,y,w,h,backgroundFill)
@@ -282,7 +272,7 @@ local function drawPopupMenu()
         if popupMenuActive == i then
             text_options = text_options + INVERS
         end
-        lcd.drawText(x+MenuBox.x_offset,y+(i-1)*h_line+h_offset,e.t,text_options)
+        lcd.drawText(x+radio.MenuBox.x_offset,y+(i-1)*h_line+h_offset,e.t,text_options)
     end
 end
 
@@ -372,14 +362,12 @@ function run_ui(event)
     end
     local nextPage = currentPage
     while Page == nil do
-    Page = assert(loadScript(radio.templateHome .. PageFiles[currentPage].script))()
+        Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[currentPage].script))()
         if Page.requiredVersion and apiVersion > 0 and Page.requiredVersion > apiVersion then
             incPage(1)
-
             if currentPage == nextPage then
                 lcd.clear()
-                lcd.drawText(NoTelem[1], NoTelem[2], "No Pages! API: " .. apiVersion, NoTelem[4])
-
+                lcd.drawText(radio.NoTelem[1], radio.NoTelem[2], "No Pages! API: " .. apiVersion, radio.NoTelem[4])
                 return 1
             end
         end
@@ -393,17 +381,17 @@ function run_ui(event)
     end
     drawScreen()
     if protocol.rssi() == 0 then
-        lcd.drawText(NoTelem[1],NoTelem[2],NoTelem[3],NoTelem[4])
+        lcd.drawText(radio.NoTelem[1],radio.NoTelem[2],radio.NoTelem[3],radio.NoTelem[4])
     end
     if currentState == pageStatus.popupMenu then
         drawPopupMenu()
     elseif currentState == pageStatus.saving then
-        lcd.drawFilledRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,backgroundFill)
-        lcd.drawRectangle(SaveBox.x,SaveBox.y,SaveBox.w,SaveBox.h,SOLID)
+        lcd.drawFilledRectangle(radio.SaveBox.x,radio.SaveBox.y,radio.SaveBox.w,radio.SaveBox.h,backgroundFill)
+        lcd.drawRectangle(radio.SaveBox.x,radio.SaveBox.y,radio.SaveBox.w,radio.SaveBox.h,SOLID)
         if saveRetries <= 0 then
-            lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
+            lcd.drawText(radio.SaveBox.x+radio.SaveBox.x_offset,radio.SaveBox.y+radio.SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
         else
-            lcd.drawText(SaveBox.x+SaveBox.x_offset,SaveBox.y+SaveBox.h_offset,"Retrying",DBLSIZE + (globalTextOptions))
+            lcd.drawText(radio.SaveBox.x+radio.SaveBox.x_offset,radio.SaveBox.y+radio.SaveBox.h_offset,"Retrying",DBLSIZE + (globalTextOptions))
         end
     end
     if currentState == pageStatus.mainMenu and (not isTelemetryScript) then
@@ -415,26 +403,32 @@ function run_ui(event)
             incMainMenu(-1)
         end
         lcd.clear()
-        lcd.drawScreenTitle("Betaflight Config", 0, 0)
+        drawScreenTitle("Betaflight Config", 0, 0)
+        local yMinLim = radio.yMinLimit
+        local yMaxLim = radio.yMaxLimit
+        local lineSpacing = 10
+        if radio.resolution == lcdResolution.high then
+            lineSpacing = 25
+        end
         for i=1, #PageFiles do
-            local yMinLim = 10
-            local yMaxLim = LCD_H - 8
-            local currentLineY = (menuLine-1)*8 + yMinLim
-            if currentLineY <= yMaxLim then
-                scrollPixelsY = 0
-            elseif currentLineY - scrollPixelsY <= yMinLim then
-                scrollPixelsY = currentLineY - yMinLim*2
-            elseif currentLineY - scrollPixelsY >= yMaxLim then
-                scrollPixelsY = currentLineY - yMaxLim + 6
-            end
-            local attr = (menuLine == i and INVERS or 0)
-            if event == EVT_VIRTUAL_ENTER and attr == INVERS then
-                Page = assert(loadScript(radio.templateHome .. PageFiles[i].script))()
-                currentPage = i
-                currentState = pageStatus.display   
-            end
-            if ((i-1)*8 + yMinLim - scrollPixelsY) >= yMinLim and ((i-1)*8 + yMinLim - scrollPixelsY) <= yMaxLim then
-                lcd.drawText(6, (i-1)*8 + yMinLim - scrollPixelsY, PageFiles[i].title, attr)
+            if not Page.requiredVersion or (apiVersion > 0 and Page.requiredVersion < apiVersion) then
+                local currentLineY = (menuLine-1)*lineSpacing + yMinLim
+                if currentLineY <= yMaxLim then
+                    scrollPixelsY = 0
+                elseif currentLineY - scrollPixelsY <= yMinLim then
+                    scrollPixelsY = currentLineY - yMinLim
+                elseif currentLineY - scrollPixelsY >= yMaxLim then
+                    scrollPixelsY = currentLineY - yMaxLim
+                end
+                local attr = (menuLine == i and INVERS or 0)
+                if event == EVT_VIRTUAL_ENTER and attr == INVERS then
+                    Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[i].script))()
+                    currentPage = i
+                    currentState = pageStatus.display
+                end
+                if ((i-1)*lineSpacing + yMinLim - scrollPixelsY) >= yMinLim and ((i-1)*lineSpacing + yMinLim - scrollPixelsY) <= yMaxLim then
+                    lcd.drawText(6, (i-1)*lineSpacing + yMinLim - scrollPixelsY, PageFiles[i].title, attr)
+                end
             end
         end
     end

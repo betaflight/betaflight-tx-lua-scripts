@@ -1,15 +1,14 @@
 SCRIPT_HOME = "/SCRIPTS/BF"
 
 apiVersion = 0
+isTelemetryScript = true
 
 protocol = assert(loadScript(SCRIPT_HOME.."/protocols.lua"))()
 radio = assert(loadScript(SCRIPT_HOME.."/radios.lua"))()
 
-assert(loadScript(radio.preLoad))()
+assert(loadScript(SCRIPT_HOME.."/pages.lua"))()
 assert(loadScript(protocol.transport))()
 assert(loadScript(SCRIPT_HOME.."/MSP/common.lua"))()
-
-isTelemetryScript = true
 
 local run_ui = assert(loadScript(SCRIPT_HOME.."/ui.lua"))()
 local background = assert(loadScript(SCRIPT_HOME.."/background.lua"))()

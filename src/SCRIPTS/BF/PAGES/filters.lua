@@ -1,0 +1,35 @@
+local display = assert(loadScript(radio.templateHome.."filters.lua"))()
+return {
+    read              = 92, -- MSP_FILTER_CONFIG
+    write             = 93, -- MSP_SET_FILTER_CONFIG
+    eepromWrite       = true,
+    reboot            = false,
+    title             = "Filters",
+    minBytes          = 37,
+    outputBytes       = 37,
+    labels            = display.labels,
+    fieldLayout       = display.fieldLayout,
+    fields            = {
+        { min = 0, max = 1000,   vals = { 30, 31 } },
+        { min = 0, max = 1000,   vals = { 32, 33 } },
+        { min = 0, max = 1,      vals = { 25 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
+        { min = 0, max = 16000,  vals = { 21, 22 } },
+        { min = 0, max = 1,      vals = { 25 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
+        { min = 0, max = 16000,  vals = { 23, 24 } },
+        { min = 0, max = 1,      vals = { 26 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
+        { min = 0, max = 16000,  vals = { 6, 7 } },
+        { min = 0, max = 16000,  vals = { 8, 9 } },
+        { min = 0, max = 16000,  vals = { 14, 15 } },
+        { min = 0, max = 16000,  vals = { 16, 17 } },
+        { min = 0, max = 1000,   vals = { 34, 35 } },
+        { min = 0, max = 1000,   vals = { 36, 37 } },
+        { min = 0, max = 1,      vals = { 18 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
+        { min = 0, max = 16000,  vals = { 2, 3 } },
+        { min = 0, max = 1,      vals = { 18 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
+        { min = 0, max = 16000,  vals = { 27, 28 } },
+        { min = 0, max = 1,      vals = { 29 }, table = { [0] = "PT1", [1] = "BIQUAD" } },
+        { min = 0, max = 16000,  vals = { 10, 11 } },
+        { min = 0, max = 16000,  vals = { 12, 13 } },
+        { min = 0, max = 500,    vals = { 4, 5 } },
+    },
+}

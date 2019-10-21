@@ -7,7 +7,7 @@ isTelemetryScript = false
 protocol = assert(loadScript(SCRIPT_HOME.."/protocols.lua"))()
 radio = assert(loadScript(SCRIPT_HOME.."/radios.lua"))()
 
-assert(loadScript(radio.preLoad))()
+assert(loadScript(SCRIPT_HOME.."/pages.lua"))()
 assert(loadScript(protocol.transport))()
 assert(loadScript(SCRIPT_HOME.."/MSP/common.lua"))()
 

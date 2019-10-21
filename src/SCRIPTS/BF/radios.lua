@@ -4,39 +4,52 @@ lcdResolution =
     high = 1
 }
 
-local supportedPlatforms = {
-    x7 =
-    {
-        templateHome    = SCRIPT_HOME.."/X7/",
-        preLoad         = SCRIPT_HOME.."/X7/x7pre.lua",
-        resolution      = lcdResolution.low
-    },
-    x9 =
-    {
-        templateHome    = SCRIPT_HOME.."/X9/",
-        preLoad         = SCRIPT_HOME.."/X9/x9pre.lua",
-        resolution      = lcdResolution.low
-    },
-    horus =
-    {
-        templateHome    = SCRIPT_HOME.."/HORUS/",
-        preLoad         = SCRIPT_HOME.."/HORUS/horuspre.lua",
-        resolution      = lcdResolution.high
-    },
-    nv14 =
-    {
-        templateHome    = SCRIPT_HOME.."/NV14/",
-        preLoad         = SCRIPT_HOME.."/NV14/nv14pre.lua",
-        resolution      = lcdResolution.high
-    },
-}
-
 local supportedRadios =
 {
-    ["128x64"]  = supportedPlatforms.x7,
-    ["212x64"]  = supportedPlatforms.x9,
-    ["480x272"] = supportedPlatforms.horus,
-    ["320x480"] = supportedPlatforms.nv14,
+    ["128x64"]  = 
+    {
+        templateHome    = SCRIPT_HOME.."/LAYOUT/128x64/",
+        resolution      = lcdResolution.low,
+        MenuBox         = { x=15, y=12, w=100, x_offset=36, h_line=8, h_offset=3 },
+        SaveBox         = { x=15, y=12, w=100, x_offset=4,  h=30, h_offset=5 },
+        NoTelem         = { 30, 55, "No Telemetry", BLINK },
+        textSize        = SMLSIZE,
+        yMinLimit       = 11,
+        yMaxLimit       = 52,
+    },
+    ["212x64"]  = 
+    {
+        templateHome    = SCRIPT_HOME.."/LAYOUT/212x64/",
+        resolution      = lcdResolution.low,
+        MenuBox         = { x=40, y=12, w=120, x_offset=36, h_line=8, h_offset=3 },
+        SaveBox         = { x=40, y=12, w=120, x_offset=4,  h=30, h_offset=5 },
+        NoTelem         = { 70, 55, "No Telemetry", BLINK },
+        textSize        = SMLSIZE,
+        yMinLimit       = 12,
+        yMaxLimit       = 52,
+    },
+    ["480x272"] = 
+    {
+        templateHome    = SCRIPT_HOME.."/LAYOUT/480x272/",
+        resolution      = lcdResolution.high,
+        MenuBox         = { x=120, y=100, w=200, x_offset=68, h_line=20, h_offset=6 },
+        SaveBox         = { x=120, y=100, w=180, x_offset=12, h=60, h_offset=12 },
+        NoTelem         = {   192,   LCD_H - 28, "No Telemetry", BLINK },
+        textSize        = MIDSIZE,
+        yMinLimit       = 35,
+        yMaxLimit       = 215,
+    },
+    ["320x480"] = 
+    {
+        templateHome    = SCRIPT_HOME.."/LAYOUT/320x480/",
+        resolution      = lcdResolution.high,
+        MenuBox         = { x= (LCD_W -200)/2, y=LCD_H/2, w=200, x_offset=68, h_line=20, h_offset=6 },
+        SaveBox         = { x= (LCD_W -200)/2, y=LCD_H/2, w=180, x_offset=12, h=60, h_offset=12 },
+        NoTelem         = { LCD_W/2 - 50, LCD_H - 28, "No Telemetry", BLINK },
+        textSize        = MIDSIZE,
+        yMinLimit       = 35,
+        yMaxLimit       = 215,
+    },
 }
 
 local ver, rad, maj, min, rev = getVersion()

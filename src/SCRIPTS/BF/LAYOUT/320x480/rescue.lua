@@ -1,0 +1,25 @@
+return {
+   labels = {
+      { t = "Min Sats.",        x = 10, y =  40 },
+      { t = "Angle",            x = 10, y =  80 },
+      { t = "Initial Altitude", x = 10, y = 120 },
+      { t = "Descent Distance", x = 10, y = 160 },
+      { t = "Ground Speed",     x = 10, y = 200 },
+      { t = "Snty.",            x = 10, y = 240 },
+      { t = "Throttle",         x = 10, y = 280 },
+      { t = "Min",              x = 10, y = 320 },
+      { t = "Hover",            x = 10, y = 360 },
+      { t = "Max",              x = 10, y = 400 },
+   },
+   fieldLayout = {
+      { x = 260, y = 40,  },
+      { x = 260, y = 80,  },
+      { x = 260, y = 120, },
+      { x = 260, y = 160, },
+      { x = 260, y = 200, },
+      { x = 260, y = 240, },
+      { x = 260, y = 320, },
+      { x = 260, y = 360, },
+      { x = 260, y = 400, },
+   },
+}
