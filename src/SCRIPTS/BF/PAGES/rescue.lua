@@ -5,8 +5,8 @@ return {
    title             = "GPS Rescue",
    reboot            = false,
    eepromWrite       = true,
-   minBytes          = 21,
-   requiredVersion   = 1.043,
+   minBytes          = 16,
+   requiredVersion   = 1.041,
    labels            = display.labels,
    fieldLayout       = display.fieldLayout,
    fields            = {
