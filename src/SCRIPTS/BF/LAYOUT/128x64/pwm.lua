@@ -1,12 +1,12 @@
 return {
     labels = {
-        { t = "32K", x = 10, y = 14,    },
-        { t = "Gyro", x = 10, y = 24,   },
-        { t = "PID", x = 10, y = 34,    },
-        { t = "Prot", x = 58, y = 14,   },
+        { t = "32K",    x = 10, y = 14, },
+        { t = "Gyro",   x = 10, y = 24, },
+        { t = "PID",    x = 10, y = 34, },
+        { t = "Prot",   x = 58, y = 14, },
         { t = "Unsync", x = 58, y = 24, },
-        { t = "PWM", x = 58, y = 34,    },
-        { t = "Idle", x = 58, y = 44,   }
+        { t = "PWM",    x = 58, y = 34, },
+        { t = "Idle",   x = 58, y = 44, }
     },
     fieldLayout = {
         { x = 32, y = 14, },
