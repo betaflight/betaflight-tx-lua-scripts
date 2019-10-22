@@ -444,8 +444,10 @@ function run_ui(event)
         end
     end
     if stopDisplay and (not isTelemetryScript) then
+        currentLine = 1
         currentState = pageStatus.mainMenu
         stopDisplay = false
+        collectgarbage()
     end
     processMspReply(mspPollReply())
     return 0
