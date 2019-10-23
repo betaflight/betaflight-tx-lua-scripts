@@ -14,6 +14,7 @@ local uiMsp =
 }
 
 local menuLine = 1
+local pageCount = 1
 local currentState = pageStatus.mainMenu
 local requestTimeout = 80 -- 800ms request timeout
 local currentPage = 1
@@ -36,6 +37,15 @@ local backgroundFill = TEXT_BGCOLOR or ERASE
 local foregroundColor = LINE_COLOR or SOLID
 
 local globalTextOptions = TEXT_COLOR or 0
+
+local function getPageCount()
+    pageCount = 0
+    for i=1,#(PageFiles) do
+        if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion < apiVersion) then
+            pageCount = pageCount + 1
+        end
+    end
+end
 
 local function saveSettings(new)
     if Page.values then
@@ -155,7 +165,7 @@ local function incLine(inc)
 end
 
 local function incMainMenu(inc)
-    menuLine = clipValue(menuLine + inc, 1, #(PageFiles))
+    menuLine = clipValue(menuLine + inc, 1, pageCount)
 end
 
 local function incPopupMenu(inc)
@@ -277,6 +287,7 @@ local function drawPopupMenu()
 end
 
 function run_ui(event)
+    getPageCount()
     local now = getTime()
     -- if lastRunTS old than 500ms
     if lastRunTS + 50 < now then
@@ -411,8 +422,8 @@ function run_ui(event)
             lineSpacing = 25
         end
         for i=1, #PageFiles do
-            if not Page.requiredVersion or (apiVersion > 0 and Page.requiredVersion < apiVersion) then
-                local currentLineY = (menuLine-1)*lineSpacing + yMinLim
+            if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion < apiVersion) then
+                local currentLineY = (menuLine-1)*lineSpacing + yMinLim + 1
                 if currentLineY <= yMaxLim then
                     scrollPixelsY = 0
                 elseif currentLineY - scrollPixelsY <= yMinLim then
@@ -433,8 +444,10 @@ function run_ui(event)
         end
     end
     if stopDisplay and (not isTelemetryScript) then
+        currentLine = 1
         currentState = pageStatus.mainMenu
         stopDisplay = false
+        collectgarbage()
     end
     processMspReply(mspPollReply())
     return 0
