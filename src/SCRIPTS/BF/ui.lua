@@ -389,7 +389,9 @@ function run_ui(event)
     if TEXT_BGCOLOR then
         lcd.drawFilledRectangle(0, 0, LCD_W, LCD_H, TEXT_BGCOLOR)
     end
-    drawScreen()
+    if currentState ~= pageStatus.mainMenu then
+        drawScreen()
+    end
     if protocol.rssi() == 0 then
         lcd.drawText(radio.NoTelem[1],radio.NoTelem[2],radio.NoTelem[3],radio.NoTelem[4])
     end
