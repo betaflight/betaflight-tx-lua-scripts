@@ -424,8 +424,8 @@ function run_ui(event)
         end
         for i=1, #PageFiles do
             if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion < apiVersion) then
-                local currentLineY = (menuLine-1)*lineSpacing + yMinLim + 1
-                if currentLineY <= yMaxLim then
+                local currentLineY = (menuLine-1)*lineSpacing + yMinLim
+                if currentLineY <= yMinLim then
                     scrollPixelsY = 0
                 elseif currentLineY - scrollPixelsY <= yMinLim then
                     scrollPixelsY = currentLineY - yMinLim
