@@ -6,7 +6,7 @@
 
 ## How to download the scripts
 
-Please visit the [releases page](https://github.com/betaflight/Sbetaflight-tx-lua-scripts/releases) to download a zip file containing latest version.
+Please visit the [releases page](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) to download a zip file containing latest version.
 
 ## Firmware Considerations
 
