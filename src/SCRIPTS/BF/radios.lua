@@ -14,7 +14,7 @@ local supportedRadios =
         SaveBox         = { x=15, y=12, w=100, x_offset=4,  h=30, h_offset=5 },
         NoTelem         = { 30, 55, "No Telemetry", BLINK },
         textSize        = SMLSIZE,
-        yMinLimit       = 11,
+        yMinLimit       = 12,
         yMaxLimit       = 52,
     },
     ["212x64"]  = 

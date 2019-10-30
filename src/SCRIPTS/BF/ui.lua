@@ -389,7 +389,9 @@ function run_ui(event)
     if TEXT_BGCOLOR then
         lcd.drawFilledRectangle(0, 0, LCD_W, LCD_H, TEXT_BGCOLOR)
     end
-    drawScreen()
+    if currentState ~= pageStatus.mainMenu then
+        drawScreen()
+    end
     if protocol.rssi() == 0 then
         lcd.drawText(radio.NoTelem[1],radio.NoTelem[2],radio.NoTelem[3],radio.NoTelem[4])
     end
@@ -422,8 +424,8 @@ function run_ui(event)
         end
         for i=1, #PageFiles do
             if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion < apiVersion) then
-                local currentLineY = (menuLine-1)*lineSpacing + yMinLim + 1
-                if currentLineY <= yMaxLim then
+                local currentLineY = (menuLine-1)*lineSpacing + yMinLim
+                if currentLineY <= yMinLim then
                     scrollPixelsY = 0
                 elseif currentLineY - scrollPixelsY <= yMinLim then
                     scrollPixelsY = currentLineY - yMinLim
