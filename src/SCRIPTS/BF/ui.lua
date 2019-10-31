@@ -29,7 +29,8 @@ local popupMenuActive = false
 local lastRunTS = 0
 local killEnterBreak = 0
 local stopDisplay = true
-local scrollPixelsY = 0
+local pageScrollY = 0
+local mainMenuScrollY = 0
 
 local Page = nil
 
@@ -197,17 +198,17 @@ local function drawScreen()
     local screen_title = Page.title
     drawScreenTitle("Betaflight / "..screen_title)
     if currentLineY <= Page.fieldLayout[1].y then
-        scrollPixelsY = 0
-    elseif currentLineY - scrollPixelsY <= yMinLim then
-        scrollPixelsY = currentLineY - yMinLim
-    elseif currentLineY - scrollPixelsY >= yMaxLim then
-        scrollPixelsY = currentLineY - yMaxLim
+        pageScrollY = 0
+    elseif currentLineY - pageScrollY <= yMinLim then
+        pageScrollY = currentLineY - yMinLim
+    elseif currentLineY - pageScrollY >= yMaxLim then
+        pageScrollY = currentLineY - yMaxLim
     end
     for i=1,#(Page.labels) do
         local f = Page.labels[i]
         local textOptions = radio.textSize + globalTextOptions
-        if (f.y - scrollPixelsY) >= yMinLim and (f.y - scrollPixelsY) <= yMaxLim then
-            lcd.drawText(f.x, f.y - scrollPixelsY, f.t, textOptions)
+        if (f.y - pageScrollY) >= yMinLim and (f.y - pageScrollY) <= yMaxLim then
+            lcd.drawText(f.x, f.y - pageScrollY, f.t, textOptions)
         end
     end
     local val = "---"
@@ -232,8 +233,8 @@ local function drawScreen()
                 val = f.table[f.value]
             end
         end
-        if (pos.y - scrollPixelsY) >= yMinLim and (pos.y - scrollPixelsY) <= yMaxLim then
-            lcd.drawText(pos.x, pos.y - scrollPixelsY, val, value_options)
+        if (pos.y - pageScrollY) >= yMinLim and (pos.y - pageScrollY) <= yMaxLim then
+            lcd.drawText(pos.x, pos.y - pageScrollY, val, value_options)
         end
     end
 end
@@ -427,11 +428,11 @@ function run_ui(event)
             if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion < apiVersion) then
                 local currentLineY = (menuLine-1)*lineSpacing + yMinLim
                 if currentLineY <= yMinLim then
-                    scrollPixelsY = 0
-                elseif currentLineY - scrollPixelsY <= yMinLim then
-                    scrollPixelsY = currentLineY - yMinLim
-                elseif currentLineY - scrollPixelsY >= yMaxLim then
-                    scrollPixelsY = currentLineY - yMaxLim
+                    mainMenuScrollY = 0
+                elseif currentLineY - mainMenuScrollY <= yMinLim then
+                    mainMenuScrollY = currentLineY - yMinLim
+                elseif currentLineY - mainMenuScrollY >= yMaxLim then
+                    mainMenuScrollY = currentLineY - yMaxLim
                 end
                 local attr = (menuLine == i and INVERS or 0)
                 if event == EVT_VIRTUAL_ENTER and attr == INVERS then
@@ -439,8 +440,8 @@ function run_ui(event)
                     currentPage = i
                     currentState = pageStatus.display
                 end
-                if ((i-1)*lineSpacing + yMinLim - scrollPixelsY) >= yMinLim and ((i-1)*lineSpacing + yMinLim - scrollPixelsY) <= yMaxLim then
-                    lcd.drawText(6, (i-1)*lineSpacing + yMinLim - scrollPixelsY, PageFiles[i].title, attr)
+                if ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) >= yMinLim and ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) <= yMaxLim then
+                    lcd.drawText(6, (i-1)*lineSpacing + yMinLim - mainMenuScrollY, PageFiles[i].title, attr)
                 end
             end
         end
