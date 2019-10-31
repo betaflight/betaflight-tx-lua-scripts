@@ -74,6 +74,7 @@ local function invalidatePages()
     Page = nil
     currentState = pageStatus.display
     saveTS = 0
+    collectgarbage()
 end
 
 local function rebootFc()
@@ -434,7 +435,7 @@ function run_ui(event)
                 end
                 local attr = (menuLine == i and INVERS or 0)
                 if event == EVT_VIRTUAL_ENTER and attr == INVERS then
-                    Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[i].script))()
+                    invalidatePages()
                     currentPage = i
                     currentState = pageStatus.display
                 end
