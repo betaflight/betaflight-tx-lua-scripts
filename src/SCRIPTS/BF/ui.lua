@@ -105,6 +105,9 @@ local function processMspReply(cmd,rx_buf)
     if cmd == nil or rx_buf == nil then
         return
     end
+    if Page == nil then
+        return
+    end
     if cmd == Page.write then
         if Page.eepromWrite then
             eepromWrite()
@@ -349,10 +352,12 @@ function run_ui(event)
         elseif event == EVT_VIRTUAL_NEXT or event == EVT_VIRTUAL_NEXT_REPT then
             incLine(1)
         elseif event == EVT_VIRTUAL_ENTER then
-            local field = Page.fields[currentLine]
-            local idx = field.i or currentLine
-            if Page.values and Page.values[idx] and (field.ro ~= true) then
-                currentState = pageStatus.editing
+            if Page then
+                local field = Page.fields[currentLine]
+                local idx = field.i or currentLine
+                if Page.values and Page.values[idx] and (field.ro ~= true) then
+                    currentState = pageStatus.editing
+                end
             end
         elseif event == EVT_VIRTUAL_EXIT then
             if isTelemetryScript then 
