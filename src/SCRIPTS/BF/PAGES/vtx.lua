@@ -1,10 +1,13 @@
 local display = assert(loadScript(radio.templateHome.."vtx.lua"))()
-assert(loadScript("/BF/VTX/vtx_defaults.lua"))()
 local md = model.getInfo();
-vtx_tables = loadScript("/BF/VTX/"..md.name..".lua")
-if (vtx_tables ~= nil) then
-    vtx_tables()
+local vtx_tables = loadScript("/BF/VTX/"..md.name..".lua")
+if vtx_tables then
+    vtx_tables = vtx_tables()
+else
+    vtx_tables = assert(loadScript("/BF/VTX/vtx_defaults.lua"))()
 end
+local deviceTable = { [1]="6705", [3]="SA", [4]="Tramp", [255]="None" }
+local pitModeTable = { [0]="OFF", "ON" }
 
 -- Vals                     Fields
 -- 1 Device Type            Band
@@ -29,14 +32,14 @@ return {
     labels         = display.labels,
     fieldLayout    = display.fieldLayout,
     fields = {
-        { min=0, max=#(bandTable), vals = { 2 }, table = bandTable, upd = function(self) self.handleBandChanUpdate(self) end },
-        { min=1, max=frequenciesPerBand, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end },
+        { min=0, max=#(vtx_tables.bandTable), vals = { 2 }, table = vtx_tables.bandTable, upd = function(self) self.handleBandChanUpdate(self) end },
+        { min=1, max=vtx_tables.frequenciesPerBand, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end },
         { min=1, vals = { 4 }, upd = function(self) self.updatePowerTable(self) end },
         { min=0, max=#(pitModeTable), vals = { 5 }, table = pitModeTable },
         { vals = { 1 }, write = false, ro = true, table = deviceTable },
         { min = 5000, max = 5999, vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end },
     },
-    freqLookup = frequencyTable,
+    freqLookup = vtx_tables.frequencyTable,
     postLoad = function (self)
         if (self.values[2] or 0) < 0 or (self.values[3] or 0) == 0 or (self.values[4] or 0) == 0 then
             self.values = {}
@@ -180,9 +183,9 @@ return {
     end,
     updatePowerTable = function(self)
         if self.values and not self.fields[3].table then
-            if powerTable then
-                self.fields[3].table = powerTable
-                self.fields[3].max = #(powerTable)
+            if vtx_tables.powerTable then
+                self.fields[3].table = vtx_tables.powerTable
+                self.fields[3].max = #(vtx_tables.powerTable)
             else
                 if self.values[1] == 1 then          -- RTC6705
                     self.fields[3].table = { 25, 200 }
