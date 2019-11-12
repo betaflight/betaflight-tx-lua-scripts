@@ -1,7 +1,6 @@
-
 -- Protocol version
-MSP_VERSION = bit32.lshift(1,5)
-MSP_STARTFLAG = bit32.lshift(1,4)
+local MSP_VERSION = bit32.lshift(1,5)
+local MSP_STARTFLAG = bit32.lshift(1,4)
 
 -- Sequence number for next MSP packet
 local mspSeq = 0
@@ -16,8 +15,6 @@ local mspTxBuf = {}
 local mspTxIdx = 1
 local mspTxCRC = 0
 local mspTxPk = 0
-
-mspPendingRequest = false
 
 function mspProcessTxQ()
     if (#(mspTxBuf) == 0) then
