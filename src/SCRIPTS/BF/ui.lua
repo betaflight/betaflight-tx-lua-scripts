@@ -23,8 +23,6 @@ local saveTS = 0
 local saveTimeout = 0
 local saveRetries = 0
 local saveMaxRetries = 0
-local pageRequested = false
-local telemetryScreenActive = false
 local popupMenuActive = false
 local lastRunTS = 0
 local killEnterBreak = 0
@@ -115,7 +113,6 @@ local function processMspReply(cmd,rx_buf)
         else
             invalidatePages()
         end
-        pageRequested = false
         return
     end
     if cmd == uiMsp.eepromWrite then
@@ -220,7 +217,6 @@ local function drawScreen()
         local f = Page.fields[i]
         local pos = Page.fieldLayout[i]
         local text_options = radio.textSize + globalTextOptions
-        local heading_options = text_options
         local value_options = text_options
         if i == currentLine then
             value_options = text_options + INVERS
@@ -250,10 +246,6 @@ function clipValue(val,min,max)
         val = max
     end
     return val
-end
-
-local function getCurrentField()
-    return Page.fields[currentLine]
 end
 
 local function incValue(inc)
