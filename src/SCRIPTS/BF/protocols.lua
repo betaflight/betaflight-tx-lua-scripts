@@ -26,7 +26,7 @@ local supportedProtocols =
     }
 }
 
-function getProtocol()
+local function getProtocol()
     if supportedProtocols.smartPort.push() then
         return supportedProtocols.smartPort
     elseif supportedProtocols.crsf.push() then

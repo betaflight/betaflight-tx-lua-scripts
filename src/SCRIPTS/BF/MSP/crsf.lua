@@ -1,14 +1,12 @@
-
 -- CRSF Devices
-CRSF_ADDRESS_BETAFLIGHT          = 0xC8
-CRSF_ADDRESS_RADIO_TRANSMITTER   = 0xEA
+local CRSF_ADDRESS_BETAFLIGHT          = 0xC8
+local CRSF_ADDRESS_RADIO_TRANSMITTER   = 0xEA
 -- CRSF Frame Types
-CRSF_FRAMETYPE_MSP_REQ           = 0x7A      -- response request using msp sequence as command
-CRSF_FRAMETYPE_MSP_RESP          = 0x7B      -- reply with 60 byte chunked binary
-CRSF_FRAMETYPE_MSP_WRITE         = 0x7C      -- write with 60 byte chunked binary 
+local CRSF_FRAMETYPE_MSP_REQ           = 0x7A      -- response request using msp sequence as command
+local CRSF_FRAMETYPE_MSP_RESP          = 0x7B      -- reply with 60 byte chunked binary
+local CRSF_FRAMETYPE_MSP_WRITE         = 0x7C      -- write with 60 byte chunked binary 
 
 crsfMspCmd = 0
-crsfMspHeader = {}
 
 protocol.mspSend = function(payload)
     local payloadOut = { CRSF_ADDRESS_BETAFLIGHT, CRSF_ADDRESS_RADIO_TRANSMITTER }

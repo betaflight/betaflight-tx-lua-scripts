@@ -48,10 +48,10 @@ end
 
 local function saveSettings(new)
     if Page.values then
+        local payload = {}
         if Page.preSave then
             payload = Page.preSave(Page)
         else
-            payload = {}
             for i=1,(Page.outputBytes or #Page.values) do
                 payload[i] = Page.values[i]
             end
