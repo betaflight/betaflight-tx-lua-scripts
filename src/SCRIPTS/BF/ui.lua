@@ -25,7 +25,7 @@ local uiState = uiStatus.init
 local pageState = pageStatus.display
 local requestTimeout = 80 -- 800ms request timeout
 local currentPage = 1
-local currentLine = 1
+local currentField = 1
 local saveTS = 0
 local saveTimeout = 0
 local saveRetries = 0
@@ -166,13 +166,13 @@ end
 local function incPage(inc)
     currentPage = incMax(currentPage, inc, #(PageFiles))
     Page = nil
-    currentLine = 1
+    currentField = 1
     menuLine = currentPage
     collectgarbage()
 end
 
 local function incLine(inc)
-    currentLine = clipValue(currentLine + inc, 1, #(Page.fields))
+    currentField = clipValue(currentField + inc, 1, #(Page.fields))
 end
 
 local function incMainMenu(inc)
@@ -203,15 +203,15 @@ end
 local function drawScreen()
     local yMinLim = radio.yMinLimit or 0
     local yMaxLim = radio.yMaxLimit or LCD_H
-    local currentLineY = Page.fieldLayout[currentLine].y
+    local currentFieldY = Page.fieldLayout[currentField].y
     local screen_title = Page.title
     drawScreenTitle("Betaflight / "..screen_title)
-    if currentLineY <= Page.fieldLayout[1].y then
+    if currentFieldY <= Page.fieldLayout[1].y then
         pageScrollY = 0
-    elseif currentLineY - pageScrollY <= yMinLim then
-        pageScrollY = currentLineY - yMinLim
-    elseif currentLineY - pageScrollY >= yMaxLim then
-        pageScrollY = currentLineY - yMaxLim
+    elseif currentFieldY - pageScrollY <= yMinLim then
+        pageScrollY = currentFieldY - yMinLim
+    elseif currentFieldY - pageScrollY >= yMaxLim then
+        pageScrollY = currentFieldY - yMaxLim
     end
     for i=1,#(Page.labels) do
         local f = Page.labels[i]
@@ -226,7 +226,7 @@ local function drawScreen()
         local pos = Page.fieldLayout[i]
         local text_options = radio.textSize + globalTextOptions
         local value_options = text_options
-        if i == currentLine then
+        if i == currentField then
             value_options = text_options + INVERS
             if pageState == pageStatus.editing then
                 value_options = value_options + BLINK
@@ -257,8 +257,8 @@ function clipValue(val,min,max)
 end
 
 local function incValue(inc)
-    local f = Page.fields[currentLine]
-    local idx = f.i or currentLine
+    local f = Page.fields[currentField]
+    local idx = f.i or currentField
     local scale = (f.scale or 1)
     local mult = (f.mult or 1)
     f.value = clipValue(f.value + ((inc*mult)/scale), (f.min/scale) or 0, (f.max/scale) or 255)
@@ -344,13 +344,13 @@ function run_ui(event)
         end
         for i=1, #PageFiles do
             if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion <= apiVersion) then
-                local currentLineY = (menuLine-1)*lineSpacing + yMinLim
-                if currentLineY <= yMinLim then
+                local currentFieldY = (menuLine-1)*lineSpacing + yMinLim
+                if currentFieldY <= yMinLim then
                     mainMenuScrollY = 0
-                elseif currentLineY - mainMenuScrollY <= yMinLim then
-                    mainMenuScrollY = currentLineY - yMinLim
-                elseif currentLineY - mainMenuScrollY >= yMaxLim then
-                    mainMenuScrollY = currentLineY - yMaxLim
+                elseif currentFieldY - mainMenuScrollY <= yMinLim then
+                    mainMenuScrollY = currentFieldY - yMinLim
+                elseif currentFieldY - mainMenuScrollY >= yMaxLim then
+                    mainMenuScrollY = currentFieldY - yMaxLim
                 end
                 local attr = (menuLine == i and INVERS or 0)
                 if event == EVT_VIRTUAL_ENTER and attr == INVERS then
@@ -413,8 +413,8 @@ function run_ui(event)
                 incLine(1)
             elseif event == EVT_VIRTUAL_ENTER then
                 if Page then
-                    local field = Page.fields[currentLine]
-                    local idx = field.i or currentLine
+                    local field = Page.fields[currentField]
+                    local idx = field.i or currentField
                     if Page.values and Page.values[idx] and (field.ro ~= true) then
                         pageState = pageStatus.editing
                     end
@@ -469,7 +469,7 @@ function run_ui(event)
         end
         if stopDisplay and (not isTelemetryScript) then
             invalidatePages()
-            currentLine = 1
+            currentField = 1
             uiState = uiStatus.mainMenu
             stopDisplay = false
         end
