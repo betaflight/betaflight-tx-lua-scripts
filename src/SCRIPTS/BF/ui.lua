@@ -1,7 +1,8 @@
 local uiStatus =
 {
-    mainMenu = 1,
+    init     = 1,
     pages    = 2,
+    mainMenu = 3,
 }
 
 local pageStatus =
@@ -20,7 +21,7 @@ local uiMsp =
 
 local menuLine = 1
 local pageCount = 1
-local uiState = uiStatus.mainMenu
+local uiState = uiStatus.init
 local pageState = pageStatus.display
 local requestTimeout = 80 -- 800ms request timeout
 local currentPage = 1
@@ -37,6 +38,7 @@ local pageScrollY = 0
 local mainMenuScrollY = 0
 
 local Page = nil
+local background = nil
 
 local backgroundFill = TEXT_BGCOLOR or ERASE
 local foregroundColor = LINE_COLOR or SOLID
@@ -298,14 +300,32 @@ function run_ui(event)
         if isTelemetryScript then
             uiState = uiStatus.pages
         else
-            uiState = uiStatus.mainMenu
+            uiState = uiStatus.init
         end
     end
     lastRunTS = now
     if isTelemetryScript then
         uiState = uiStatus.pages
     end
-    if uiState == uiStatus.mainMenu then
+    if uiState == uiStatus.init then
+        local yMinLim = radio.yMinLimit
+        lcd.clear()
+        drawScreenTitle("Betaflight Config", 0, 0)
+        lcd.drawText(6, yMinLim, "Initialising")
+        if apiVersion == 0 then
+            if not background then
+                background = assert(loadScript("/SCRIPTS/BF/background.lua"))()
+                background.init()
+            else
+                background.run_bg()
+            end
+            return 0
+        else
+            background = nil
+            invalidatePages()
+            uiState = uiStatus.mainMenu
+        end
+    elseif uiState == uiStatus.mainMenu then
         getPageCount()
         if event == EVT_VIRTUAL_EXIT then
             return 2
