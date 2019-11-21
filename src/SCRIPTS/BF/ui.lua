@@ -48,7 +48,7 @@ local globalTextOptions = TEXT_COLOR or 0
 local function getPageCount()
     pageCount = 0
     for i=1,#(PageFiles) do
-        if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion < apiVersion) then
+        if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion <= apiVersion) then
             pageCount = pageCount + 1
         end
     end
@@ -343,7 +343,7 @@ function run_ui(event)
             lineSpacing = 25
         end
         for i=1, #PageFiles do
-            if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion < apiVersion) then
+            if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion <= apiVersion) then
                 local currentLineY = (menuLine-1)*lineSpacing + yMinLim
                 if currentLineY <= yMinLim then
                     mainMenuScrollY = 0
