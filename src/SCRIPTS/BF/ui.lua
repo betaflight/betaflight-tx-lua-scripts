@@ -297,16 +297,9 @@ function run_ui(event)
     -- if lastRunTS old than 500ms
     if lastRunTS + 50 < now then
         invalidatePages()
-        if isTelemetryScript then
-            uiState = uiStatus.pages
-        else
-            uiState = uiStatus.init
-        end
+        uiState = uiStatus.init
     end
     lastRunTS = now
-    if isTelemetryScript then
-        uiState = uiStatus.pages
-    end
     if uiState == uiStatus.init then
         local yMinLim = radio.yMinLimit
         lcd.clear()
@@ -323,7 +316,11 @@ function run_ui(event)
         else
             background = nil
             invalidatePages()
-            uiState = uiStatus.mainMenu
+            if isTelemetryScript then
+                uiState = uiStatus.pages
+            else
+                uiState = uiStatus.mainMenu
+            end
         end
     elseif uiState == uiStatus.mainMenu then
         getPageCount()
