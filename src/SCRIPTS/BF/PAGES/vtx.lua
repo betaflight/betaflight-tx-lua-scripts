@@ -1,4 +1,3 @@
-local display = assert(loadScript(radio.templateHome.."vtx.lua"))()
 local md = model.getInfo();
 local vtx_tables = loadScript("/BF/VTX/"..md.name..".lua")
 if vtx_tables then
@@ -8,6 +7,41 @@ else
 end
 local deviceTable = { [1]="6705", [3]="SA", [4]="Tramp", [255]="None" }
 local pitModeTable = { [0]="OFF", "ON" }
+local template = loadScript(radio.templateHome.."vtx.lua")
+if template then
+    template = template()
+else
+    template = assert(loadScript(radio.templateHome.."default_template.lua"))()
+end
+local margin = template.margin
+local indent = template.indent
+local lineSpacing = template.lineSpacing
+local tableSpacing = template.tableSpacing
+local sp = template.listSpacing.field
+local yMinLim = radio.yMinLimit
+local x = margin
+local y = yMinLim - lineSpacing
+local inc = { x = function(val) x = x + val return x end, y = function(val) y = y + val return y end }
+local labels = {}
+local fields = {}
+
+if apiVersion >= 1.036 then
+    labels[#labels + 1] = { t = "Band",      x = x,      y = inc.y(lineSpacing) }
+    fields[#fields + 1] = {                  x = x + sp, y = y, min=0, max=#(vtx_tables.bandTable),       vals = { 2 }, table = vtx_tables.bandTable, upd = function(self) self.handleBandChanUpdate(self) end }
+    labels[#labels + 1] = { t = "Channel",   x = x,      y = inc.y(lineSpacing) }
+    fields[#fields + 1] = {                  x = x + sp, y = y, min=1, max=vtx_tables.frequenciesPerBand, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end }
+    labels[#labels + 1] = { t = "Power",     x = x,      y = inc.y(lineSpacing) }
+    fields[#fields + 1] = {                  x = x + sp, y = y, min=1,                                    vals = { 4 }, upd = function(self) self.updatePowerTable(self) end }
+    labels[#labels + 1] = { t = "Pit Mode",  x = x,      y = inc.y(lineSpacing) }
+    fields[#fields + 1] = {                  x = x + sp, y = y, min=0, max=#(pitModeTable),               vals = { 5 }, table = pitModeTable }
+    labels[#labels + 1] = { t = "Protocol",  x = x,      y = inc.y(lineSpacing) }
+    fields[#fields + 1] = {                  x = x + sp, y = y,                                           vals = { 1 }, write = false, ro = true, table = deviceTable }
+end
+
+if apiVersion >= 1.037 then
+    labels[#labels + 1] = { t = "Frequency", x = x,      y = inc.y(lineSpacing) }
+    fields[#fields + 1] = {                  x = x + sp, y = y, min = 5000, max = 5999,                   vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end }
+end
 
 -- Vals                     Fields
 -- 1 Device Type            Band
@@ -29,16 +63,8 @@ return {
     prevFreqVal    = 0,
     lastFreqUpdTS  = 0,
     freqModCounter = 0,
-    labels         = display.labels,
-    fieldLayout    = display.fieldLayout,
-    fields = {
-        { min=0, max=#(vtx_tables.bandTable), vals = { 2 }, table = vtx_tables.bandTable, upd = function(self) self.handleBandChanUpdate(self) end },
-        { min=1, max=vtx_tables.frequenciesPerBand, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end },
-        { min=1, vals = { 4 }, upd = function(self) self.updatePowerTable(self) end },
-        { min=0, max=#(pitModeTable), vals = { 5 }, table = pitModeTable },
-        { vals = { 1 }, write = false, ro = true, table = deviceTable },
-        { min = 5000, max = 5999, vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end },
-    },
+    labels         = labels,
+    fields         = fields,
     freqLookup = vtx_tables.frequencyTable,
     postLoad = function (self)
         if (self.values[2] or 0) < 0 or (self.values[3] or 0) == 0 or (self.values[4] or 0) == 0 then

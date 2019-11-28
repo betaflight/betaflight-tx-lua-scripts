@@ -19,8 +19,6 @@ local uiMsp =
     eepromWrite = 250
 }
 
-local menuLine = 1
-local pageCount = 1
 local uiState = uiStatus.init
 local pageState = pageStatus.display
 local requestTimeout = 80 -- 800ms request timeout
@@ -36,7 +34,7 @@ local killEnterBreak = 0
 local stopDisplay = false
 local pageScrollY = 0
 local mainMenuScrollY = 0
-
+local PageFiles = nil
 local Page = nil
 local background = nil
 
@@ -44,15 +42,6 @@ local backgroundFill = TEXT_BGCOLOR or ERASE
 local foregroundColor = LINE_COLOR or SOLID
 
 local globalTextOptions = TEXT_COLOR or 0
-
-local function getPageCount()
-    pageCount = 0
-    for i=1,#(PageFiles) do
-        if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion <= apiVersion) then
-            pageCount = pageCount + 1
-        end
-    end
-end
 
 local function saveSettings(new)
     if Page.values then
@@ -167,7 +156,6 @@ local function incPage(inc)
     currentPage = incMax(currentPage, inc, #(PageFiles))
     Page = nil
     currentField = 1
-    menuLine = currentPage
     collectgarbage()
 end
 
@@ -176,7 +164,7 @@ local function incLine(inc)
 end
 
 local function incMainMenu(inc)
-    menuLine = clipValue(menuLine + inc, 1, pageCount)
+    currentPage = clipValue(currentPage + inc, 1, #PageFiles)
 end
 
 local function incPopupMenu(inc)
@@ -203,10 +191,11 @@ end
 local function drawScreen()
     local yMinLim = radio.yMinLimit or 0
     local yMaxLim = radio.yMaxLimit or LCD_H
-    local currentFieldY = Page.fieldLayout[currentField].y
-    local screen_title = Page.title
-    drawScreenTitle("Betaflight / "..screen_title)
-    if currentFieldY <= Page.fieldLayout[1].y then
+    local currentFieldY = Page.fields[currentField].y
+    local screenTitle = Page.title
+    local textOptions = radio.textSize + globalTextOptions
+    drawScreenTitle("Betaflight / "..screenTitle)
+    if currentFieldY <= Page.fields[1].y then
         pageScrollY = 0
     elseif currentFieldY - pageScrollY <= yMinLim then
         pageScrollY = currentFieldY - yMinLim
@@ -215,7 +204,6 @@ local function drawScreen()
     end
     for i=1,#(Page.labels) do
         local f = Page.labels[i]
-        local textOptions = radio.textSize + globalTextOptions
         if (f.y - pageScrollY) >= yMinLim and (f.y - pageScrollY) <= yMaxLim then
             lcd.drawText(f.x, f.y - pageScrollY, f.t, textOptions)
         end
@@ -223,13 +211,11 @@ local function drawScreen()
     local val = "---"
     for i=1,#(Page.fields) do
         local f = Page.fields[i]
-        local pos = Page.fieldLayout[i]
-        local text_options = radio.textSize + globalTextOptions
-        local value_options = text_options
+        local valueOptions = textOptions
         if i == currentField then
-            value_options = text_options + INVERS
+            valueOptions = valueOptions + INVERS
             if pageState == pageStatus.editing then
-                value_options = value_options + BLINK
+                valueOptions = valueOptions + BLINK
             end
         end 
         if f.value then
@@ -241,8 +227,8 @@ local function drawScreen()
                 val = f.table[f.value]
             end
         end
-        if (pos.y - pageScrollY) >= yMinLim and (pos.y - pageScrollY) <= yMaxLim then
-            lcd.drawText(pos.x, pos.y - pageScrollY, val, value_options)
+        if (f.y - pageScrollY) >= yMinLim and (f.y - pageScrollY) <= yMaxLim then
+            lcd.drawText(f.x, f.y - pageScrollY, val, valueOptions)    
         end
     end
 end
@@ -315,6 +301,7 @@ function run_ui(event)
             return 0
         else
             background = nil
+            PageFiles = assert(loadScript("/SCRIPTS/BF/pages.lua"))()
             invalidatePages()
             if isTelemetryScript then
                 uiState = uiStatus.pages
@@ -323,7 +310,6 @@ function run_ui(event)
             end
         end
     elseif uiState == uiStatus.mainMenu then
-        getPageCount()
         if event == EVT_VIRTUAL_EXIT then
             return 2
         elseif event == EVT_VIRTUAL_NEXT then
@@ -340,25 +326,23 @@ function run_ui(event)
             lineSpacing = 25
         end
         for i=1, #PageFiles do
-            if (not PageFiles[i].requiredVersion) or (apiVersion == 0) or (apiVersion > 0 and PageFiles[i].requiredVersion <= apiVersion) then
-                local currentFieldY = (menuLine-1)*lineSpacing + yMinLim
-                if currentFieldY <= yMinLim then
-                    mainMenuScrollY = 0
-                elseif currentFieldY - mainMenuScrollY <= yMinLim then
-                    mainMenuScrollY = currentFieldY - yMinLim
-                elseif currentFieldY - mainMenuScrollY >= yMaxLim then
-                    mainMenuScrollY = currentFieldY - yMaxLim
-                end
-                local attr = (menuLine == i and INVERS or 0)
-                if event == EVT_VIRTUAL_ENTER and attr == INVERS then
-                    invalidatePages()
-                    currentPage = i
-                    pageState = pageStatus.display
-                    uiState = uiStatus.pages
-                end
-                if ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) >= yMinLim and ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) <= yMaxLim then
-                    lcd.drawText(6, (i-1)*lineSpacing + yMinLim - mainMenuScrollY, PageFiles[i].title, attr)
-                end
+            local currentFieldY = (currentPage-1)*lineSpacing + yMinLim
+            if currentFieldY <= yMinLim then
+                mainMenuScrollY = 0
+            elseif currentFieldY - mainMenuScrollY <= yMinLim then
+                mainMenuScrollY = currentFieldY - yMinLim
+            elseif currentFieldY - mainMenuScrollY >= yMaxLim then
+                mainMenuScrollY = currentFieldY - yMaxLim
+            end
+            local attr = (currentPage == i and INVERS or 0)
+            if event == EVT_VIRTUAL_ENTER and attr == INVERS then
+                invalidatePages()
+                currentPage = i
+                pageState = pageStatus.display
+                uiState = uiStatus.pages
+            end
+            if ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) >= yMinLim and ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) <= yMaxLim then
+                lcd.drawText(6, (i-1)*lineSpacing + yMinLim - mainMenuScrollY, PageFiles[i].title, attr)
             end
         end
     elseif uiState == uiStatus.pages then
@@ -433,17 +417,14 @@ function run_ui(event)
                 incValue(-1)
             end
         end
-        local nextPage = currentPage
-        while Page == nil do
-            Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[currentPage].script))()
-            if Page.requiredVersion and apiVersion > 0 and Page.requiredVersion > apiVersion then
-                incPage(1)
-                if currentPage == nextPage then
-                    lcd.clear()
-                    lcd.drawText(radio.NoTelem[1], radio.NoTelem[2], "No Pages! API: " .. apiVersion, radio.NoTelem[4])
-                    return 1
-                end
+        if Page == nil then
+            if #PageFiles == 0 then
+                lcd.clear()
+                lcd.drawText(radio.NoTelem[1], radio.NoTelem[2], "No Pages! API: " .. apiVersion, radio.NoTelem[4])
+                return 1
             end
+            Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[currentPage].script))()
+            collectgarbage()
         end
         if not Page.values and pageState == pageStatus.display then
             requestPage()
