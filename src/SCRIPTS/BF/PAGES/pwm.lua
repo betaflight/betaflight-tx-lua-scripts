@@ -23,9 +23,9 @@ end
 
 if apiVersion >= 1.016 then
     labels[#labels + 1] = { t = "Gyro Update",     x = x,      y = inc.y(lineSpacing)}
-    fields[#fields + 1] = {                        x = x + sp, y = y, min = 1, max = 32, vals = { 1 }, upd = function(self) self.updatePidRateTable(self) end }
+    fields[#fields + 1] = {                        x = x + sp, y = y, min = 1, max = 32, vals = { 1 }, table = {}, upd = function(self) self.updatePidRateTable(self) end }
     labels[#labels + 1] = { t = "PID Loop",        x = x,      y = inc.y(lineSpacing)}
-    fields[#fields + 1] = {                        x = x + sp, y = y, min = 1, max = 16, vals = { 2 }, }
+    fields[#fields + 1] = {                        x = x + sp, y = y, min = 1, max = 16, vals = { 2 }, table = {} }
     labels[#labels + 1] = { t = "Protocol",        x = x,      y = inc.y(lineSpacing) }
     fields[#fields + 1] = {                        x = x + sp, y = y, min = 0, max = 9, vals = { 4 }, table = { [0] = "OFF", "OS125", "OS42", "MSHOT","BRSH", "DS150", "DS300", "DS600","DS1200", "PS1000" } }
     labels[#labels + 1] = { t = "Unsynced PWM",    x = x,      y = inc.y(lineSpacing) }
@@ -48,6 +48,7 @@ return {
     minBytes    = 6,
     labels      = labels,
     fields      = fields,
+    gyroRates   = {},
     getGyroDenomFieldIndex = function(self)
         for i=1,#self.fields do
             if self.fields[i].vals[1] == 1 then
@@ -63,18 +64,14 @@ return {
         end
     end,
     calculateGyroRates = function(self, baseRate)
-        self.gyroRates = {}
         local idx = self.getGyroDenomFieldIndex(self)
-        self.fields[idx].table = {}
         for i=1, 32 do
             self.gyroRates[i] = baseRate/i
-            local fmt = nil
             self.fields[idx].table[i] = string.format("%.2f",baseRate/i)
         end
     end,
     calculatePidRates = function(self, baseRate)
         local idx = self.getPidDenomFieldIndex(self)
-        self.fields[idx].table = {}
         for i=1, 16 do
             self.fields[idx].table[i] = string.format("%.2f",baseRate/i)
         end
