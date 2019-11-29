@@ -44,6 +44,10 @@ if apiVersion >= 1.040 then
     fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 4, vals = { 28 }, table = { [0]="NONE", "RP", "RPY", "RP (inc)", "RPY (inc)" } }
     labels[#labels + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing) }
     fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 1, vals = { 29 }, table = { [0]="Gyro", "Setpoint" } }
+    if apiVersion >= 1.042 then
+        labels[#labels + 1] = { t = "Cutoff",        x = x + indent, y = inc.y(lineSpacing) }
+        fields[#fields + 1] = {                      x = x + sp,     y = y, min = 1, max = 100, vals = { 47 } }
+    end
 end
 
 if apiVersion >= 1.041 then
