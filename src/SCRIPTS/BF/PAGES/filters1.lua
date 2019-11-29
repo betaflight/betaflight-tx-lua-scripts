@@ -1,4 +1,4 @@
-local template = loadScript(radio.templateHome.."filters.lua")
+local template = loadScript(radio.templateHome.."filters1.lua")
 if template then
     template = template()
 else
@@ -115,7 +115,7 @@ return {
     write       = 93, -- MSP_SET_FILTER_CONFIG
     eepromWrite = true,
     reboot      = false,
-    title       = "Filters",
+    title       = "Filters (1/2)",
     minBytes    = 5,
     labels      = labels,
     fields      = fields,

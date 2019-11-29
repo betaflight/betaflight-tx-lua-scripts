@@ -21,7 +21,11 @@ if apiVersion >= 1.016 then
 end
 
 if apiVersion >= 1.016 then
-    PageFiles[#PageFiles + 1] = { title = "Filters", script = "filters.lua" }
+    PageFiles[#PageFiles + 1] = { title = "Filters 1", script = "filters1.lua" }
+end
+
+if apiVersion >= 1.042 then
+    PageFiles[#PageFiles + 1] = { title = "Filters 2", script = "filters2.lua" }
 end
 
 if apiVersion >= 1.016 then
