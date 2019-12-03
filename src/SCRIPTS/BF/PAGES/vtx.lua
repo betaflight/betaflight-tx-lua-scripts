@@ -26,21 +26,15 @@ local labels = {}
 local fields = {}
 
 if apiVersion >= 1.036 then
-    labels[#labels + 1] = { t = "Band",      x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                  x = x + sp, y = y, min=0, max=#(vtx_tables.bandTable),       vals = { 2 }, table = vtx_tables.bandTable, upd = function(self) self.handleBandChanUpdate(self) end }
-    labels[#labels + 1] = { t = "Channel",   x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                  x = x + sp, y = y, min=1, max=vtx_tables.frequenciesPerBand, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end }
-    labels[#labels + 1] = { t = "Power",     x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                  x = x + sp, y = y, min=1,                                    vals = { 4 }, upd = function(self) self.updatePowerTable(self) end }
-    labels[#labels + 1] = { t = "Pit Mode",  x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                  x = x + sp, y = y, min=0, max=#(pitModeTable),               vals = { 5 }, table = pitModeTable }
-    labels[#labels + 1] = { t = "Protocol",  x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                  x = x + sp, y = y,                                           vals = { 1 }, write = false, ro = true, table = deviceTable }
+    fields[#fields + 1] = { t = "Band",      x = x, y = inc.y(lineSpacing), sp = x + sp, min=0, max=#(vtx_tables.bandTable),       vals = { 2 }, table = vtx_tables.bandTable, upd = function(self) self.handleBandChanUpdate(self) end }
+    fields[#fields + 1] = { t = "Channel",   x = x, y = inc.y(lineSpacing), sp = x + sp, min=1, max=vtx_tables.frequenciesPerBand, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end }
+    fields[#fields + 1] = { t = "Power",     x = x, y = inc.y(lineSpacing), sp = x + sp, min=1,                                    vals = { 4 }, upd = function(self) self.updatePowerTable(self) end }
+    fields[#fields + 1] = { t = "Pit Mode",  x = x, y = inc.y(lineSpacing), sp = x + sp, min=0, max=#(pitModeTable),               vals = { 5 }, table = pitModeTable }
+    fields[#fields + 1] = { t = "Protocol",  x = x, y = inc.y(lineSpacing), sp = x + sp,                                           vals = { 1 }, write = false, ro = true, table = deviceTable }
 end
 
 if apiVersion >= 1.037 then
-    labels[#labels + 1] = { t = "Frequency", x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                  x = x + sp, y = y, min = 5000, max = 5999,                   vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end }
+    fields[#fields + 1] = { t = "Frequency", x = x, y = inc.y(lineSpacing), sp = x + sp, min = 5000, max = 5999,                   vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end }
 end
 
 -- Vals                     Fields

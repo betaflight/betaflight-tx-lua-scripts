@@ -17,26 +17,19 @@ local labels = {}
 local fields = {}
 
 if apiVersion >= 1.031 and apiVersion <= 1.040 then
-    labels[#labels + 1] = { t = "32kHz Sampling", x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                       x = x + sp, y = y, min = 0, max = 1, vals = { 9 }, table = { [0] = "OFF", "ON" }, upd = function(self) self.updateRateTables(self) end }
+    fields[#fields + 1] = { t = "32kHz Sampling",  x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 9 }, table = { [0] = "OFF", "ON" }, upd = function(self) self.updateRateTables(self) end }
 end
 
 if apiVersion >= 1.016 then
-    labels[#labels + 1] = { t = "Gyro Update",     x = x,      y = inc.y(lineSpacing)}
-    fields[#fields + 1] = {                        x = x + sp, y = y, min = 1, max = 32, vals = { 1 }, table = {}, upd = function(self) self.updatePidRateTable(self) end }
-    labels[#labels + 1] = { t = "PID Loop",        x = x,      y = inc.y(lineSpacing)}
-    fields[#fields + 1] = {                        x = x + sp, y = y, min = 1, max = 16, vals = { 2 }, table = {} }
-    labels[#labels + 1] = { t = "Protocol",        x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                        x = x + sp, y = y, min = 0, max = 9, vals = { 4 }, table = { [0] = "OFF", "OS125", "OS42", "MSHOT","BRSH", "DS150", "DS300", "DS600","DS1200", "PS1000" } }
-    labels[#labels + 1] = { t = "Unsynced PWM",    x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                        x = x + sp, y = y, min = 0, max = 1, vals = { 3 }, table = { [0] = "OFF", "ON" } }
-    labels[#labels + 1] = { t = "PWM Frequency",   x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                        x = x + sp, y = y, min = 200, max = 32000, vals = { 5, 6 }, }
+    fields[#fields + 1] = { t = "Gyro Update",     x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 32, vals = { 1 }, table = {}, upd = function(self) self.updatePidRateTable(self) end }
+    fields[#fields + 1] = { t = "PID Loop",        x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 16, vals = { 2 }, table = {} }
+    fields[#fields + 1] = { t = "Protocol",        x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 9, vals = { 4 }, table = { [0] = "OFF", "OS125", "OS42", "MSHOT","BRSH", "DS150", "DS300", "DS600","DS1200", "PS1000" } }
+    fields[#fields + 1] = { t = "Unsynced PWM",    x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 3 }, table = { [0] = "OFF", "ON" } }
+    fields[#fields + 1] = { t = "PWM Frequency",   x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 200, max = 32000, vals = { 5, 6 }, }
 end
 
 if apiVersion >= 1.031 then
-    labels[#labels + 1] = { t = "Idle Throttle %", x = x,      y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                        x = x + sp, y = y, min = 0, max = 2000, vals = { 7, 8 }, scale = 100 }
+    fields[#fields + 1] = { t = "Idle Throttle %", x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 2000, vals = { 7, 8 }, scale = 100 }
 end
 
 return {

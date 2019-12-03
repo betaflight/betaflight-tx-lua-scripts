@@ -50,29 +50,24 @@ end
 
 
 if apiVersion >= 1.040 then
-    labels[#labels + 1] = { t = "Feedforward", x = x,      y = inc.y(lineSpacing) }
-    labels[#labels + 1] = { t = "Transition",  x = indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                    x = x + sp, y = y, min = 0, max = 100, vals = { 9 }, scale = 100 }
+    labels[#labels + 1] = { t = "Feedforward", x = x,          y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Transition",  x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 9 }, scale = 100 }
 end
 
 if apiVersion >= 1.041 then
-    labels[#labels + 1] = { t = "D Min",       x = x,      y = inc.y(lineSpacing) }
-    labels[#labels + 1] = { t = "Gain",        x = indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                    x = x + sp, y = y, min = 0, max = 100, vals = { 43 } }
-    labels[#labels + 1] = { t = "Advance",     x = indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                    x = x + sp, y = y, min = 0, max = 200, vals = { 44 } }
+    labels[#labels + 1] = { t = "D Min",       x = x,          y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Gain",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 43 } }
+    fields[#fields + 1] = { t = "Advance",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 44 } }
 end
 
 if apiVersion >= 1.021 and apiVersion <= 1.039 then
-    labels[#labels + 1] = { t = "Dterm Setpoint", x = x,      y = inc.y(lineSpacing) }
-    labels[#labels + 1] = { t = "Weight",         x = indent, y = inc.y(lineSpacing) }
+    labels[#labels + 1] = { t = "Dterm Setpoint", x = x, y = inc.y(lineSpacing) }
     if apiVersion >= 1.021 and apiVersion <= 1.038 then
-        fields[#fields + 1] = {                   x = x + sp, y = y, min = 0, max = 254, vals = { 10 }, scale = 100 }
+        fields[#fields + 1] = { t = "Weight",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 254, vals = { 10 }, scale = 100 }
     else
-        fields[#fields + 1] = {                   x = x + sp, y = y, min = 0, max = 254, vals = { 25 }, scale = 100 }
+        fields[#fields + 1] = { t = "Weight",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 254, vals = { 25 }, scale = 100 }
     end
-    labels[#labels + 1] = { t = "Transition",     x = indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                       x = x + sp, y = y, min = 0, max = 100, vals = { 9 },  scale = 100 }
+    fields[#fields + 1] = { t = "Transition",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 9 },  scale = 100 }
 end
 
 return {

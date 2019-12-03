@@ -18,19 +18,13 @@ local fields = {}
 
 if apiVersion >= 1.042 then
     labels[#labels + 1] = { t = "Gyro RPM Filter",      x = x,          y = inc.y(lineSpacing) }
-    labels[#labels + 1] = { t = "Harmonics",            x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                             x = x + sp,     y = y, min = 0, max = 3, vals = { 44 } }
-    labels[#labels + 1] = { t = "Min Frequency",        x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                             x = x + sp,     y = y, min = 50, max = 200, vals = { 45 } }
+    fields[#fields + 1] = { t = "Harmonics",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 44 } }
+    fields[#fields + 1] = { t = "Min Frequency",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 50, max = 200, vals = { 45 } }
     labels[#labels + 1] = { t = "Dynamic Notch Filter", x = x,          y = inc.y(lineSpacing) }
-    labels[#labels + 1] = { t = "Range",                x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                             x = x + sp,     y = y, min = 0, max = 3, vals = { 38 }, table = { [0]="HIGH", "MEDIUM", "LOW", "AUTO" } }
-    labels[#labels + 1] = { t = "Width %",              x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                             x = x + sp,     y = y, min = 0, max = 20, vals = { 39 } }
-    labels[#labels + 1] = { t = "Q",                    x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                             x = x + sp,     y = y, min = 1, max = 1000, vals = { 40, 41 } }
-    labels[#labels + 1] = { t = "Min Frequency",        x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                             x = x + sp,     y = y, min = 60, max = 1000, vals = { 42, 43 } }
+    fields[#fields + 1] = { t = "Range",                x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 38 }, table = { [0]="HIGH", "MEDIUM", "LOW", "AUTO" } }
+    fields[#fields + 1] = { t = "Width %",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 20, vals = { 39 } }
+    fields[#fields + 1] = { t = "Q",                    x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 1000, vals = { 40, 41 } }
+    fields[#fields + 1] = { t = "Min Frequency",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 60, max = 1000, vals = { 42, 43 } }
 end
 
 return {
