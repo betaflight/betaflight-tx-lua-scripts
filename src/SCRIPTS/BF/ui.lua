@@ -45,13 +45,9 @@ local globalTextOptions = TEXT_COLOR or 0
 
 local function saveSettings(new)
     if Page.values then
-        local payload = {}
+        local payload = Page.values
         if Page.preSave then
             payload = Page.preSave(Page)
-        else
-            for i=1,(Page.outputBytes or #Page.values) do
-                payload[i] = Page.values[i]
-            end
         end
         protocol.mspWrite(Page.write, payload)
         saveTS = getTime()
@@ -123,11 +119,7 @@ local function processMspReply(cmd,rx_buf)
         return
     end
     if #(rx_buf) > 0 then
-        Page.values = {}
-        for i=1,#(rx_buf) do
-            Page.values[i] = rx_buf[i]
-        end
-
+        Page.values = rx_buf
         for i=1,#(Page.fields) do
             if (#(Page.values) or 0) >= Page.minBytes then
                 local f = Page.fields[i]
@@ -152,6 +144,15 @@ local function incMax(val, inc, base)
     return ((val + inc + base - 1) % base) + 1
 end
 
+local function clipValue(val,min,max)
+    if val < min then
+        val = min
+    elseif val > max then
+        val = max
+    end
+    return val
+end
+
 local function incPage(inc)
     currentPage = incMax(currentPage, inc, #(PageFiles))
     Page = nil
@@ -159,7 +160,7 @@ local function incPage(inc)
     collectgarbage()
 end
 
-local function incLine(inc)
+local function incField(inc)
     currentField = clipValue(currentField + inc, 1, #(Page.fields))
 end
 
@@ -178,7 +179,7 @@ local function requestPage()
     end
 end
 
-function drawScreenTitle(screen_title)
+local function drawScreenTitle(screen_title)
     if radio.resolution == lcdResolution.low then
         lcd.drawFilledRectangle(0, 0, LCD_W, 10)
         lcd.drawText(1,1,screen_title,INVERS)
@@ -236,21 +237,12 @@ local function drawScreen()
     end
 end
 
-function clipValue(val,min,max)
-    if val < min then
-        val = min
-    elseif val > max then
-        val = max
-    end
-    return val
-end
-
 local function incValue(inc)
     local f = Page.fields[currentField]
     local idx = f.i or currentField
     local scale = (f.scale or 1)
     local mult = (f.mult or 1)
-    f.value = clipValue(f.value + ((inc*mult)/scale), (f.min/scale) or 0, (f.max/scale) or 255)
+    f.value = clipValue(f.value + ((inc*mult)/scale), ((f.min or 0)/scale), ((f.max or 255)/scale))
     f.value = math.floor((f.value*scale)/mult + 0.5)/(scale/mult)
     for idx=1, #(f.vals) do
         Page.values[f.vals[idx]] = bit32.rshift(math.floor(f.value*scale + 0.5), (idx-1)*8)
@@ -281,7 +273,7 @@ local function drawPopupMenu()
     end
 end
 
-function run_ui(event)
+local function run_ui(event)
     local now = getTime()
     -- if lastRunTS old than 500ms
     if lastRunTS + 50 < now then
@@ -297,10 +289,8 @@ function run_ui(event)
         if apiVersion == 0 then
             if not background then
                 background = assert(loadScript("/SCRIPTS/BF/background.lua"))()
-                background.init()
-            else
-                background.run_bg()
             end
+            background()
             return 0
         else
             background = nil
@@ -319,6 +309,9 @@ function run_ui(event)
             incMainMenu(1)
         elseif event == EVT_VIRTUAL_PREV then
             incMainMenu(-1)
+        elseif event == EVT_VIRTUAL_ENTER then
+            pageState = pageStatus.display
+            uiState = uiStatus.pages
         end
         lcd.clear()
         drawScreenTitle("Betaflight Config", 0, 0)
@@ -328,22 +321,16 @@ function run_ui(event)
         if radio.resolution == lcdResolution.high then
             lineSpacing = 25
         end
+        local currentFieldY = (currentPage-1)*lineSpacing + yMinLim
+        if currentFieldY <= yMinLim then
+            mainMenuScrollY = 0
+        elseif currentFieldY - mainMenuScrollY <= yMinLim then
+            mainMenuScrollY = currentFieldY - yMinLim
+        elseif currentFieldY - mainMenuScrollY >= yMaxLim then
+            mainMenuScrollY = currentFieldY - yMaxLim
+        end
         for i=1, #PageFiles do
-            local currentFieldY = (currentPage-1)*lineSpacing + yMinLim
-            if currentFieldY <= yMinLim then
-                mainMenuScrollY = 0
-            elseif currentFieldY - mainMenuScrollY <= yMinLim then
-                mainMenuScrollY = currentFieldY - yMinLim
-            elseif currentFieldY - mainMenuScrollY >= yMaxLim then
-                mainMenuScrollY = currentFieldY - yMaxLim
-            end
             local attr = (currentPage == i and INVERS or 0)
-            if event == EVT_VIRTUAL_ENTER and attr == INVERS then
-                invalidatePages()
-                currentPage = i
-                pageState = pageStatus.display
-                uiState = uiStatus.pages
-            end
             if ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) >= yMinLim and ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) <= yMaxLim then
                 lcd.drawText(6, (i-1)*lineSpacing + yMinLim - mainMenuScrollY, PageFiles[i].title, attr)
             end
@@ -392,9 +379,9 @@ function run_ui(event)
             elseif (not isTelemetryScript and event == EVT_VIRTUAL_NEXT_PAGE) or (isTelemetryScript and event == EVT_VIRTUAL_MENU) then
                 incPage(1)
             elseif event == EVT_VIRTUAL_PREV or event == EVT_VIRTUAL_PREV_REPT then
-                incLine(-1)
+                incField(-1)
             elseif event == EVT_VIRTUAL_NEXT or event == EVT_VIRTUAL_NEXT_REPT then
-                incLine(1)
+                incField(1)
             elseif event == EVT_VIRTUAL_ENTER then
                 if Page then
                     local field = Page.fields[currentField]
