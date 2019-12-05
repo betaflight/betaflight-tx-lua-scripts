@@ -18,53 +18,40 @@ local fields = {}
 
 if apiVersion >= 1.040 then
     labels[#labels + 1] = { t = "Acro Trainer",      x = x,          y = inc.y(lineSpacing) }
-    labels[#labels + 1] = { t = "Angle Limit",       x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 20, max = 80, vals = { 32 } }
-    labels[#labels + 1] = { t = "Throttle Boost",    x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 100, vals = { 31 } }
-    labels[#labels + 1] = { t = "Absolute Control",  x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 20, vals = { 30 } }
-    labels[#labels + 1] = { t = "I Term Rotation",   x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 1, vals = { 26 }, table = { [0]="OFF", "ON" } }
+    fields[#fields + 1] = { t = "Angle Limit",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 20, max = 80, vals = { 32 } }
+    fields[#fields + 1] = { t = "Throttle Boost",    x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 31 } }
+    fields[#fields + 1] = { t = "Absolute Control",  x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 20, vals = { 30 } }
+    fields[#fields + 1] = { t = "I Term Rotation",   x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 26 }, table = { [0]="OFF", "ON" } }
 end
 
 if apiVersion >= 1.016 then
-    labels[#labels + 1] = { t = "VBAT Compensation", x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 1, vals = { 8 },  table = { [0]="OFF", "ON" } }
+    fields[#fields + 1] = { t = "VBAT Compensation", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 8 },  table = { [0]="OFF", "ON" } }
 end
 
 if apiVersion >= 1.040 and apiVersion <= 1.041 then
-    labels[#labels + 1] = { t = "Smart Feedforward", x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 1, vals = { 27 }, table = { [0] = "OFF", "ON" } } 
+    fields[#fields + 1] = { t = "Smart Feedforward", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 27 }, table = { [0] = "OFF", "ON" } } 
 end
 
 if apiVersion >= 1.040 then
     labels[#labels + 1] = { t = "I Term Relax",      x = x,          y = inc.y(lineSpacing) }
-    labels[#labels + 1] = { t = "Axes",              x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 4, vals = { 28 }, table = { [0]="NONE", "RP", "RPY", "RP (inc)", "RPY (inc)" } }
-    labels[#labels + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 1, vals = { 29 }, table = { [0]="Gyro", "Setpoint" } }
+    fields[#fields + 1] = { t = "Axes",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 4, vals = { 28 }, table = { [0]="NONE", "RP", "RPY", "RP (inc)", "RPY (inc)" } }
+    fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 29 }, table = { [0]="Gyro", "Setpoint" } }
     if apiVersion >= 1.042 then
-        labels[#labels + 1] = { t = "Cutoff",        x = x + indent, y = inc.y(lineSpacing) }
-        fields[#fields + 1] = {                      x = x + sp,     y = y, min = 1, max = 100, vals = { 47 } }
+        fields[#fields + 1] = { t = "Cutoff",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 100, vals = { 47 } }
     end
 end
 
 if apiVersion >= 1.041 then
-    labels[#labels + 1] = { t = "Integrated Yaw",    x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 0, max = 1, vals = { 45 }, table = { [0]="OFF", "ON" } }
+    fields[#fields + 1] = { t = "Integrated Yaw",    x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 45 }, table = { [0]="OFF", "ON" } }
 end
 
 if apiVersion >= 1.036 then
     labels[#labels + 1] = { t = "Anti Gravity",      x = x,          y = inc.y(lineSpacing) }
     if apiVersion >= 1.040 then
-        labels[#labels + 1] = { t = "Mode",          x = x + indent, y = inc.y(lineSpacing) }
-        fields[#fields + 1] = {                      x = x + sp,     y = y, min = 0, max = 1, vals = { 39 }, table = { [0]="Smooth", "Step" } }
+        fields[#fields + 1] = { t = "Mode",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 39 }, table = { [0]="Smooth", "Step" } }
     end
-    labels[#labels + 1] = { t = "Gain",              x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 1000, max = 30000, vals = { 22, 23 }, scale = 1000, mult = 100 }
-    labels[#labels + 1] = { t = "Threshold",         x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                          x = x + sp,     y = y, min = 20,max = 1000, vals = { 20, 21 } }
+    fields[#fields + 1] = { t = "Gain",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 30000, vals = { 22, 23 }, scale = 1000, mult = 100 }
+    fields[#fields + 1] = { t = "Threshold",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 20,max = 1000, vals = { 20, 21 } }
 end
 
 return {

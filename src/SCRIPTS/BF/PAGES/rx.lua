@@ -18,24 +18,18 @@ local fields = {}
 
 if apiVersion >= 1.016 then
     labels[#labels + 1] = { t = "Stick",      x = x,          y = inc.y(lineSpacing) }
-    labels[#labels + 1] = { t = "Low",        x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                   x = x + sp,     y = y, min = 1000, max = 2000, vals = { 6, 7 } }
-    labels[#labels + 1] = { t = "Center",     x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                   x = x + sp,     y = y, min = 1000, max = 2000, vals = { 4, 5 } }
-    labels[#labels + 1] = { t = "High",       x = x + indent, y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                   x = x + sp,     y = y, min = 1000, max = 2000, vals = { 2, 3 } }
+    fields[#fields + 1] = { t = "Low",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 2000, vals = { 6, 7 } }
+    fields[#fields + 1] = { t = "Center",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 2000, vals = { 4, 5 } }
+    fields[#fields + 1] = { t = "High",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 2000, vals = { 2, 3 } }
 end
 
 if apiVersion >= 1.020 then
-    labels[#labels + 1] = { t = "Interp",     x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                   x = x + sp,     y = y, min = 0, max = 3, vals = { 13 }, table={ [0]="Off", "Preset", "Auto", "Manual"} }
-    labels[#labels + 1] = { t = "Interp Int", x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                   x = x + sp,     y = y, min = 1, max = 50, vals = { 14 } }
+    fields[#fields + 1] = { t = "Interp",     x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 13 }, table={ [0]="Off", "Preset", "Auto", "Manual"} }
+    fields[#fields + 1] = { t = "Interp Int", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 50, vals = { 14 } }
 end
 
 if apiVersion >= 1.031 then
-    labels[#labels + 1] = { t = "Cam Angle",  x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = {                   x = x + sp,     y = y, min = 0, max = 90, vals = { 23 } }
+    fields[#fields + 1] = { t = "Cam Angle",  x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 90, vals = { 23 } }
 end
 
 return {

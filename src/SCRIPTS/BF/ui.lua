@@ -228,7 +228,10 @@ local function drawScreen()
             end
         end
         if (f.y - pageScrollY) >= yMinLim and (f.y - pageScrollY) <= yMaxLim then
-            lcd.drawText(f.x, f.y - pageScrollY, val, valueOptions)    
+            if f.t then
+                lcd.drawText(f.x, f.y - pageScrollY, f.t, textOptions)
+            end
+            lcd.drawText(f.sp or f.x, f.y - pageScrollY, val, valueOptions)
         end
     end
 end
