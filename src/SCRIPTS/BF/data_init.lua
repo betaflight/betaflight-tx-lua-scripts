@@ -23,12 +23,10 @@ local function init()
     elseif apiVersionReceived and not timeIsSet then
         -- only send datetime one time after telemetry connection became available
         -- or when connection is restored after e.g. lipo refresh
-
+        local values = {}
         if apiVersion >= 1.041 then
             -- format: seconds after the epoch (32) / milliseconds (16)
             local now = getRtcTime()
-
-            values = {}
 
             for i = 1, 4 do
                 values[i] = bit32.band(now, 0xFF)
@@ -42,7 +40,6 @@ local function init()
             local now = getDateTime()
             local year = now.year;
 
-            values = {}
             values[1] = bit32.band(year, 0xFF)
             year = bit32.rshift(year, 8)
             values[2] = bit32.band(year, 0xFF)
@@ -61,4 +58,4 @@ local function init()
     return apiVersionReceived and timeIsSet
 end
 
-return { init=init }
+return init

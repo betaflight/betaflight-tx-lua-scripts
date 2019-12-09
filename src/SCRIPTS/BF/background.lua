@@ -2,7 +2,7 @@ local INTERVAL          = 50         -- in 1/100th seconds
 
 local MSP_TX_INFO       = 186
 
-local lastRunTS
+local lastRunTS = 0
 local sensorId = -1
 local dataInitialised = false
 local data_init = nil
@@ -21,10 +21,6 @@ local function modelActive(sensorValue)
     return type(sensorValue) == "number" and sensorValue > 0
 end
 
-local function init()
-    lastRunTS = 0
-end
-
 local function run_bg()
     -- run in intervals
     if lastRunTS == 0 or lastRunTS + INTERVAL < getTime() then
@@ -37,7 +33,7 @@ local function run_bg()
                     data_init = assert(loadScript(SCRIPT_HOME .. "/data_init.lua"))()
                 end
 
-                dataInitialised = data_init.init();
+                dataInitialised = data_init();
 
                 if dataInitialised then
                     data_init = nil
@@ -52,7 +48,7 @@ local function run_bg()
                     rssi = 255
                 end
 
-                values = {}
+                local values = {}
                 values[1] = rssi
 
                 protocol.mspWrite(MSP_TX_INFO, values)
@@ -68,4 +64,4 @@ local function run_bg()
     mspProcessTxQ()
 end
 
-return { init=init, run_bg=run_bg }
+return run_bg
