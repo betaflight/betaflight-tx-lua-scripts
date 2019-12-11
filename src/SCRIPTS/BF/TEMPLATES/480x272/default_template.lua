@@ -1,7 +1,7 @@
 return {
-    margin       = 5,
+    margin       = 10,
     indent       = 15,
-    lineSpacing  = 20,
-    listSpacing  = { line = 20, field = 170 },
-    tableSpacing = { row = 25, col = 60, header = 20 },
+    lineSpacing  = 25,
+    listSpacing  = { line = 25, field = 240 },
+    tableSpacing = { row = 35, col = 120, header = 20 },
 }
