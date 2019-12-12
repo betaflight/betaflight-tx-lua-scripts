@@ -16,6 +16,23 @@ local inc = { x = function(val) x = x + val return x end, y = function(val) y = 
 local labels = {}
 local fields = {}
 
+local escProtocols = { [0] = "PWM", "OS125", "OS42", "MSHOT" }
+
+if apiVersion >= 1.020 then
+    escProtocols[#escProtocols + 1] = "BRSH"
+end
+if apiVersion >= 1.031 then
+    escProtocols[#escProtocols + 1] = "DS150"
+    escProtocols[#escProtocols + 1] = "DS300"
+    escProtocols[#escProtocols + 1] = "DS600"
+    if apiVersion < 1.042 then
+        escProtocols[#escProtocols + 1] = "DS1200"
+    end
+    if apiVersion >= 1.036 then
+        escProtocols[#escProtocols + 1] = "PS1000"
+    end
+end
+
 if apiVersion >= 1.031 and apiVersion <= 1.040 then
     fields[#fields + 1] = { t = "32kHz Sampling",  x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 9 }, table = { [0] = "OFF", "ON" }, upd = function(self) self.updateRateTables(self) end }
 end
@@ -23,7 +40,7 @@ end
 if apiVersion >= 1.016 then
     fields[#fields + 1] = { t = "Gyro Update",     x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 32, vals = { 1 }, table = {}, upd = function(self) self.updatePidRateTable(self) end }
     fields[#fields + 1] = { t = "PID Loop",        x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 16, vals = { 2 }, table = {} }
-    fields[#fields + 1] = { t = "Protocol",        x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 9, vals = { 4 }, table = { [0] = "OFF", "OS125", "OS42", "MSHOT","BRSH", "DS150", "DS300", "DS600","DS1200", "PS1000" } }
+    fields[#fields + 1] = { t = "Protocol",        x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = #escProtocols, vals = { 4 }, table = escProtocols }
     fields[#fields + 1] = { t = "Unsynced PWM",    x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 3 }, table = { [0] = "OFF", "ON" } }
     fields[#fields + 1] = { t = "PWM Frequency",   x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 200, max = 32000, vals = { 5, 6 }, }
 end
@@ -70,7 +87,7 @@ return {
         end
     end,
     updateRateTables = function(self)
-        if self.values[9] == 0 then
+        if (self.values[9] or 0) == 0 then
             self.calculateGyroRates(self, 8)
             self.calculatePidRates(self, 8)
         elseif self.values[9] == 1 then
