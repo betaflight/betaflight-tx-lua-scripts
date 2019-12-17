@@ -144,7 +144,7 @@ local function incMax(val, inc, base)
     return ((val + inc + base - 1) % base) + 1
 end
 
-local function clipValue(val,min,max)
+function clipValue(val,min,max)
     if val < min then
         val = min
     elseif val > max then
