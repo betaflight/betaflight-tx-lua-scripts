@@ -144,7 +144,7 @@ local function incMax(val, inc, base)
     return ((val + inc + base - 1) % base) + 1
 end
 
-local function clipValue(val,min,max)
+function clipValue(val,min,max)
     if val < min then
         val = min
     elseif val > max then
@@ -239,7 +239,6 @@ end
 
 local function incValue(inc)
     local f = Page.fields[currentField]
-    local idx = f.i or currentField
     local scale = (f.scale or 1)
     local mult = (f.mult or 1)
     f.value = clipValue(f.value + ((inc*mult)/scale), ((f.min or 0)/scale), ((f.max or 255)/scale))
@@ -384,9 +383,8 @@ local function run_ui(event)
                 incField(1)
             elseif event == EVT_VIRTUAL_ENTER then
                 if Page then
-                    local field = Page.fields[currentField]
-                    local idx = field.i or currentField
-                    if Page.values and Page.values[idx] and (field.ro ~= true) then
+                    local f = Page.fields[currentField]
+                    if Page.values and Page.values[f.vals[#f.vals]] and not f.ro then
                         pageState = pageStatus.editing
                     end
                 end
