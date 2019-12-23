@@ -27,9 +27,9 @@ local supportedProtocols =
 }
 
 local function getProtocol()
-    if supportedProtocols.smartPort.push() then
+    if supportedProtocols.smartPort.push() ~= nil then
         return supportedProtocols.smartPort
-    elseif supportedProtocols.crsf.push() then
+    elseif supportedProtocols.crsf.push() ~= nil then
         return supportedProtocols.crsf
     end
 end
