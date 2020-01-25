@@ -29,9 +29,7 @@ local saveTimeout = 0
 local saveRetries = 0
 local saveMaxRetries = 0
 local popupMenuActive = false
-local lastRunTS = 0
 local killEnterBreak = 0
-local stopDisplay = false
 local pageScrollY = 0
 local mainMenuScrollY = 0
 local PageFiles = nil
@@ -273,13 +271,6 @@ local function drawPopupMenu()
 end
 
 local function run_ui(event)
-    local now = getTime()
-    -- if lastRunTS old than 500ms
-    if lastRunTS + 50 < now then
-        invalidatePages()
-        uiState = uiStatus.init
-    end
-    lastRunTS = now
     if uiState == uiStatus.init then
         local yMinLim = radio.yMinLimit
         lcd.clear()
@@ -295,11 +286,7 @@ local function run_ui(event)
             background = nil
             PageFiles = assert(loadScript("/SCRIPTS/BF/pages.lua"))()
             invalidatePages()
-            if isTelemetryScript then
-                uiState = uiStatus.pages
-            else
-                uiState = uiStatus.mainMenu
-            end
+            uiState = uiStatus.mainMenu
         end
     elseif uiState == uiStatus.mainMenu then
         if event == EVT_VIRTUAL_EXIT then
@@ -336,7 +323,7 @@ local function run_ui(event)
         end
     elseif uiState == uiStatus.pages then
         if (pageState == pageStatus.saving) then
-            if (saveTS + saveTimeout < now) then
+            if (saveTS + saveTimeout < getTime()) then
                 if saveRetries < saveMaxRetries then
                     saveSettings()
                 else
@@ -347,10 +334,7 @@ local function run_ui(event)
             end
         end
         -- navigation
-        if isTelemetryScript and event == EVT_VIRTUAL_MENU_LONG then -- telemetry script
-            popupMenuActive = 1
-            pageState = pageStatus.popupMenu
-        elseif (not isTelemetryScript) and event == EVT_VIRTUAL_ENTER_LONG then -- standalone
+        if event == EVT_VIRTUAL_ENTER_LONG then
             popupMenuActive = 1
             killEnterBreak = 1
             pageState = pageStatus.popupMenu
@@ -372,10 +356,10 @@ local function run_ui(event)
             end
         -- normal page viewing
         elseif pageState <= pageStatus.display then
-            if not isTelemetryScript and event == EVT_VIRTUAL_PREV_PAGE then
+            if event == EVT_VIRTUAL_PREV_PAGE then
                 incPage(-1)
                 killEvents(event) -- X10/T16 issue: pageUp is a long press
-            elseif (not isTelemetryScript and event == EVT_VIRTUAL_NEXT_PAGE) or (isTelemetryScript and event == EVT_VIRTUAL_MENU) then
+            elseif event == EVT_VIRTUAL_NEXT_PAGE then
                 incPage(1)
             elseif event == EVT_VIRTUAL_PREV or event == EVT_VIRTUAL_PREV_REPT then
                 incField(-1)
@@ -389,11 +373,10 @@ local function run_ui(event)
                     end
                 end
             elseif event == EVT_VIRTUAL_EXIT then
-                if isTelemetryScript then 
-                    return protocol.exitFunc();
-                else
-                    stopDisplay = true
-                end
+                invalidatePages()
+                currentField = 1
+                uiState = uiStatus.mainMenu
+                return 0
             end
         -- editing value
         elseif pageState == pageStatus.editing then
@@ -432,12 +415,6 @@ local function run_ui(event)
             else
                 lcd.drawText(radio.SaveBox.x+radio.SaveBox.x_offset,radio.SaveBox.y+radio.SaveBox.h_offset,"Retrying",DBLSIZE + (globalTextOptions))
             end
-        end
-        if stopDisplay and (not isTelemetryScript) then
-            invalidatePages()
-            currentField = 1
-            uiState = uiStatus.mainMenu
-            stopDisplay = false
         end
     end
     -- process send queue
