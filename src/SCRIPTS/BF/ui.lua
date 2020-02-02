@@ -34,7 +34,7 @@ local pageScrollY = 0
 local mainMenuScrollY = 0
 local PageFiles = nil
 local Page = nil
-local background = nil
+local init = nil
 
 local backgroundFill = TEXT_BGCOLOR or ERASE
 local foregroundColor = LINE_COLOR or SOLID
@@ -277,14 +277,14 @@ local function run_ui(event)
         drawScreenTitle("Betaflight Config", 0, 0)
         lcd.drawText(6, yMinLim, "Initialising")
         if apiVersion == 0 then
-            if not background then
-                background = assert(loadScript("/SCRIPTS/BF/background.lua"))()
+            if not init then
+                init = assert(loadScript(SCRIPT_HOME.."/data_init.lua"))()
             end
-            background()
+            init()
             return 0
         else
-            background = nil
-            PageFiles = assert(loadScript("/SCRIPTS/BF/pages.lua"))()
+            init = nil
+            PageFiles = assert(loadScript(SCRIPT_HOME.."/pages.lua"))()
             invalidatePages()
             uiState = uiStatus.mainMenu
         end
