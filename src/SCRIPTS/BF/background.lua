@@ -1,11 +1,8 @@
-local INTERVAL          = 50         -- in 1/100th seconds
-
-local MSP_TX_INFO       = 186
-
-local lastRunTS = 0
 local sensorId = -1
 local dataInitialised = false
 local data_init = nil
+local rssiEnabled = true
+local rssiTask = nil
 
 local function getSensorValue()
     if sensorId == -1 then
@@ -22,46 +19,44 @@ local function modelActive(sensorValue)
 end
 
 local function run_bg()
-    -- run in intervals
-    if lastRunTS == 0 or lastRunTS + INTERVAL < getTime() then
-        local sensorValue = getSensorValue()
-        if modelActive(sensorValue) then
-            -- Send data when the telemetry connection is available
-            -- assuming when sensor value higher than 0 there is an telemetry connection
-            if not dataInitialised then
-                if data_init == nil then
-                    data_init = assert(loadScript(SCRIPT_HOME .. "/data_init.lua"))()
-                end
-
-                dataInitialised = data_init();
-
-                if dataInitialised then
-                    data_init = nil
-
-                    collectgarbage()
-                end
-            else
-                local rssi, alarm_low, alarm_crit = getRSSI()
-                -- Scale the [0, 85] (empirical) RSSI values to [0, 255]
-                rssi = rssi * 3
-                if rssi > 255 then
-                    rssi = 255
-                end
-
-                local values = {}
-                values[1] = rssi
-
-                protocol.mspWrite(MSP_TX_INFO, values)
+    local sensorValue = getSensorValue()
+    if modelActive(sensorValue) then
+        -- Send data when the telemetry connection is available
+        -- assuming when sensor value higher than 0 there is an telemetry connection
+        if not dataInitialised then
+            if not data_init then
+                data_init = assert(loadScript(SCRIPT_HOME .. "/data_init.lua"))()
             end
-        else
-            dataInitialised = false
+
+            dataInitialised = data_init()
+
+            if dataInitialised then
+                data_init = nil
+
+                collectgarbage()
+            end
+        elseif rssiEnabled and apiVersion >= 1.037 then
+            if not rssiTask then
+                rssiTask = assert(loadScript(SCRIPT_HOME.."/rssi.lua"))()
+            end
+
+            rssiEnabled = rssiTask()
+
+            if not rssiEnabled then
+                rssiTask = nil
+
+                collectgarbage()
+            end
         end
-
-        lastRunTS = getTime()
+    else
+        dataInitialised = false
+        rssiEnabled = true
+        if data_init or rssiTask then
+            data_init = nil
+            rssiTask = nil
+            collectgarbage()
+        end
     end
-
-    -- process queue
-    mspProcessTxQ()
 end
 
 return run_bg
