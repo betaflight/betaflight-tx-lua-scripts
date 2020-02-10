@@ -13,7 +13,7 @@ protocol.mspSend = function(payload)
     for i=1, #(payload) do
         payloadOut[i+2] = payload[i]
     end
-    return crossfireTelemetryPush(crsfMspCmd, payloadOut)
+    return protocol.push(crsfMspCmd, payloadOut)
 end
 
 protocol.mspRead = function(cmd)
