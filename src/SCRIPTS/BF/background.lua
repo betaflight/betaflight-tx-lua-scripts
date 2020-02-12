@@ -25,7 +25,7 @@ local function run_bg()
         -- assuming when sensor value higher than 0 there is an telemetry connection
         if not dataInitialised then
             if not data_init then
-                data_init = assert(loadScript(SCRIPT_HOME .. "/data_init.lua"))()
+                data_init = assert(loadScript("data_init.lua"))()
             end
 
             dataInitialised = data_init()
@@ -37,7 +37,7 @@ local function run_bg()
             end
         elseif rssiEnabled and apiVersion >= 1.037 then
             if not rssiTask then
-                rssiTask = assert(loadScript(SCRIPT_HOME.."/rssi.lua"))()
+                rssiTask = assert(loadScript("rssi.lua"))()
             end
 
             rssiEnabled = rssiTask()

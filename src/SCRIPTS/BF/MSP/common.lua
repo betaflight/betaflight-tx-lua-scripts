@@ -6,7 +6,6 @@ local MSP_STARTFLAG = bit32.lshift(1,4)
 local mspSeq = 0
 local mspRemoteSeq = 0
 local mspRxBuf = {}
-local mspRxIdx = 1
 local mspRxCRC = 0
 local mspRxReq = 0
 local mspStarted = false
@@ -14,7 +13,6 @@ local mspLastReq = 0
 local mspTxBuf = {}
 local mspTxIdx = 1
 local mspTxCRC = 0
-local mspTxPk = 0
 
 function mspProcessTxQ()
     if (#(mspTxBuf) == 0) then
@@ -31,10 +29,7 @@ function mspProcessTxQ()
         payload[1] = payload[1] + MSP_STARTFLAG
     end
     local i = 2
-    while (i <= protocol.maxTxBufferSize) do
-        if mspTxIdx > #(mspTxBuf) then
-            break
-        end
+    while (i <= protocol.maxTxBufferSize) and mspTxIdx <= #mspTxBuf do
         payload[i] = mspTxBuf[mspTxIdx]
         mspTxIdx = mspTxIdx + 1
         mspTxCRC = bit32.bxor(mspTxCRC,payload[i])  
@@ -48,17 +43,13 @@ function mspProcessTxQ()
             payload[i] = 0
             i = i + 1
         end
-        if protocol.mspSend(payload) then
-            mspTxPk = mspTxPk + 1
-        end
+        protocol.mspSend(payload)
         mspTxBuf = {}
         mspTxIdx = 1
-        mspTxCRC = 0     
+        mspTxCRC = 0
         return false
     end
-    if protocol.mspSend(payload) then
-        mspTxPk = mspTxPk + 1
-    end
+    protocol.mspSend(payload)
     return true
 end
 
@@ -90,7 +81,6 @@ function mspReceivedReply(payload)
     local seq   = bit32.band(head,0x0F)
     if start then
         -- start flag set
-        mspRxIdx = 1
         mspRxBuf = {}
         mspRxSize = payload[idx]
         mspRxCRC  = bit32.bxor(mspRxSize,mspLastReq)
@@ -103,28 +93,26 @@ function mspReceivedReply(payload)
         mspStarted = false
         return nil
     end
-    while (idx <= protocol.maxRxBufferSize) and (mspRxIdx <= mspRxSize) do
-        mspRxBuf[mspRxIdx] = payload[idx]
+    while (idx <= protocol.maxRxBufferSize) and (#mspRxBuf < mspRxSize) do
+        mspRxBuf[#mspRxBuf + 1] = payload[idx]
         mspRxCRC = bit32.bxor(mspRxCRC,payload[idx])
-        mspRxIdx = mspRxIdx + 1
         idx = idx + 1
     end
     if idx > protocol.maxRxBufferSize then
         mspRemoteSeq = seq
         return true
     end
+    mspStarted = false
     -- check CRC
     if mspRxCRC ~= payload[idx] then
-        mspStarted = false
         return nil
     end
-    mspStarted = false
     return mspRxBuf
 end
 
 function mspPollReply()
     while true do
-        ret = protocol.mspPoll()
+        local ret = protocol.mspPoll()
         if type(ret) == "table" then
             mspLastReq = 0
             return mspRxReq, ret

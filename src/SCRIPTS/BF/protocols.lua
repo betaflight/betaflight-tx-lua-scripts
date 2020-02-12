@@ -2,7 +2,7 @@ local supportedProtocols =
 {
     smartPort =
     {
-        transport       = SCRIPT_HOME.."/MSP/sp.lua",
+        transport       = "MSP/sp.lua",
         rssi            = function() return getValue("RSSI") end,
         stateSensor     = "Tmp1",
         push            = sportTelemetryPush,
@@ -13,7 +13,7 @@ local supportedProtocols =
     },
     crsf =
     {
-        transport       = SCRIPT_HOME.."/MSP/crsf.lua",
+        transport       = "MSP/crsf.lua",
         rssi            = function() return getValue("TQly") end,
         stateSensor     = "1RSS",
         push            = crossfireTelemetryPush,

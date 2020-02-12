@@ -21,27 +21,25 @@ local uiMsp =
 
 local uiState = uiStatus.init
 local pageState = pageStatus.display
-local requestTimeout = 80 -- 800ms request timeout
+local requestTimeout = 80
 local currentPage = 1
 local currentField = 1
 local saveTS = 0
-local saveTimeout = 0
+local saveTimeout = protocol.saveTimeout
 local saveRetries = 0
-local saveMaxRetries = 0
-local popupMenuActive = false
+local saveMaxRetries = protocol.saveMaxRetries
+local popupMenuActive = 1
 local killEnterBreak = 0
 local pageScrollY = 0
 local mainMenuScrollY = 0
-local PageFiles = nil
-local Page = nil
-local init = nil
+local PageFiles, Page, init
 
 local backgroundFill = TEXT_BGCOLOR or ERASE
 local foregroundColor = LINE_COLOR or SOLID
 
 local globalTextOptions = TEXT_COLOR or 0
 
-local function saveSettings(new)
+local function saveSettings()
     if Page.values then
         local payload = Page.values
         if Page.preSave then
@@ -54,8 +52,6 @@ local function saveSettings(new)
         else
             pageState = pageStatus.saving
             saveRetries = 0
-            saveMaxRetries = protocol.saveMaxRetries or 2 -- default 2
-            saveTimeout = protocol.saveTimeout or 150     -- default 1.5s
         end
     end
 end
@@ -77,54 +73,33 @@ local function eepromWrite()
 end
 
 local popupMenuList = {
-    {
-        t = "save page",
-        f = saveSettings
-    },
-    {
-        t = "reload",
-        f = invalidatePages
-    },
-    {
-        t = "reboot",
-        f = rebootFc
-    }
+    { t = "save page", f = saveSettings },
+    { t = "reload", f = invalidatePages },
+    { t = "reboot", f = rebootFc },
 }
 
 local function processMspReply(cmd,rx_buf)
-    if cmd == nil or rx_buf == nil then
-        return
-    end
-    if Page == nil then
-        return
-    end
-    if cmd == Page.write then
+    if not Page or not rx_buf then
+    elseif cmd == Page.write then
         if Page.eepromWrite then
             eepromWrite()
         else
             invalidatePages()
         end
-        return
-    end
-    if cmd == uiMsp.eepromWrite then
+    elseif cmd == uiMsp.eepromWrite then
         if Page.reboot then
             rebootFc()
         end
         invalidatePages()
-        return
-    end
-    if cmd ~= Page.read then
-        return
-    end
-    if #(rx_buf) > 0 then
+    elseif cmd == Page.read and #rx_buf > 0 then
         Page.values = rx_buf
-        for i=1,#(Page.fields) do
-            if (#(Page.values) or 0) >= Page.minBytes then
+        for i=1,#Page.fields do
+            if #Page.values >= Page.minBytes then
                 local f = Page.fields[i]
                 if f.vals then
-                    f.value = 0;
-                    for idx=1, #(f.vals) do
-                        local raw_val = (Page.values[f.vals[idx]] or 0)
+                    f.value = 0
+                    for idx=1, #f.vals do
+                        local raw_val = Page.values[f.vals[idx]] or 0
                         raw_val = bit32.lshift(raw_val, (idx-1)*8)
                         f.value = bit32.bor(f.value, raw_val)
                     end
@@ -152,14 +127,13 @@ function clipValue(val,min,max)
 end
 
 local function incPage(inc)
-    currentPage = incMax(currentPage, inc, #(PageFiles))
-    Page = nil
+    currentPage = incMax(currentPage, inc, #PageFiles)
     currentField = 1
-    collectgarbage()
+    invalidatePages()
 end
 
 local function incField(inc)
-    currentField = clipValue(currentField + inc, 1, #(Page.fields))
+    currentField = clipValue(currentField + inc, 1, #Page.fields)
 end
 
 local function incMainMenu(inc)
@@ -167,33 +141,32 @@ local function incMainMenu(inc)
 end
 
 local function incPopupMenu(inc)
-    popupMenuActive = clipValue(popupMenuActive + inc, 1, #(popupMenuList))
+    popupMenuActive = clipValue(popupMenuActive + inc, 1, #popupMenuList)
 end
 
 local function requestPage()
-    if Page.read and ((Page.reqTS == nil) or (Page.reqTS + requestTimeout <= getTime())) then
+    if Page.read and ((not Page.reqTS) or (Page.reqTS + requestTimeout <= getTime())) then
         Page.reqTS = getTime()
         protocol.mspRead(Page.read)
     end
 end
 
-local function drawScreenTitle(screen_title)
-    if radio.resolution == lcdResolution.low then
-        lcd.drawFilledRectangle(0, 0, LCD_W, 10)
-        lcd.drawText(1,1,screen_title,INVERS)
-    else
+local function drawScreenTitle(screenTitle)
+    if radio.highRes then
         lcd.drawFilledRectangle(0, 0, LCD_W, 30, TITLE_BGCOLOR)
-        lcd.drawText(5,5,screen_title, MENU_TITLE_COLOR)
+        lcd.drawText(5,5,screenTitle, MENU_TITLE_COLOR)
+    else
+        lcd.drawFilledRectangle(0, 0, LCD_W, 10)
+        lcd.drawText(1,1,screenTitle,INVERS)
     end
 end
 
 local function drawScreen()
-    local yMinLim = radio.yMinLimit or 0
-    local yMaxLim = radio.yMaxLimit or LCD_H
+    local yMinLim = radio.yMinLimit
+    local yMaxLim = radio.yMaxLimit
     local currentFieldY = Page.fields[currentField].y
-    local screenTitle = Page.title
     local textOptions = radio.textSize + globalTextOptions
-    drawScreenTitle("Betaflight / "..screenTitle)
+    drawScreenTitle("Betaflight / "..Page.title)
     if currentFieldY <= Page.fields[1].y then
         pageScrollY = 0
     elseif currentFieldY - pageScrollY <= yMinLim then
@@ -201,14 +174,15 @@ local function drawScreen()
     elseif currentFieldY - pageScrollY >= yMaxLim then
         pageScrollY = currentFieldY - yMaxLim
     end
-    for i=1,#(Page.labels) do
+    for i=1,#Page.labels do
         local f = Page.labels[i]
-        if (f.y - pageScrollY) >= yMinLim and (f.y - pageScrollY) <= yMaxLim then
-            lcd.drawText(f.x, f.y - pageScrollY, f.t, textOptions)
+        local y = f.y - pageScrollY
+        if y >= yMinLim and y <= yMaxLim then
+            lcd.drawText(f.x, y, f.t, textOptions)
         end
     end
     local val = "---"
-    for i=1,#(Page.fields) do
+    for i=1,#Page.fields do
         local f = Page.fields[i]
         local valueOptions = textOptions
         if i == currentField then
@@ -226,22 +200,23 @@ local function drawScreen()
                 val = f.table[f.value]
             end
         end
-        if (f.y - pageScrollY) >= yMinLim and (f.y - pageScrollY) <= yMaxLim then
+        local y = f.y - pageScrollY
+        if y >= yMinLim and y <= yMaxLim then
             if f.t then
-                lcd.drawText(f.x, f.y - pageScrollY, f.t, textOptions)
+                lcd.drawText(f.x, y, f.t, textOptions)
             end
-            lcd.drawText(f.sp or f.x, f.y - pageScrollY, val, valueOptions)
+            lcd.drawText(f.sp or f.x, y, val, valueOptions)
         end
     end
 end
 
 local function incValue(inc)
     local f = Page.fields[currentField]
-    local scale = (f.scale or 1)
-    local mult = (f.mult or 1)
-    f.value = clipValue(f.value + ((inc*mult)/scale), ((f.min or 0)/scale), ((f.max or 255)/scale))
-    f.value = math.floor((f.value*scale)/mult + 0.5)/(scale/mult)
-    for idx=1, #(f.vals) do
+    local scale = f.scale or 1
+    local mult = f.mult or 1
+    f.value = clipValue(f.value + inc*mult/scale, (f.min or 0)/scale, (f.max or 255)/scale)
+    f.value = math.floor(f.value*scale/mult + 0.5)*mult/scale
+    for idx=1, #f.vals do
         Page.values[f.vals[idx]] = bit32.rshift(math.floor(f.value*scale + 0.5), (idx-1)*8)
     end
     if f.upd and Page.values then
@@ -255,18 +230,18 @@ local function drawPopupMenu()
     local w = radio.MenuBox.w
     local h_line = radio.MenuBox.h_line
     local h_offset = radio.MenuBox.h_offset
-    local h = #(popupMenuList) * h_line + h_offset*2
+    local h = #popupMenuList * h_line + h_offset*2
 
     lcd.drawFilledRectangle(x,y,w,h,backgroundFill)
     lcd.drawRectangle(x,y,w-1,h-1,foregroundColor)
     lcd.drawText(x+h_line/2,y+h_offset,"Menu:",globalTextOptions)
 
     for i,e in ipairs(popupMenuList) do
-        local text_options = globalTextOptions
+        local textOptions = globalTextOptions
         if popupMenuActive == i then
-            text_options = text_options + INVERS
+            textOptions = textOptions + INVERS
         end
-        lcd.drawText(x+radio.MenuBox.x_offset,y+(i-1)*h_line+h_offset,e.t,text_options)
+        lcd.drawText(x+radio.MenuBox.x_offset,y+(i-1)*h_line+h_offset,e.t,textOptions)
     end
 end
 
@@ -274,20 +249,17 @@ local function run_ui(event)
     if uiState == uiStatus.init then
         local yMinLim = radio.yMinLimit
         lcd.clear()
-        drawScreenTitle("Betaflight Config", 0, 0)
+        drawScreenTitle("Betaflight Config")
         lcd.drawText(6, yMinLim, "Initialising")
         if apiVersion == 0 then
-            if not init then
-                init = assert(loadScript(SCRIPT_HOME.."/data_init.lua"))()
-            end
+            init = init or assert(loadScript("data_init.lua"))()
             init()
             return 0
-        else
-            init = nil
-            PageFiles = assert(loadScript(SCRIPT_HOME.."/pages.lua"))()
-            invalidatePages()
-            uiState = uiStatus.mainMenu
         end
+        init = nil
+        PageFiles = assert(loadScript("pages.lua"))()
+        invalidatePages()
+        uiState = uiStatus.mainMenu
     elseif uiState == uiStatus.mainMenu then
         if event == EVT_VIRTUAL_EXIT then
             return 2
@@ -296,15 +268,14 @@ local function run_ui(event)
         elseif event == EVT_VIRTUAL_PREV then
             incMainMenu(-1)
         elseif event == EVT_VIRTUAL_ENTER then
-            pageState = pageStatus.display
             uiState = uiStatus.pages
         end
         lcd.clear()
-        drawScreenTitle("Betaflight Config", 0, 0)
+        drawScreenTitle("Betaflight Config")
         local yMinLim = radio.yMinLimit
         local yMaxLim = radio.yMaxLimit
         local lineSpacing = 10
-        if radio.resolution == lcdResolution.high then
+        if radio.highRes then
             lineSpacing = 25
         end
         local currentFieldY = (currentPage-1)*lineSpacing + yMinLim
@@ -316,29 +287,27 @@ local function run_ui(event)
             mainMenuScrollY = currentFieldY - yMaxLim
         end
         for i=1, #PageFiles do
-            local attr = (currentPage == i and INVERS or 0)
-            if ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) >= yMinLim and ((i-1)*lineSpacing + yMinLim - mainMenuScrollY) <= yMaxLim then
-                lcd.drawText(6, (i-1)*lineSpacing + yMinLim - mainMenuScrollY, PageFiles[i].title, attr)
+            local attr = currentPage == i and INVERS or 0
+            local y = (i-1)*lineSpacing + yMinLim - mainMenuScrollY
+            if y >= yMinLim and y <= yMaxLim then
+                lcd.drawText(6, y, PageFiles[i].title, attr)
             end
         end
     elseif uiState == uiStatus.pages then
-        if (pageState == pageStatus.saving) then
-            if (saveTS + saveTimeout < getTime()) then
+        if pageState == pageStatus.saving then
+            if saveTS + saveTimeout < getTime() then
                 if saveRetries < saveMaxRetries then
                     saveSettings()
                 else
-                    -- max retries reached
                     pageState = pageStatus.display
                     invalidatePages()
                 end
             end
         end
-        -- navigation
         if event == EVT_VIRTUAL_ENTER_LONG then
             popupMenuActive = 1
             killEnterBreak = 1
             pageState = pageStatus.popupMenu
-        -- menu is currently displayed
         elseif pageState == pageStatus.popupMenu then
             if event == EVT_VIRTUAL_EXIT then
                 pageState = pageStatus.display
@@ -354,7 +323,6 @@ local function run_ui(event)
                     popupMenuList[popupMenuActive].f()
                 end
             end
-        -- normal page viewing
         elseif pageState <= pageStatus.display then
             if event == EVT_VIRTUAL_PREV_PAGE then
                 incPage(-1)
@@ -378,7 +346,6 @@ local function run_ui(event)
                 uiState = uiStatus.mainMenu
                 return 0
             end
-        -- editing value
         elseif pageState == pageStatus.editing then
             if event == EVT_VIRTUAL_EXIT or event == EVT_VIRTUAL_ENTER then
                 pageState = pageStatus.display
@@ -388,40 +355,31 @@ local function run_ui(event)
                 incValue(-1)
             end
         end
-        if Page == nil then
-            if #PageFiles == 0 then
-                lcd.clear()
-                lcd.drawText(radio.NoTelem[1], radio.NoTelem[2], "No Pages! API: " .. apiVersion, radio.NoTelem[4])
-                return 1
-            end
-            Page = assert(loadScript(SCRIPT_HOME.."/Pages/"..PageFiles[currentPage].script))()
+        if not Page then
+            Page = assert(loadScript("Pages/"..PageFiles[currentPage].script))()
             collectgarbage()
         end
         if not Page.values and pageState == pageStatus.display then
             requestPage()
         end
         lcd.clear()
-        if TEXT_BGCOLOR then
-            lcd.drawFilledRectangle(0, 0, LCD_W, LCD_H, TEXT_BGCOLOR)
-        end
         drawScreen()
         if pageState == pageStatus.popupMenu then
             drawPopupMenu()
         elseif pageState == pageStatus.saving then
+            local saveMsg = "Saving..."
+            if saveRetries > 0 then
+                saveMsg = "Retrying"
+            end
             lcd.drawFilledRectangle(radio.SaveBox.x,radio.SaveBox.y,radio.SaveBox.w,radio.SaveBox.h,backgroundFill)
             lcd.drawRectangle(radio.SaveBox.x,radio.SaveBox.y,radio.SaveBox.w,radio.SaveBox.h,SOLID)
-            if saveRetries <= 0 then
-                lcd.drawText(radio.SaveBox.x+radio.SaveBox.x_offset,radio.SaveBox.y+radio.SaveBox.h_offset,"Saving...",DBLSIZE + BLINK + (globalTextOptions))
-            else
-                lcd.drawText(radio.SaveBox.x+radio.SaveBox.x_offset,radio.SaveBox.y+radio.SaveBox.h_offset,"Retrying",DBLSIZE + (globalTextOptions))
-            end
+            lcd.drawText(radio.SaveBox.x+radio.SaveBox.x_offset,radio.SaveBox.y+radio.SaveBox.h_offset,saveMsg,DBLSIZE + globalTextOptions)
         end
     end
-    -- process send queue
-    mspProcessTxQ()
     if protocol.rssi() == 0 then
         lcd.drawText(radio.NoTelem[1],radio.NoTelem[2],radio.NoTelem[3],radio.NoTelem[4])
     end
+    mspProcessTxQ()
     processMspReply(mspPollReply())
     return 0
 end

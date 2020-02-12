@@ -1,6 +1,6 @@
-SCRIPT_HOME = "/SCRIPTS/BF"
+chdir("/SCRIPTS/BF")
 
-assert(loadScript(SCRIPT_HOME.."/MSP/messages.lua"))()
+assert(loadScript("MSP/messages.lua"))()
 
 local msg_p = {
   intro = "p.wav",

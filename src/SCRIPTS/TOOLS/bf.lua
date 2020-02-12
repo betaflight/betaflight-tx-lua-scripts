@@ -1,14 +1,14 @@
 local toolName = "TNS|Betaflight setup|TNE"
-SCRIPT_HOME = "/SCRIPTS/BF"
+chdir("/SCRIPTS/BF")
 
 apiVersion = 0
 
-protocol = assert(loadScript(SCRIPT_HOME.."/protocols.lua"))()
-radio = assert(loadScript(SCRIPT_HOME.."/radios.lua"))()
+protocol = assert(loadScript("protocols.lua"))()
+radio = assert(loadScript("radios.lua"))()
 
 assert(loadScript(protocol.transport))()
-assert(loadScript(SCRIPT_HOME.."/MSP/common.lua"))()
+assert(loadScript("MSP/common.lua"))()
 
-local run_ui = assert(loadScript(SCRIPT_HOME.."/ui.lua"))()
+local run_ui = assert(loadScript("ui.lua"))()
 
 return { run=run_ui }
