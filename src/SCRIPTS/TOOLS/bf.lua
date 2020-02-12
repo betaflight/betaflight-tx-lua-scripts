@@ -3,12 +3,17 @@ chdir("/SCRIPTS/BF")
 
 apiVersion = 0
 
-protocol = assert(loadScript("protocols.lua"))()
-radio = assert(loadScript("radios.lua"))()
+local run = nil
+local scriptsCompiled = assert(loadScript("COMPILE/scripts_compiled.lua"))()
 
-assert(loadScript(protocol.transport))()
-assert(loadScript("MSP/common.lua"))()
+if scriptsCompiled then
+    protocol = assert(loadScript("protocols.lua"))()
+    radio = assert(loadScript("radios.lua"))()
+    assert(loadScript(protocol.transport))()
+    assert(loadScript("MSP/common.lua"))()
+    run = assert(loadScript("ui.lua"))()
+else
+    run = assert(loadScript("COMPILE/compile.lua"))()
+end
 
-local run_ui = assert(loadScript("ui.lua"))()
-
-return { run=run_ui }
+return { run=run }
