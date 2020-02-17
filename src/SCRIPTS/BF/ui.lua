@@ -303,11 +303,6 @@ local function run_ui(event)
                     invalidatePages()
                 end
             end
-        end
-        if event == EVT_VIRTUAL_ENTER_LONG then
-            popupMenuActive = 1
-            killEnterBreak = 1
-            pageState = pageStatus.popupMenu
         elseif pageState == pageStatus.popupMenu then
             if event == EVT_VIRTUAL_EXIT then
                 pageState = pageStatus.display
@@ -323,7 +318,7 @@ local function run_ui(event)
                     popupMenuList[popupMenuActive].f()
                 end
             end
-        elseif pageState <= pageStatus.display then
+        elseif pageState == pageStatus.display then
             if event == EVT_VIRTUAL_PREV_PAGE then
                 incPage(-1)
                 killEvents(event) -- X10/T16 issue: pageUp is a long press
@@ -340,6 +335,10 @@ local function run_ui(event)
                         pageState = pageStatus.editing
                     end
                 end
+            elseif event == EVT_VIRTUAL_ENTER_LONG then
+                popupMenuActive = 1
+                killEnterBreak = 1
+                pageState = pageStatus.popupMenu
             elseif event == EVT_VIRTUAL_EXIT then
                 invalidatePages()
                 currentField = 1
