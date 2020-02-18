@@ -15,6 +15,7 @@ local function compile()
     local file = io.open("COMPILE/scripts_compiled.lua", 'w')
     io.write(file, "return true")
     io.close(file)
+    assert(loadScript("COMPILE/scripts_compiled.lua", 'c'))
     return 1
 end
 
