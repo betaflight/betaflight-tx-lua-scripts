@@ -247,13 +247,10 @@ end
 
 local function run_ui(event)
     if uiState == uiStatus.init then
-        local yMinLim = radio.yMinLimit
         lcd.clear()
         drawScreenTitle("Betaflight Config")
-        lcd.drawText(6, yMinLim, "Initialising")
-        if apiVersion == 0 then
-            init = init or assert(loadScript("data_init.lua"))()
-            init()
+        init = init or assert(loadScript("ui_init.lua"))()
+        if not init() then
             return 0
         end
         init = nil
