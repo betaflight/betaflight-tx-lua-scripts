@@ -1,0 +1,65 @@
+# Builds the Betaflight TX lua scripts.
+#
+# After building, artifacts are released to a seperate repository.
+#
+# Azure Pipelines requires the following extensions to be installed:
+# - GitHub Tool: https://marketplace.visualstudio.com/items?itemName=marcelo-formentao.github-tools
+#
+# You'll also need to setup the follwing pipeline variables: 
+#     "releaseNotes" - This is used to add the release notes in the windows job in the build stage so they can be published as part of the github release in the release stage
+#     "endpoint" - The name of the github endpoint link setup in AzDo - setup when linking AzDo and GitHub
+#     "owner" - The owner of the repository to release to e.g. betaflight
+#     "repoName" - The name of the repository to release to e.g. betaflight-configurator-nightly
+
+name: $(Date:yyyyMMdd).$(BuildID)
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+pr: none
+
+stages:
+- stage: Build
+  jobs:
+  - job: 'Linux'
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+    - script: sudo apt-get -y install lua5.2
+      displayName: 'Install lua compiler.'
+    - script: make release -C $(System.DefaultWorkingDirectory)
+      displayName: 'Test and build the release.'
+    - powershell: Set-Content -Path '$(System.DefaultWorkingDirectory)/release/log.txt' -Value $env:BUILD_SOURCEVERSIONMESSAGE
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish release'
+      inputs: 
+        artifactName: betaflight-tx-lua-scripts
+        targetPath: '$(System.DefaultWorkingDirectory)/release'
+
+- stage: Release
+  jobs:
+  - job: Release
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        targetPath: '$(Pipeline.Workspace)'
+    - powershell: Write-Output ("##vso[task.setvariable variable=releaseNotes;]$(gc $(Pipeline.Workspace)/betaflight-tx-lua-scripts/log.txt)")
+    - task: GitHubReleasePublish@1
+      inputs:
+        githubEndpoint: '$(endpoint)'
+        manuallySetRepository: true
+        githubOwner: '$(owner)'
+        githubRepositoryName: '$(repoName)'
+        githubReleaseNotes: '$(releaseNotes)'
+        githubReleaseDraft: false
+        githubReleasePrerelease: false
+        githubIgnoreAssets: false
+        githubReleaseAsset: |
+          $(Pipeline.Workspace)/betaflight-tx-lua-scripts/**
+        githubReuseRelease: true
+        githubReuseDraftOnly: true
+        githubSkipDuplicatedAssets: false
+        githubEditRelease: false
+        githubDeleteEmptyTag: false
