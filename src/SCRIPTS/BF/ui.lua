@@ -32,7 +32,7 @@ local popupMenuActive = 1
 local killEnterBreak = 0
 local pageScrollY = 0
 local mainMenuScrollY = 0
-local PageFiles, Page, init
+local PageFiles, Page, init, popupMenuList
 
 local backgroundFill = TEXT_BGCOLOR or ERASE
 local foregroundColor = LINE_COLOR or SOLID
@@ -72,11 +72,24 @@ local function eepromWrite()
     protocol.mspRead(uiMsp.eepromWrite)
 end
 
-local popupMenuList = {
-    { t = "save page", f = saveSettings },
-    { t = "reload", f = invalidatePages },
-    { t = "reboot", f = rebootFc },
-}
+local function getVtxTables()
+    uiState = uiStatus.init
+    PageFiles = nil
+    invalidatePages()
+    io.close(io.open("/BF/VTX/"..model.getInfo().name..".lua", 'w'))
+    return 0
+end
+
+local function createPopupMenu()
+    popupMenuList = {
+        { t = "save page", f = saveSettings },
+        { t = "reload", f = invalidatePages },
+        { t = "reboot", f = rebootFc },
+    }
+    if apiVersion >= 1.042 then
+        popupMenuList[#popupMenuList + 1] = { t = "vtx tables", f = getVtxTables }
+    end
+end
 
 local function processMspReply(cmd,rx_buf)
     if not Page or not rx_buf then
@@ -254,6 +267,7 @@ local function run_ui(event)
             return 0
         end
         init = nil
+        createPopupMenu()
         PageFiles = assert(loadScript("pages.lua"))()
         invalidatePages()
         uiState = uiStatus.mainMenu
@@ -312,7 +326,7 @@ local function run_ui(event)
                     killEnterBreak = 0
                 else
                     pageState = pageStatus.display
-                    popupMenuList[popupMenuActive].f()
+                    return popupMenuList[popupMenuActive].f() or 0
                 end
             end
         elseif pageState == pageStatus.display then
