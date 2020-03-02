@@ -1,6 +1,13 @@
 local apiVersionReceived = false
-local vtxTablesReceived = loadScript("/BF/VTX/"..model.getInfo().name..".lua")
+local vtxTablesReceived = false
 local data_init, getVtxTables
+local vtxTables = loadScript("/BF/VTX/"..model.getInfo().name..".lua")
+
+if vtxTables and vtxTables() then
+    vtxTablesReceived = true
+    vtxTables = nil
+    collectgarbage()
+end
 
 local function init()
     if apiVersion == 0 then
