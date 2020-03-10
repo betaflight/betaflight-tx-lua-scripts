@@ -44,10 +44,7 @@ local supportedRadios =
     },
 }
 
-local radio = supportedRadios[tostring(LCD_W) .. "x" .. tostring(LCD_H)]
-
-if not radio then
-    error("Radio not supported: "..rad)
-end
+local resolution = LCD_W.."x"..LCD_H
+local radio = assert(supportedRadios[resolution], resolution.." not supported")
 
 return radio
