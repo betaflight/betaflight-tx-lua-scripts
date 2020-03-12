@@ -35,6 +35,8 @@ end
 
 if apiVersion >= 1.037 then
     fields[#fields + 1] = { t = "Frequency", x = x, y = inc.y(lineSpacing), sp = x + sp, min = 5000, max = 5999,                   vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end }
+elseif apiVersion >= 1.036 then
+    fields[#fields + 1] = { t = "Frequency", x = x, y = inc.y(lineSpacing), sp = x + sp, min = 5000, max = 5999, ro = true }
 end
 
 -- Vals                     Fields

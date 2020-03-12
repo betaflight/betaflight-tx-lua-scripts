@@ -342,7 +342,7 @@ local function run_ui(event)
             elseif event == EVT_VIRTUAL_ENTER then
                 if Page then
                     local f = Page.fields[currentField]
-                    if Page.values and Page.values[f.vals[#f.vals]] and not f.ro then
+                    if Page.values and f.vals and Page.values[f.vals[#f.vals]] and not f.ro then
                         pageState = pageStatus.editing
                     end
                 end
