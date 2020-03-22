@@ -11,6 +11,11 @@
 #     "owner" - The owner of the repository to release to e.g. betaflight
 #     "repoName" - The name of the repository to release to e.g. betaflight-configurator-nightly
 
+variables:
+  owner: betaflight
+  repoName: betaflight-tx-lua-scripts-nightlies
+  releaseNotes: This is a nightly build off the tip of 'master'. It may be unstable and result in corrupted configurations or data loss. **Use only for testing.**
+
 name: $(Date:yyyyMMdd).$(BuildID)
 trigger:
   batch: true
