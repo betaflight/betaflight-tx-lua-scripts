@@ -35,7 +35,6 @@ stages:
       displayName: 'Install lua compiler.'
     - script: make release -C $(System.DefaultWorkingDirectory)
       displayName: 'Test and build the release.'
-    - powershell: Set-Content -Path '$(System.DefaultWorkingDirectory)/release/log.txt' -Value $env:BUILD_SOURCEVERSIONMESSAGE
     - task: PublishPipelineArtifact@1
       displayName: 'Publish release'
       inputs: 
@@ -50,14 +49,17 @@ stages:
       inputs:
         buildType: 'current'
         targetPath: '$(Pipeline.Workspace)'
-    - powershell: Write-Output ("##vso[task.setvariable variable=releaseNotes;]$(gc $(Pipeline.Workspace)/betaflight-tx-lua-scripts/log.txt)")
     - task: GitHubReleasePublish@1
       inputs:
         githubEndpoint: '$(endpoint)'
         manuallySetRepository: true
         githubOwner: '$(owner)'
         githubRepositoryName: '$(repoName)'
-        githubReleaseNotes: '$(releaseNotes)'
+        githubReleaseNotes: |+
+          $(releaseNotes)
+
+          ### Changes:
+          $(Build.SourceVersionMessage)
         githubReleaseDraft: false
         githubReleasePrerelease: false
         githubIgnoreAssets: false
