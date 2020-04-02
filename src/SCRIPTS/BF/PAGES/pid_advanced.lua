@@ -36,7 +36,9 @@ if apiVersion >= 1.040 then
     labels[#labels + 1] = { t = "I Term Relax",      x = x,          y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Axes",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 4, vals = { 28 }, table = { [0]="NONE", "RP", "RPY", "RP (inc)", "RPY (inc)" } }
     fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 29 }, table = { [0]="Gyro", "Setpoint" } }
-    if apiVersion >= 1.042 then
+    if apiVersion >= 1.043 then
+        fields[#fields + 1] = { t = "Cutoff",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 50, vals = { 47 } }
+    elseif apiVersion >= 1.042 then
         fields[#fields + 1] = { t = "Cutoff",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 100, vals = { 47 } }
     end
 end
@@ -51,7 +53,7 @@ if apiVersion >= 1.036 then
         fields[#fields + 1] = { t = "Mode",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 39 }, table = { [0]="Smooth", "Step" } }
     end
     fields[#fields + 1] = { t = "Gain",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 30000, vals = { 22, 23 }, scale = 1000, mult = 100 }
-    fields[#fields + 1] = { t = "Threshold",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 20,max = 1000, vals = { 20, 21 } }
+    fields[#fields + 1] = { t = "Threshold",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 20, max = 1000, vals = { 20, 21 } }
 end
 
 return {
