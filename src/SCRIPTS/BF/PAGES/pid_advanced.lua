@@ -24,6 +24,10 @@ if apiVersion >= 1.040 then
     fields[#fields + 1] = { t = "I Term Rotation",   x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 26 }, table = { [0]="OFF", "ON" } }
 end
 
+if apiVersion >= 1.043 then
+    fields[#fields + 1] = { t = "Dynamic Idle",      x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 50 } }
+end
+
 if apiVersion >= 1.016 then
     fields[#fields + 1] = { t = "VBAT Compensation", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 8 },  table = { [0]="OFF", "ON" } }
 end
