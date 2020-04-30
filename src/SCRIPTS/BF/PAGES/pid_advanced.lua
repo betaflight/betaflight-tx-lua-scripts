@@ -69,4 +69,11 @@ return {
     minBytes    = 8,
     labels      = labels,
     fields      = fields,
+    postLoad = function(self)
+        self.dynamicIdle = self.values[50]
+    end,
+    preSave = function(self)
+        self.reboot = self.values[50] ~= self.dynamicIdle
+        return self.values
+    end,
 }

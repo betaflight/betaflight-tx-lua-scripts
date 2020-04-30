@@ -43,4 +43,11 @@ return {
     minBytes    = 5,
     labels      = labels,
     fields      = fields,
+    postLoad = function(self)
+        self.rpmHarmonics = self.values[44]
+    end,
+    preSave = function(self)
+        self.reboot = self.values[44] == 0 and self.rpmHarmonics ~= 0
+        return self.values
+    end,
 }
