@@ -33,6 +33,10 @@ if apiVersion >= 1.031 then
     end
 end
 
+if apiVersion >= 1.043 then
+    escProtocols[#escProtocols + 1] = "DISABLED"
+end
+
 if apiVersion >= 1.031 and apiVersion <= 1.040 then
     fields[#fields + 1] = { t = "32kHz Sampling",  x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 9 }, table = { [0] = "OFF", "ON" }, upd = function(self) self.updateRateTables(self) end }
 end
