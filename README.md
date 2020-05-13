@@ -5,7 +5,7 @@
 - Betaflight - As a best practice, it is recommended to use the most recent stable release of Betaflight to obtain the best possible results;
 - OpenTX - 2.3.4 or newer;
 - Crossfire TX / RX - v2.11 or newer;
-- FrSky TX / RX - While most receivers work fine, it's recommended to update the XSR family of receivers to their most recent firmware version to correct any known bugs in SmartPort telemetry.
+- FrSky TX / RX with support for SmartPort - While most receivers with SmartPort support work fine, it is recommended to update the receiver to the most recent firmware version to correct any known bugs in telemetry.
 
 ## Installing
 
