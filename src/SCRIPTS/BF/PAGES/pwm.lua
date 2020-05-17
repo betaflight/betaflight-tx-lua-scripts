@@ -43,8 +43,8 @@ end
 
 if apiVersion >= 1.016 then
     if apiVersion <= 1.042 then
-        fields[#fields + 1] = { t = "Gyro Update", x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 32, vals = { 1 }, table = {}, upd = function(self) self.updatePidRateTable(self) end }
-        fields[#fields + 1] = { t = "PID Loop",    x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 16, vals = { 2 }, table = {} }
+        fields[#fields + 1] = { t = "Gyro Update", x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 32, vals = { 1 }, table = {}, upd = function(self) self.updatePidRateTable(self) end, mult = -1 }
+        fields[#fields + 1] = { t = "PID Loop",    x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 16, vals = { 2 }, table = {}, mult = -1 }
     end
     fields[#fields + 1] = { t = "Protocol",        x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = #escProtocols, vals = { 4 }, table = escProtocols }
     fields[#fields + 1] = { t = "Unsynced PWM",    x = x,      y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 3 }, table = { [0] = "OFF", "ON" } }
