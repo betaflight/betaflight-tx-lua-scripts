@@ -1,5 +1,7 @@
 # Betaflight TX Lua Scripts
 
+ [![Build Status](https://api.travis-ci.com/betaflight/betaflight-tx-lua-scripts.svg?branch=master)](https://travis-ci.com/betaflight/betaflight-tx-lua-scripts) [![Build Status](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_apis/build/status/betaflight.betaflight-tx-lua-scripts?branchName=master)](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_build/latest?definitionId=1&branchName=master)
+
 ## Firmware Considerations
 
 - Betaflight - As a best practice, it is recommended to use the most recent stable release of Betaflight to obtain the best possible results;
@@ -47,6 +49,11 @@ The optional background script offers RTC synchronization and RSSI through MSP. 
 
 ![Background script setup](docs/assets/images/background_script_setup.png)
 
+
+## Unstable Testing Versions
+Unstable testing versions of the latest builds of the Lua Script can be downloaded from [here](https://github.com/betaflight/betaflight-tx-lua-scripts-nightlies/releases).
+
+Be aware that these versions are intended for testing / feedback only, and may be buggy or broken. Caution is advised when using these versions.
 
 ## Building from source
 
