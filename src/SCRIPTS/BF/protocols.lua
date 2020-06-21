@@ -2,25 +2,28 @@ local supportedProtocols =
 {
     smartPort =
     {
-        transport       = "MSP/sp.lua",
+        mspTransport    = "MSP/sp.lua",
         rssi            = function() return getValue("RSSI") end,
         stateSensor     = "Tmp1",
         push            = sportTelemetryPush,
         maxTxBufferSize = 6,
         maxRxBufferSize = 6,
         saveMaxRetries  = 2,
-        saveTimeout     = 500
+        saveTimeout     = 500,
+        cms             = {},
     },
     crsf =
     {
-        transport       = "MSP/crsf.lua",
+        mspTransport    = "MSP/crsf.lua",
+        cmsTransport    = "CMS/crsf.lua",
         rssi            = function() return getValue("TQly") end,
         stateSensor     = "1RSS",
         push            = crossfireTelemetryPush,
         maxTxBufferSize = 8,
         maxRxBufferSize = 58,
         saveMaxRetries  = 2,
-        saveTimeout     = 150
+        saveTimeout     = 150,
+        cms             = {},
     }
 }
 

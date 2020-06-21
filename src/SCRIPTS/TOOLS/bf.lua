@@ -8,8 +8,8 @@ local scriptsCompiled = assert(loadScript("COMPILE/scripts_compiled.lua"))()
 
 if scriptsCompiled then
     protocol = assert(loadScript("protocols.lua"))()
-    radio = assert(loadScript("radios.lua"))()
-    assert(loadScript(protocol.transport))()
+    radio = assert(loadScript("radios.lua"))().msp
+    assert(loadScript(protocol.mspTransport))()
     assert(loadScript("MSP/common.lua"))()
     run = assert(loadScript("ui.lua"))()
 else
