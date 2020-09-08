@@ -82,7 +82,7 @@ local function getVtxTables()
         end
     end
     if vtxTablesReceived then
-        local f = io.open("/BF/VTX/"..model.getInfo().name..".lua", 'w')
+        local f = io.open("/BF/VTX/"..mcuId..".lua", 'w')
         io.write(f, "return {", "\n")
         io.write(f, "    frequencyTable = {", "\n")
         for i = 1, #frequencyTable do
@@ -109,7 +109,7 @@ local function getVtxTables()
         io.write(f, powerString, "\n")
         io.write(f, "}", "\n")
         io.close(f)
-        assert(loadScript("/BF/VTX/"..model.getInfo().name..".lua", 'c'))
+        assert(loadScript("/BF/VTX/"..mcuId..".lua", 'c'))
     end
     mspProcessTxQ()
     processMspReply(mspPollReply())

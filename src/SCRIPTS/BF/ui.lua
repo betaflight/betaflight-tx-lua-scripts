@@ -76,7 +76,7 @@ local function getVtxTables()
     uiState = uiStatus.init
     PageFiles = nil
     invalidatePages()
-    io.close(io.open("/BF/VTX/"..model.getInfo().name..".lua", 'w'))
+    io.close(io.open("/BF/VTX/"..mcuId..".lua", 'w'))
     return 0
 end
 
