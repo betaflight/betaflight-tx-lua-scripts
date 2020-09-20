@@ -1,7 +1,6 @@
-local md = model.getInfo();
-local vtx_tables = loadScript("/BF/VTX/"..md.name..".lua")
-if vtx_tables then
-    vtx_tables = vtx_tables()
+local vtx_tables
+if apiVersion >= 1.042 then
+    vtx_tables = assert(loadScript("/BF/VTX/"..mcuId..".lua"))()
 else
     vtx_tables = assert(loadScript("/BF/VTX/vtx_defaults.lua"))()
 end
