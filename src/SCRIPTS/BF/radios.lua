@@ -27,6 +27,33 @@ local supportedRadios =
             },
         },
     },
+    ["128x96"]  = 
+    {
+        msp = {
+            templateHome    = "TEMPLATES/128x96/",
+            MenuBox         = { x=15, y=12, w=100, x_offset=36, h_line=8, h_offset=3 },
+            SaveBox         = { x=15, y=12, w=100, x_offset=4,  h=30, h_offset=5 },
+            NoTelem         = { 30, 87, "No Telemetry", BLINK },
+            textSize        = SMLSIZE,
+            yMinLimit       = 12,
+            yMaxLimit       = 84,
+        },
+        cms = {
+            rows = 12,
+            cols = 26,
+            pixelsPerRow = 8,
+            pixelsPerChar = 5,
+            xIndent = 0,
+            yOffset = 0,
+            textSize = SMLSIZE,
+            refresh = {
+                event = EVT_VIRTUAL_ENTER,
+                text = "Refresh: [ENT]",
+                top = 1,
+                left = 64,
+            },
+        },
+    },
     ["212x64"]  = 
     {
         msp = {
