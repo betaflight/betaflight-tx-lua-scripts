@@ -169,7 +169,7 @@ local function drawScreenTitle(screenTitle)
         lcd.drawFilledRectangle(0, 0, LCD_W, 30, TITLE_BGCOLOR)
         lcd.drawText(5,5,screenTitle, MENU_TITLE_COLOR)
     else
-        lcd.drawFilledRectangle(0, 0, LCD_W, 10)
+        lcd.drawFilledRectangle(0, 0, LCD_W, 10, FORCE)
         lcd.drawText(1,1,screenTitle,INVERS)
     end
 end
@@ -179,7 +179,6 @@ local function drawScreen()
     local yMaxLim = radio.yMaxLimit
     local currentFieldY = Page.fields[currentField].y
     local textOptions = radio.textSize + globalTextOptions
-    drawScreenTitle("Betaflight / "..Page.title)
     if currentFieldY <= Page.fields[1].y then
         pageScrollY = 0
     elseif currentFieldY - pageScrollY <= yMinLim then
@@ -190,7 +189,7 @@ local function drawScreen()
     for i=1,#Page.labels do
         local f = Page.labels[i]
         local y = f.y - pageScrollY
-        if y >= yMinLim and y <= yMaxLim then
+        if y >= 0 and y <= LCD_H then
             lcd.drawText(f.x, y, f.t, textOptions)
         end
     end
@@ -214,13 +213,14 @@ local function drawScreen()
             end
         end
         local y = f.y - pageScrollY
-        if y >= yMinLim and y <= yMaxLim then
+        if y >= 0 and y <= LCD_H then
             if f.t then
                 lcd.drawText(f.x, y, f.t, textOptions)
             end
             lcd.drawText(f.sp or f.x, y, val, valueOptions)
         end
     end
+    drawScreenTitle("Betaflight / "..Page.title)
 end
 
 local function incValue(inc)
@@ -282,7 +282,6 @@ local function run_ui(event)
             uiState = uiStatus.pages
         end
         lcd.clear()
-        drawScreenTitle("Betaflight Config")
         local yMinLim = radio.yMinLimit
         local yMaxLim = radio.yMaxLimit
         local lineSpacing = 10
@@ -300,10 +299,11 @@ local function run_ui(event)
         for i=1, #PageFiles do
             local attr = currentPage == i and INVERS or 0
             local y = (i-1)*lineSpacing + yMinLim - mainMenuScrollY
-            if y >= yMinLim and y <= yMaxLim then
+            if y >= 0 and y <= LCD_H then
                 lcd.drawText(6, y, PageFiles[i].title, attr)
             end
         end
+        drawScreenTitle("Betaflight Config")
     elseif uiState == uiStatus.pages then
         if pageState == pageStatus.saving then
             if saveTS + saveTimeout < getTime() then
