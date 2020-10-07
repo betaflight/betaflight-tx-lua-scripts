@@ -47,11 +47,16 @@ if apiVersion >= 1.040 then
     y = inc.y(lineSpacing*0.4)
 end
 
-
-
 if apiVersion >= 1.040 then
     labels[#labels + 1] = { t = "Feedforward", x = x,          y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Transition",  x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 9 }, scale = 100 }
+end
+
+if apiVersion >= 1.044 then
+    labels[#labels + 1] = { t = "FF Interpolate", x = x,          y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Mode",           x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 4, vals = { 51 }, table = { [0] = "OFF", "ON", "AVG_2", "AVG_3", "AVG_4" } }
+    fields[#fields + 1] = { t = "Smoothness",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 75, vals = { 52 } }
+    fields[#fields + 1] = { t = "Boost",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 50, vals = { 53 } }
 end
 
 if apiVersion >= 1.041 then
