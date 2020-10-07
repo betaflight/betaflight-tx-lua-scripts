@@ -28,12 +28,20 @@ if apiVersion >= 1.043 then
     fields[#fields + 1] = { t = "Dynamic Idle",      x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 50 } }
 end
 
-if apiVersion >= 1.016 then
+if apiVersion >= 1.016 and apiVersion <= 1.043 then
     fields[#fields + 1] = { t = "VBAT Compensation", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 8 },  table = { [0]="OFF", "ON" } }
+end
+
+if apiVersion >= 1.044 then
+    fields[#fields + 1] = { t = "Vbat Sag Comp",     x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 150, vals = { 54 } }
 end
 
 if apiVersion >= 1.040 and apiVersion <= 1.041 then
     fields[#fields + 1] = { t = "Smart Feedforward", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 27 }, table = { [0] = "OFF", "ON" } } 
+end
+
+if apiVersion >= 1.041 then
+    fields[#fields + 1] = { t = "Integrated Yaw",    x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 45 }, table = { [0]="OFF", "ON" } }
 end
 
 if apiVersion >= 1.040 then
@@ -45,10 +53,6 @@ if apiVersion >= 1.040 then
     elseif apiVersion >= 1.042 then
         fields[#fields + 1] = { t = "Cutoff",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 100, vals = { 47 } }
     end
-end
-
-if apiVersion >= 1.041 then
-    fields[#fields + 1] = { t = "Integrated Yaw",    x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 45 }, table = { [0]="OFF", "ON" } }
 end
 
 if apiVersion >= 1.036 then
