@@ -66,6 +66,10 @@ if apiVersion >= 1.016 then
     inc.y(lineSpacing*0.4)
 end
 
+if apiVersion >= 1.043 then
+    fields[#fields + 1] = { t = "Rates Type",     x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 4, vals = { 23 }, table = { [0] = "BF", "RF", "KISS", "ACTUAL", "QUICK"}, postEdit = function(self) self.updateRatesType(self, true) end }
+end
+
 if apiVersion >= 1.016 then
     labels[#labels + 1] = { t = "Throttle",       x = x,          y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Mid",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 7 }, scale = 100 }
@@ -91,4 +95,49 @@ return {
     minBytes    = 12,
     labels      = labels,
     fields      = fields,
+    ratesType,
+    getRatesType = function(self)
+        for i = 1, #self.fields do
+            if self.fields[i].vals and self.fields[i].vals[1] == 23 then
+                return self.fields[i].table[self.fields[i].value]
+            end
+        end
+    end,
+    updateRatesType = function(self, applyDefaults)
+        local ratesTable = assert(loadScript("RATETABLES/"..self.getRatesType(self)..".lua"))()
+        for i = 1, #ratesTable.labels do
+            self.labels[i].t = ratesTable.labels[i]
+        end
+        for i = 1, #ratesTable.fields do
+            for k, v in pairs(ratesTable.fields[i]) do
+                self.fields[i][k] = v
+            end
+        end
+        if applyDefaults and self.ratesType ~= self.getRatesType(self) then
+            for i = 1, #ratesTable.defaults do
+                local f = self.fields[i]
+                f.value = ratesTable.defaults[i]
+                for idx=1, #f.vals do
+                    self.values[f.vals[idx]] = bit32.rshift(math.floor(f.value*(f.scale or 1) + 0.5), (idx-1)*8)
+                end
+            end
+        else
+            for i = 1, 9 do
+                local f = self.fields[i]
+                f.value = 0
+                for idx=1, #f.vals do
+                    local raw_val = self.values[f.vals[idx]] or 0
+                    raw_val = bit32.lshift(raw_val, (idx-1)*8)
+                    f.value = bit32.bor(f.value, raw_val)
+                end
+                f.value = f.value/(f.scale or 1)
+            end
+        end
+        self.ratesType = self.getRatesType(self)
+    end,
+    postLoad = function(self)
+        if apiVersion >= 1.043 then
+            self.updateRatesType(self)
+        end
+    end,     
 }
