@@ -358,6 +358,9 @@ local function run_ui(event)
             end
         elseif pageState == pageStatus.editing then
             if event == EVT_VIRTUAL_EXIT or event == EVT_VIRTUAL_ENTER then
+                if Page.fields[currentField].postEdit then
+                    Page.fields[currentField].postEdit(Page)
+                end
                 pageState = pageStatus.display
             elseif event == EVT_VIRTUAL_INC or event == EVT_VIRTUAL_INC_REPT then
                 incValue(1)
