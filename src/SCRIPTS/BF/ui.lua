@@ -16,7 +16,7 @@ local pageStatus =
 local uiMsp =
 {
     reboot = 68,
-    eepromWrite = 250
+    eepromWrite = 250,
 }
 
 local uiState = uiStatus.init
@@ -72,6 +72,13 @@ local function eepromWrite()
     protocol.mspRead(uiMsp.eepromWrite)
 end
 
+local function accCal()
+    invalidatePages()
+    currentField = 1
+    Page = assert(loadScript("Pages/accelerometer.lua"))()
+    collectgarbage()
+end
+
 local function getVtxTables()
     uiState = uiStatus.init
     PageFiles = nil
@@ -85,6 +92,7 @@ local function createPopupMenu()
         { t = "save page", f = saveSettings },
         { t = "reload", f = invalidatePages },
         { t = "reboot", f = rebootFc },
+        { t = "acc cal", f = accCal },
     }
     if apiVersion >= 1.042 then
         popupMenuList[#popupMenuList + 1] = { t = "vtx tables", f = getVtxTables }
@@ -342,6 +350,9 @@ local function run_ui(event)
             elseif event == EVT_VIRTUAL_ENTER then
                 if Page then
                     local f = Page.fields[currentField]
+                    if f.onClick then
+                        f.onClick(Page)
+                    end
                     if Page.values and f.vals and Page.values[f.vals[#f.vals]] and not f.ro then
                         pageState = pageStatus.editing
                     end
