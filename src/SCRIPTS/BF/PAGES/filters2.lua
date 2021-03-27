@@ -24,7 +24,11 @@ if apiVersion >= 1.042 then
     if apiVersion < 1.043 then
         fields[#fields + 1] = { t = "Range",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 38 }, table = { [0]="HIGH", "MEDIUM", "LOW", "AUTO" } }
     end
-    fields[#fields + 1] = { t = "Width %",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 20, vals = { 39 } }
+    if apiVersion >= 1.044 then
+        fields[#fields + 1] = { t = "Count",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 5, vals = { 49 } }
+    else
+        fields[#fields + 1] = { t = "Width %",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 20, vals = { 39 } }
+    end
     fields[#fields + 1] = { t = "Q",                    x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 1000, vals = { 40, 41 } }
     if apiVersion >= 1.043 then
         fields[#fields + 1] = { t = "Min Frequency",    x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 60, max = 250, vals = { 42, 43 } }
