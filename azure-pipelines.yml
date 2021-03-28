@@ -17,12 +17,19 @@ variables:
   releaseNotes: This is a nightly build off the tip of 'master'. It may be unstable and result in corrupted configurations or data loss. **Use only for testing.**
 
 name: $(Date:yyyyMMdd).$(BuildID)
+
 trigger:
   batch: true
   branches:
     include:
     - master
-pr: none
+
+pr:
+  drafts: false
+  branches:
+    include:
+    - master
+    - "*-maintenance"
 
 stages:
 - stage: Build
