@@ -32,6 +32,10 @@ if apiVersion >= 1.041 then
     fields[#fields + 1] = { t = "Min",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 2000, vals = { 9, 10 } }
     fields[#fields + 1] = { t = "Hover",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 2000, vals = { 13, 14 } }
     fields[#fields + 1] = { t = "Max",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 2000, vals = { 11, 12 } }
+
+    if apiVersion >= 1.044 then
+        fields[#fields + 1] = { t = "Min Dth",      x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 50, max = 1000, vals = { 23, 24 } }
+    end
 end
 
 return {
