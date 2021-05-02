@@ -63,4 +63,4 @@ local function init()
     return apiVersionReceived and timeIsSet
 end
 
-return init
+return { f = init, t = "Waiting for API version" }

@@ -34,4 +34,4 @@ local function getMCUId()
     return MCUIdReceived
 end
 
-return getMCUId
+return { f = getMCUId, t = "Waiting for device ID" }

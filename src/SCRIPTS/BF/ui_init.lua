@@ -1,20 +1,27 @@
 local apiVersionReceived = false
 local vtxTablesReceived = false
 local data_init, getVtxTables, getMCUId
+local returnTable = { f = nil, t = "" }
+
+local function modelActive()
+    return getValue(protocol.stateSensor) > 0
+end
 
 local function init()
-    if apiVersion == 0 then
-        lcd.drawText(6, radio.yMinLimit, "Waiting for connection")
+    if not modelActive() then
+        returnTable.t = "Waiting for connection"
+    elseif apiVersion == 0 then
         data_init = data_init or assert(loadScript("data_init.lua"))()
-        data_init()
+        returnTable.t = data_init.t
+        data_init.f()
     elseif apiVersion > 0 and not apiVersionReceived then
         data_init = nil
         apiVersionReceived = true
         collectgarbage()
     elseif apiVersion >= 1.042 and not mcuId then
-        lcd.drawText(6, radio.yMinLimit, "Waiting for device ID")
         getMCUId = getMCUId or assert(loadScript("mcu_id.lua"))()
-        if getMCUId() then
+        returnTable.t = getMCUId.t
+        if getMCUId.f() then
             getMCUId = nil
             local vtxTables = loadScript("/BF/VTX/"..mcuId..".lua")
             if vtxTables and vtxTables() then
@@ -24,9 +31,9 @@ local function init()
             collectgarbage()
         end
     elseif apiVersion >= 1.042 and not vtxTablesReceived then
-        lcd.drawText(6, radio.yMinLimit, "Downloading VTX Tables")
         getVtxTables = getVtxTables or assert(loadScript("vtx_tables.lua"))()
-        vtxTablesReceived = getVtxTables()
+        returnTable.t = getVtxTables.t
+        vtxTablesReceived = getVtxTables.f()
         if vtxTablesReceived then
             getVtxTables = nil
             collectgarbage()
@@ -37,4 +44,6 @@ local function init()
     return apiVersionReceived and vtxTablesReceived and mcuId
 end
 
-return init
+returnTable.f = init
+
+return returnTable
