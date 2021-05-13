@@ -20,6 +20,10 @@ if apiVersion >= 1.016 then
     PageFiles[#PageFiles + 1] = { title = "Advanced PIDs", script = "pid_advanced.lua" }
 end
 
+if apiVersion >= 1.044 then
+    PageFiles[#PageFiles + 1] = { title = "Simplified Tuning", script = "simplified_tuning.lua" }
+end
+
 if apiVersion >= 1.016 then
     PageFiles[#PageFiles + 1] = { title = "Filters 1", script = "filters1.lua" }
 end
