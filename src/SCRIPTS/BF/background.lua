@@ -1,26 +1,14 @@
-local sensorId = -1
 local dataInitialised = false
 local data_init = nil
 local rssiEnabled = true
 local rssiTask = nil
 
-local function getSensorValue()
-    if sensorId == -1 then
-        local sensor = getFieldInfo(protocol.stateSensor)
-        if type(sensor) == "table" then
-            sensorId = sensor['id'] or -1
-        end
-    end
-    return getValue(sensorId)
-end
-
-local function modelActive(sensorValue)
-    return type(sensorValue) == "number" and sensorValue > 0
+local function modelActive()
+    return getValue(protocol.stateSensor) > 0
 end
 
 local function run_bg()
-    local sensorValue = getSensorValue()
-    if modelActive(sensorValue) then
+    if modelActive() then
         -- Send data when the telemetry connection is available
         -- assuming when sensor value higher than 0 there is an telemetry connection
         if not dataInitialised then
@@ -28,7 +16,7 @@ local function run_bg()
                 data_init = assert(loadScript("data_init.lua"))()
             end
 
-            dataInitialised = data_init()
+            dataInitialised = data_init.f()
 
             if dataInitialised then
                 data_init = nil

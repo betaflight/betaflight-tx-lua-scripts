@@ -1,4 +1,4 @@
-local template = loadScript(radio.templateHome.."accelerometer.lua")
+local template = loadScript(radio.templateHome.."acc_cal.lua")
 if template then
     template = template()
 else
@@ -20,17 +20,11 @@ labels[#labels + 1] = { t = "Make sure the craft is level", x = x, y = inc.y(lin
 labels[#labels + 1] = { t = "and stable, then press",       x = x, y = inc.y(lineSpacing) }
 labels[#labels + 1] = { t = "[ENTER] to calibrate, or",     x = x, y = inc.y(lineSpacing) }
 labels[#labels + 1] = { t = "[EXIT] to cancel.",            x = x, y = inc.y(lineSpacing) }
-fields[#fields + 1] = { x = x, y = inc.y(lineSpacing), value = "", ro = true, onClick = function(self) self.accCal(self) end }
+fields[#fields + 1] = { x = x, y = inc.y(lineSpacing), value = "", ro = true }
 
 return {
-    write       = 205, -- MSP_ACC_CALIBRATION
-    title       = "Accelerometer",
-    reboot      = false,
-    eepromWrite = false,
-    minBytes    = 0,
-    labels      = labels,
-    fields      = fields,
-    accCal = function(self)
-        protocol.mspRead(self.write)
-    end,
+    title  = "Accelerometer",
+    labels = labels,
+    fields = fields,
+    init   = assert(loadScript("acc_cal.lua"))(),
 }

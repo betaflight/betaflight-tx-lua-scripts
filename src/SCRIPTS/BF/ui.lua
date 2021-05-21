@@ -1,16 +1,16 @@
 local uiStatus =
 {
     init     = 1,
-    pages    = 2,
-    mainMenu = 3,
+    mainMenu = 2,
+    pages    = 3,
+    confirm  = 4,
 }
 
 local pageStatus =
 {
-    display     = 2,
-    editing     = 3,
-    saving      = 4,
-    popupMenu   = 5,
+    display = 1,
+    editing = 2,
+    saving  = 3,
 }
 
 local uiMsp =
@@ -20,6 +20,7 @@ local uiMsp =
 }
 
 local uiState = uiStatus.init
+local prevUiState
 local pageState = pageStatus.display
 local requestTimeout = 80
 local currentPage = 1
@@ -32,7 +33,7 @@ local popupMenuActive = 1
 local killEnterBreak = 0
 local pageScrollY = 0
 local mainMenuScrollY = 0
-local PageFiles, Page, init, popupMenuList
+local PageFiles, Page, init, popupMenu
 
 local backgroundFill = TEXT_BGCOLOR or ERASE
 local foregroundColor = LINE_COLOR or SOLID
@@ -72,30 +73,26 @@ local function eepromWrite()
     protocol.mspRead(uiMsp.eepromWrite)
 end
 
-local function accCal()
+local function confirm(page)
+    prevUiState = uiState
+    uiState = uiStatus.confirm
     invalidatePages()
     currentField = 1
-    Page = assert(loadScript("Pages/accelerometer.lua"))()
+    Page = assert(loadScript(page))()
     collectgarbage()
 end
 
-local function getVtxTables()
-    uiState = uiStatus.init
-    PageFiles = nil
-    invalidatePages()
-    io.close(io.open("/BF/VTX/"..mcuId..".lua", 'w'))
-    return 0
-end
-
 local function createPopupMenu()
-    popupMenuList = {
-        { t = "save page", f = saveSettings },
-        { t = "reload", f = invalidatePages },
-        { t = "reboot", f = rebootFc },
-        { t = "acc cal", f = accCal },
-    }
+    popupMenuActive = 1
+    popupMenu = {}
+    if uiState == uiStatus.pages then
+        popupMenu[#popupMenu + 1] = { t = "save page", f = saveSettings }
+        popupMenu[#popupMenu + 1] = { t = "reload", f = invalidatePages }
+    end
+    popupMenu[#popupMenu + 1] = { t = "reboot", f = rebootFc }
+    popupMenu[#popupMenu + 1] = { t = "acc cal", f = function() confirm("CONFIRM/acc_cal.lua") end }
     if apiVersion >= 1.042 then
-        popupMenuList[#popupMenuList + 1] = { t = "vtx tables", f = getVtxTables }
+        popupMenu[#popupMenu + 1] = { t = "vtx tables", f = function() confirm("CONFIRM/vtx_tables.lua") end }
     end
 end
 
@@ -162,7 +159,7 @@ local function incMainMenu(inc)
 end
 
 local function incPopupMenu(inc)
-    popupMenuActive = clipValue(popupMenuActive + inc, 1, #popupMenuList)
+    popupMenuActive = clipValue(popupMenuActive + inc, 1, #popupMenu)
 end
 
 local function requestPage()
@@ -251,13 +248,13 @@ local function drawPopupMenu()
     local w = radio.MenuBox.w
     local h_line = radio.MenuBox.h_line
     local h_offset = radio.MenuBox.h_offset
-    local h = #popupMenuList * h_line + h_offset*2
+    local h = #popupMenu * h_line + h_offset*2
 
     lcd.drawFilledRectangle(x,y,w,h,backgroundFill)
     lcd.drawRectangle(x,y,w-1,h-1,foregroundColor)
     lcd.drawText(x+h_line/2,y+h_offset,"Menu:",globalTextOptions)
 
-    for i,e in ipairs(popupMenuList) do
+    for i,e in ipairs(popupMenu) do
         local textOptions = globalTextOptions
         if popupMenuActive == i then
             textOptions = textOptions + INVERS
@@ -267,18 +264,35 @@ local function drawPopupMenu()
 end
 
 local function run_ui(event)
-    if uiState == uiStatus.init then
+    if popupMenu then
+        drawPopupMenu()
+        if event == EVT_VIRTUAL_EXIT then
+            popupMenu = nil
+        elseif event == EVT_VIRTUAL_PREV then
+            incPopupMenu(-1)
+        elseif event == EVT_VIRTUAL_NEXT then
+            incPopupMenu(1)
+        elseif event == EVT_VIRTUAL_ENTER then
+            if killEnterBreak == 1 then
+                killEnterBreak = 0
+            else
+                popupMenu[popupMenuActive].f()
+                popupMenu = nil
+            end
+        end
+    elseif uiState == uiStatus.init then
         lcd.clear()
         drawScreenTitle("Betaflight Config")
         init = init or assert(loadScript("ui_init.lua"))()
-        if not init() then
+        lcd.drawText(6, radio.yMinLimit, init.t)
+        if not init.f() then
             return 0
         end
         init = nil
-        createPopupMenu()
         PageFiles = assert(loadScript("pages.lua"))()
         invalidatePages()
-        uiState = uiStatus.mainMenu
+        uiState = prevUiState or uiStatus.mainMenu
+        prevUiState = nil
     elseif uiState == uiStatus.mainMenu then
         if event == EVT_VIRTUAL_EXIT then
             return 2
@@ -288,6 +302,9 @@ local function run_ui(event)
             incMainMenu(-1)
         elseif event == EVT_VIRTUAL_ENTER then
             uiState = uiStatus.pages
+        elseif event == EVT_VIRTUAL_ENTER_LONG then
+            killEnterBreak = 1
+            createPopupMenu()
         end
         lcd.clear()
         local yMinLim = radio.yMinLimit
@@ -322,21 +339,6 @@ local function run_ui(event)
                     invalidatePages()
                 end
             end
-        elseif pageState == pageStatus.popupMenu then
-            if event == EVT_VIRTUAL_EXIT then
-                pageState = pageStatus.display
-            elseif event == EVT_VIRTUAL_PREV then
-                incPopupMenu(-1)
-            elseif event == EVT_VIRTUAL_NEXT then
-                incPopupMenu(1)
-            elseif event == EVT_VIRTUAL_ENTER then
-                if killEnterBreak == 1 then
-                    killEnterBreak = 0
-                else
-                    pageState = pageStatus.display
-                    return popupMenuList[popupMenuActive].f() or 0
-                end
-            end
         elseif pageState == pageStatus.display then
             if event == EVT_VIRTUAL_PREV_PAGE then
                 incPage(-1)
@@ -350,17 +352,13 @@ local function run_ui(event)
             elseif event == EVT_VIRTUAL_ENTER then
                 if Page then
                     local f = Page.fields[currentField]
-                    if f.onClick then
-                        f.onClick(Page)
-                    end
                     if Page.values and f.vals and Page.values[f.vals[#f.vals]] and not f.ro then
                         pageState = pageStatus.editing
                     end
                 end
             elseif event == EVT_VIRTUAL_ENTER_LONG then
-                popupMenuActive = 1
                 killEnterBreak = 1
-                pageState = pageStatus.popupMenu
+                createPopupMenu()
             elseif event == EVT_VIRTUAL_EXIT then
                 invalidatePages()
                 currentField = 1
@@ -380,7 +378,7 @@ local function run_ui(event)
             end
         end
         if not Page then
-            Page = assert(loadScript("Pages/"..PageFiles[currentPage].script))()
+            Page = assert(loadScript("PAGES/"..PageFiles[currentPage].script))()
             collectgarbage()
         end
         if not Page.values and pageState == pageStatus.display then
@@ -388,9 +386,7 @@ local function run_ui(event)
         end
         lcd.clear()
         drawScreen()
-        if pageState == pageStatus.popupMenu then
-            drawPopupMenu()
-        elseif pageState == pageStatus.saving then
+        if pageState == pageStatus.saving then
             local saveMsg = "Saving..."
             if saveRetries > 0 then
                 saveMsg = "Retrying"
@@ -398,6 +394,18 @@ local function run_ui(event)
             lcd.drawFilledRectangle(radio.SaveBox.x,radio.SaveBox.y,radio.SaveBox.w,radio.SaveBox.h,backgroundFill)
             lcd.drawRectangle(radio.SaveBox.x,radio.SaveBox.y,radio.SaveBox.w,radio.SaveBox.h,SOLID)
             lcd.drawText(radio.SaveBox.x+radio.SaveBox.x_offset,radio.SaveBox.y+radio.SaveBox.h_offset,saveMsg,DBLSIZE + globalTextOptions)
+        end
+    elseif uiState == uiStatus.confirm then
+        lcd.clear()
+        drawScreen()
+        if event == EVT_VIRTUAL_ENTER then
+            uiState = uiStatus.init
+            init = Page.init
+            invalidatePages()
+        elseif event == EVT_VIRTUAL_EXIT then
+            invalidatePages()
+            uiState = prevUiState
+            prevUiState = nil
         end
     end
     if protocol.rssi() == 0 then
