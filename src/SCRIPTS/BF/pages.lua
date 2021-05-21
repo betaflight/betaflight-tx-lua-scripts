@@ -40,6 +40,10 @@ if apiVersion >= 1.016 then
     PageFiles[#PageFiles + 1] = { title = "Receiver", script = "rx.lua" }
 end
 
+if apiVersion >= 1.016 then
+    PageFiles[#PageFiles + 1] = { title = "Failsafe", script = "failsafe.lua" }
+end
+
 if apiVersion >= 1.041 then
     PageFiles[#PageFiles + 1] = { title = "GPS Rescue", script = "rescue.lua" }
 end
