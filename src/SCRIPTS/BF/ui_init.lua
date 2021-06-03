@@ -1,6 +1,7 @@
 local apiVersionReceived = false
 local vtxTablesReceived = false
-local data_init, getVtxTables, getMCUId
+local mcuIdReceived = false
+local getApiVersion, getVtxTables, getMCUId
 local returnTable = { f = nil, t = "" }
 
 local function modelActive()
@@ -10,18 +11,19 @@ end
 local function init()
     if not modelActive() then
         returnTable.t = "Waiting for connection"
-    elseif apiVersion == 0 then
-        data_init = data_init or assert(loadScript("data_init.lua"))()
-        returnTable.t = data_init.t
-        data_init.f()
-    elseif apiVersion > 0 and not apiVersionReceived then
-        data_init = nil
-        apiVersionReceived = true
-        collectgarbage()
-    elseif apiVersion >= 1.042 and not mcuId then
+    elseif not apiVersionReceived then
+        getApiVersion = getApiVersion or assert(loadScript("api_version.lua"))()
+        returnTable.t = getApiVersion.t
+        apiVersionReceived = getApiVersion.f()
+        if apiVersionReceived then
+            getApiVersion = nil
+            collectgarbage()
+        end
+    elseif not mcuIdReceived and apiVersion >= 1.042 then
         getMCUId = getMCUId or assert(loadScript("mcu_id.lua"))()
         returnTable.t = getMCUId.t
-        if getMCUId.f() then
+        mcuIdReceived = getMCUId.f()
+        if mcuIdReceived then
             getMCUId = nil
             local vtxTables = loadScript("/BF/VTX/"..mcuId..".lua")
             if vtxTables and vtxTables() then
@@ -30,7 +32,7 @@ local function init()
             end
             collectgarbage()
         end
-    elseif apiVersion >= 1.042 and not vtxTablesReceived then
+    elseif not vtxTablesReceived and apiVersion >= 1.042 then
         getVtxTables = getVtxTables or assert(loadScript("vtx_tables.lua"))()
         returnTable.t = getVtxTables.t
         vtxTablesReceived = getVtxTables.f()
