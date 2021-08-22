@@ -36,7 +36,7 @@ stages:
   jobs:
   - job: 'Linux'
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-20.04'
     steps:
     - script: sudo apt-get -y install lua5.2
       displayName: 'Install lua compiler.'
