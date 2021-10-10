@@ -33,7 +33,7 @@ if apiVersion >= 1.042 then
 end
 
 if apiVersion >= 1.016 then
-    PageFiles[#PageFiles + 1] = { title = "Gyro / Motor", script = "pwm.lua" }
+    PageFiles[#PageFiles + 1] = { title = "System / Motor", script = "pwm.lua" }
 end
 
 if apiVersion >= 1.016 then
