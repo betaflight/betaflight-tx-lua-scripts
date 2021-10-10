@@ -11,6 +11,12 @@ local inc = { x = function(val) x = x + val return x end, y = function(val) y = 
 local labels = {}
 local fields = {}
 
+local pidMax = 200
+
+if apiVersion >= 1.044 then
+    pidMax = 250
+end
+
 if apiVersion >= 1.016 then
     x = margin
     y = yMinLim - tableSpacing.header
@@ -24,26 +30,26 @@ if apiVersion >= 1.016 then
     y = yMinLim - tableSpacing.header
 
     labels[#labels + 1] = { t = "P",     x = x, y = inc.y(tableSpacing.header) }
-    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 200, vals = { 1 } }
-    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 200, vals = { 4 } }
-    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 200, vals = { 7 } }
+    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 1 } }
+    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 4 } }
+    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 7 } }
 
     x = x + tableSpacing.col
     y = yMinLim - tableSpacing.header
 
     labels[#labels + 1] = { t = "I",     x = x, y = inc.y(tableSpacing.header) }
-    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 200, vals = { 2 } }
-    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 200, vals = { 5 } }
-    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 200, vals = { 8 } }
+    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 2 } }
+    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 5 } }
+    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 8 } }
 
     x = x + tableSpacing.col
     y = yMinLim - tableSpacing.header
 
     labels[#labels + 1] = { t = "D",     x = x, y = inc.y(tableSpacing.header) }
-    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 200, vals = { 3 } }
-    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 200, vals = { 6 } }
+    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 3 } }
+    fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 6 } }
     if apiVersion >= 1.041 then
-        fields[#fields + 1] = {          x = x, y = inc.y(tableSpacing.row), min = 0, max = 200, vals = { 9 } }
+        fields[#fields + 1] = {          x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 9 } }
     end
 end
 

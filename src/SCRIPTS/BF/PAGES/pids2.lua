@@ -11,6 +11,12 @@ local inc = { x = function(val) x = x + val return x end, y = function(val) y = 
 local labels = {}
 local fields = {}
 
+local dMinMax = 100
+
+if apiVersion >= 1.044 then
+    dMinMax = 250
+end
+
 if apiVersion >= 1.040 then
     x = margin
     y = yMinLim - tableSpacing.header
@@ -33,9 +39,9 @@ if apiVersion >= 1.040 then
         y = yMinLim - tableSpacing.header
 
         labels[#labels + 1] = { t = "D Min", x = x, y = inc.y(tableSpacing.header) }
-        fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 100, vals = { 40 } }
-        fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 100, vals = { 41 } }
-        fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = 100, vals = { 42 } }
+        fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = dMinMax, vals = { 40 } }
+        fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = dMinMax, vals = { 41 } }
+        fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = dMinMax, vals = { 42 } }
     end
     
     x = margin
