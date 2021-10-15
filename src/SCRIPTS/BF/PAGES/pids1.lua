@@ -12,9 +12,11 @@ local labels = {}
 local fields = {}
 
 local pidMax = 200
+local dLabel = "D"
 
 if apiVersion >= 1.044 then
     pidMax = 250
+    dLabel = "D Max"
 end
 
 if apiVersion >= 1.016 then
@@ -45,7 +47,7 @@ if apiVersion >= 1.016 then
     x = x + tableSpacing.col
     y = yMinLim - tableSpacing.header
 
-    labels[#labels + 1] = { t = "D",     x = x, y = inc.y(tableSpacing.header) }
+    labels[#labels + 1] = { t = dLabel,  x = x, y = inc.y(tableSpacing.header) }
     fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 3 } }
     fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = pidMax, vals = { 6 } }
     if apiVersion >= 1.041 then
