@@ -13,9 +13,9 @@ local fields = {}
 
 local vtx_tables
 if apiVersion >= 1.042 then
-    vtx_tables = assert(loadScript("/BF/VTX/"..mcuId..".lua"))()
+    vtx_tables = assert(loadScript("VTX_TABLES/"..mcuId..".lua"))()
 else
-    vtx_tables = assert(loadScript("/BF/VTX/vtx_defaults.lua"))()
+    vtx_tables = assert(loadScript("VTX_TABLES/vtx_defaults.lua"))()
 end
 local deviceTable = { [1]="6705", [3]="SA", [4]="Tramp", [255]="None" }
 local pitModeTable = { [0]="OFF", "ON" }
