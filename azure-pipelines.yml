@@ -15,6 +15,7 @@ variables:
   owner: betaflight
   repoName: betaflight-tx-lua-scripts-nightlies
   releaseNotes: This is a nightly build off the tip of 'master'. It may be unstable and result in corrupted configurations or data loss. **Use only for testing.**
+  vmImage: 'ubuntu-20.04'
 
 name: $(Date:yyyyMMdd).$(BuildID)
 
@@ -36,7 +37,7 @@ stages:
   jobs:
   - job: 'Linux'
     pool:
-      vmImage: 'ubuntu-20.04'
+      vmImage: '$(vmImage)'
     steps:
     - script: sudo apt-get -y install lua5.2
       displayName: 'Install lua compiler.'
@@ -51,6 +52,8 @@ stages:
 - stage: Release
   jobs:
   - job: Release
+    pool:
+      vmImage: '$(vmImage)'
     steps:
     - task: DownloadPipelineArtifact@2
       inputs:
