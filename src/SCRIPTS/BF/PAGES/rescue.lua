@@ -1,9 +1,4 @@
-local template = loadScript(radio.templateHome.."rescue.lua")
-if template then
-    template = template()
-else
-    template = assert(loadScript(radio.templateHome.."default_template.lua"))()
-end
+local template = assert(loadScript(radio.template))()
 local margin = template.margin
 local indent = template.indent
 local lineSpacing = template.lineSpacing

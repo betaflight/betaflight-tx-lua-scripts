@@ -1,17 +1,4 @@
-local vtx_tables
-if apiVersion >= 1.042 then
-    vtx_tables = assert(loadScript("/BF/VTX/"..mcuId..".lua"))()
-else
-    vtx_tables = assert(loadScript("/BF/VTX/vtx_defaults.lua"))()
-end
-local deviceTable = { [1]="6705", [3]="SA", [4]="Tramp", [255]="None" }
-local pitModeTable = { [0]="OFF", "ON" }
-local template = loadScript(radio.templateHome.."vtx.lua")
-if template then
-    template = template()
-else
-    template = assert(loadScript(radio.templateHome.."default_template.lua"))()
-end
+local template = assert(loadScript(radio.template))()
 local margin = template.margin
 local indent = template.indent
 local lineSpacing = template.lineSpacing
@@ -23,6 +10,15 @@ local y = yMinLim - lineSpacing
 local inc = { x = function(val) x = x + val return x end, y = function(val) y = y + val return y end }
 local labels = {}
 local fields = {}
+
+local vtx_tables
+if apiVersion >= 1.042 then
+    vtx_tables = assert(loadScript("/BF/VTX/"..mcuId..".lua"))()
+else
+    vtx_tables = assert(loadScript("/BF/VTX/vtx_defaults.lua"))()
+end
+local deviceTable = { [1]="6705", [3]="SA", [4]="Tramp", [255]="None" }
+local pitModeTable = { [0]="OFF", "ON" }
 
 if apiVersion >= 1.036 then
     fields[#fields + 1] = { t = "Band",      x = x, y = inc.y(lineSpacing), sp = x + sp, min=0, max=#(vtx_tables.bandTable),       vals = { 2 }, table = vtx_tables.bandTable, upd = function(self) self.handleBandChanUpdate(self) end }
