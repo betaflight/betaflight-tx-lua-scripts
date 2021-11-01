@@ -26,7 +26,7 @@ local function init()
         mcuIdReceived = getMCUId.f()
         if mcuIdReceived then
             getMCUId = nil
-            local f = loadScript("/BF/VTX/"..mcuId..".lua")
+            local f = loadScript("VTX_TABLES/"..mcuId..".lua")
             if f and f() then
                 vtxTablesReceived = true
                 f = nil
