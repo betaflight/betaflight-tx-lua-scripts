@@ -5,12 +5,8 @@ local boardInfoReceived = false
 local getApiVersion, getVtxTables, getMCUId, getBoardInfo
 local returnTable = { f = nil, t = "" }
 
-local function modelActive()
-    return getValue(protocol.stateSensor) > 0
-end
-
 local function init()
-    if not modelActive() then
+    if getRSSI() == 0 then
         returnTable.t = "Waiting for connection"
     elseif not apiVersionReceived then
         getApiVersion = getApiVersion or assert(loadScript("api_version.lua"))()

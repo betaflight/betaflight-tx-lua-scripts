@@ -3,12 +3,8 @@ local timeIsSet = false
 local getApiVersion, setRtc, rssiTask
 local rssiEnabled = true
 
-local function modelActive()
-    return getValue(protocol.stateSensor) > 0
-end
-
 local function run_bg()
-    if modelActive() then
+    if getRSSI() > 0 then
         -- Send data when the telemetry connection is available
         -- assuming when sensor value higher than 0 there is an telemetry connection
         if not apiVersionReceived then
