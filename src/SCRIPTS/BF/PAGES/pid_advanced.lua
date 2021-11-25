@@ -28,8 +28,8 @@ if apiVersion >= 1.016 and apiVersion <= 1.043 then
 end
 
 if apiVersion >= 1.044 then
-    fields[#fields + 1] = { t = "Vbat Sag Comp",     x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 150, vals = { 54 } }
-    fields[#fields + 1] = { t = "Thrust Linear",     x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 150, vals = { 55 } }
+    fields[#fields + 1] = { t = "Vbat Sag Comp",     x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 150, vals = { 56 } }
+    fields[#fields + 1] = { t = "Thrust Linear",     x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 150, vals = { 57 } }
 end
 
 if apiVersion >= 1.040 and apiVersion <= 1.041 then

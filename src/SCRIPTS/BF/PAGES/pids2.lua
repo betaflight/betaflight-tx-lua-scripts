@@ -49,13 +49,15 @@ if apiVersion >= 1.040 then
 end
 
 if apiVersion >= 1.040 then
-    labels[#labels + 1] = { t = "Feedforward",    x = x,          y = inc.y(lineSpacing) }
-    fields[#fields + 1] = { t = "Transition",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 9 }, scale = 100 }
+    labels[#labels + 1] = { t = "Feedforward",          x = x,          y = inc.y(lineSpacing) }
     if apiVersion >= 1.044 then
-        fields[#fields + 1] = { t = "Averaging",  x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 51 }, table = { [0] = "OFF", "2_POINT", "3_POINT", "4_POINT" } }
-        fields[#fields + 1] = { t = "Smoothness", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 75, vals = { 52 } }
-        fields[#fields + 1] = { t = "Boost",      x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 50, vals = { 53 } }
+        fields[#fields + 1] = { t = "Jitter Reduction", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 20, vals = { 55 } }
+        fields[#fields + 1] = { t = "Smoothness",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 75, vals = { 52 } }
+        fields[#fields + 1] = { t = "Averaging",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 51 }, table = { [0] = "OFF", "2_POINT", "3_POINT", "4_POINT" } }
+        fields[#fields + 1] = { t = "Boost",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 50, vals = { 53 } }
+        fields[#fields + 1] = { t = "Max Rate Limit",   x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 150, vals = { 54 } }
     end
+    fields[#fields + 1] = { t = "Transition",           x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 9 }, scale = 100 }
 end
 
 if apiVersion >= 1.041 then
