@@ -408,7 +408,7 @@ local function run_ui(event)
             prevUiState = nil
         end
     end
-    if protocol.rssi() == 0 then
+    if getRSSI() == 0 then
         lcd.drawText(radio.NoTelem[1],radio.NoTelem[2],radio.NoTelem[3],radio.NoTelem[4])
     end
     mspProcessTxQ()

@@ -3,8 +3,6 @@ local supportedProtocols =
     smartPort =
     {
         mspTransport    = "MSP/sp.lua",
-        rssi            = function() return getValue("RSSI") end,
-        stateSensor     = "Tmp1",
         push            = sportTelemetryPush,
         maxTxBufferSize = 6,
         maxRxBufferSize = 6,
@@ -16,8 +14,6 @@ local supportedProtocols =
     {
         mspTransport    = "MSP/crsf.lua",
         cmsTransport    = "CMS/crsf.lua",
-        rssi            = function() return getValue("TQly") end,
-        stateSensor     = "1RSS",
         push            = crossfireTelemetryPush,
         maxTxBufferSize = 8,
         maxRxBufferSize = 58,
