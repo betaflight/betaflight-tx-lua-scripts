@@ -13,28 +13,28 @@ local fields = {}
 
 labels[#labels + 1] = { t = "Simplified PID",    x = x,          y = inc.y(lineSpacing) }
 fields[#fields + 1] = { t = "PID Tuning",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 2, vals = { 1 }, table = { [0] = "OFF", "RP", "RPY" } }
-fields[#fields + 1] = { t = "Master Mult",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 2 }, scale = 100, mult = 5 }
-fields[#fields + 1] = { t = "P/I Gain",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 6 }, scale = 100, mult = 5 }
-fields[#fields + 1] = { t = "D Gain",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 5 }, scale = 100, mult = 5 }
-fields[#fields + 1] = { t = "FF Gain",           x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 8 }, scale = 100, mult = 5 }
-fields[#fields + 1] = { t = "I Gain",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 4 }, scale = 100, mult = 5 }
-fields[#fields + 1] = { t = "D Max Gain",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 7 }, scale = 100, mult = 5 }
-fields[#fields + 1] = { t = "Pitch D Gain",      x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 3 }, scale = 100, mult = 5 }
-fields[#fields + 1] = { t = "Pitch P/I/FF Gain", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 9 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "D Gains",           x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 5 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "P&I Gains",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 6 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "FF Gains",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 8 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "D Max",             x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 7 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "I Gains",           x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 4 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "Pitch:Roll D",      x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 3 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "Pitch:Roll P,I&FF", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 9 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "Master Multiplier", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 2 }, scale = 100, mult = 5 }
 
 labels[#labels + 1] = { t = "Simplified Filter", x = x,          y = inc.y(lineSpacing) }
 fields[#fields + 1] = { t = "Gyro Tuning",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 12 }, table = { [0] = "OFF", "ON" } }
-fields[#fields + 1] = { t = "Gyro Mult",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 13 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "Gyro Multiplier",   x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 13 }, scale = 100, mult = 5 }
 fields[#fields + 1] = { t = "D Tuning",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 10 }, table = { [0] = "OFF", "ON" } }
-fields[#fields + 1] = { t = "D Mult",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 11 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "D Multiplier",      x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 11 }, scale = 100, mult = 5 }
 
 return {
-   read        = 140, -- MSP_SIMPLIFIED_TUNING
-   write       = 141, -- MSP_SET_SIMPLIFIED_TUNING
-   title       = "Simplified Tuning",
-   reboot      = false,
-   eepromWrite = true,
-   minBytes    = 13,
-   labels      = labels,
-   fields      = fields,
+    read        = 140, -- MSP_SIMPLIFIED_TUNING
+    write       = 141, -- MSP_SET_SIMPLIFIED_TUNING
+    title       = "Simplified Tuning",
+    reboot      = false,
+    eepromWrite = true,
+    minBytes    = 13,
+    labels      = labels,
+    fields      = fields,
 }
