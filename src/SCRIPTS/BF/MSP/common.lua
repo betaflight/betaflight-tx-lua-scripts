@@ -6,6 +6,7 @@ local MSP_STARTFLAG = bit32.lshift(1,4)
 local mspSeq = 0
 local mspRemoteSeq = 0
 local mspRxBuf = {}
+local mspRxSize = 0
 local mspRxCRC = 0
 local mspRxReq = 0
 local mspStarted = false
@@ -37,12 +38,6 @@ function mspProcessTxQ()
     end
     if i <= protocol.maxTxBufferSize then
         payload[i] = mspTxCRC
-        i = i + 1
-      -- zero fill
-        while i <= protocol.maxTxBufferSize do
-            payload[i] = 0
-            i = i + 1
-        end
         protocol.mspSend(payload)
         mspTxBuf = {}
         mspTxIdx = 1
@@ -68,25 +63,30 @@ function mspSendRequest(cmd, payload)
 end
 
 function mspReceivedReply(payload)
-    local idx      = 1
-    local head     = payload[idx]
-    local err_flag = (bit32.band(head,0x20) ~= 0)
+    local idx = 1
+    local status = payload[idx]
+    local err = bit32.btest(status, 0x80)
+    local version = bit32.rshift(bit32.band(status, 0x60), 5)
+    local start = bit32.btest(status, 0x10)
+    local seq = bit32.band(status, 0x0F)
     idx = idx + 1
-    if err_flag then
-        -- error flag set
+    if err then
         mspStarted = false
         return nil
     end
-    local start = (bit32.band(head,0x10) ~= 0)
-    local seq   = bit32.band(head,0x0F)
     if start then
-        -- start flag set
         mspRxBuf = {}
         mspRxSize = payload[idx]
-        mspRxCRC  = bit32.bxor(mspRxSize,mspLastReq)
-        mspRxReq  = mspLastReq
+        mspRxReq = mspLastReq
         idx = idx + 1
-        mspStarted = true
+        if version == 1 then
+            mspRxReq = payload[idx]
+            idx = idx + 1
+        end
+        mspRxCRC = bit32.bxor(mspRxSize, mspRxReq)
+        if mspRxReq == mspLastReq then
+            mspStarted = true
+        end
     elseif not mspStarted then
         return nil
     elseif bit32.band(mspRemoteSeq + 1, 0x0F) ~= seq then
@@ -95,7 +95,7 @@ function mspReceivedReply(payload)
     end
     while (idx <= protocol.maxRxBufferSize) and (#mspRxBuf < mspRxSize) do
         mspRxBuf[#mspRxBuf + 1] = payload[idx]
-        mspRxCRC = bit32.bxor(mspRxCRC,payload[idx])
+        mspRxCRC = bit32.bxor(mspRxCRC, payload[idx])
         idx = idx + 1
     end
     if idx > protocol.maxRxBufferSize then
@@ -104,7 +104,7 @@ function mspReceivedReply(payload)
     end
     mspStarted = false
     -- check CRC
-    if mspRxCRC ~= payload[idx] then
+    if mspRxCRC ~= payload[idx] and version == 0 then
         return nil
     end
     return mspRxBuf

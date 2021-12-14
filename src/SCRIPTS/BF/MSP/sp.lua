@@ -7,9 +7,11 @@ local REPLY_FRAME_ID   = 0x32
 local lastSensorId, lastFrameId, lastDataId, lastValue
 
 protocol.mspSend = function(payload)
-    local dataId = payload[1] + bit32.lshift(payload[2],8)
-    local value = payload[3] + bit32.lshift(payload[4],8)
-        + bit32.lshift(payload[5],16) + bit32.lshift(payload[6],24)
+    local dataId = payload[1] + bit32.lshift(payload[2], 8)
+    local value = 0
+    for i = 3, #payload do
+        value = value + bit32.lshift(payload[i], (i - 3) * 8)
+    end
     return protocol.push(LOCAL_SENSOR_ID, REQUEST_FRAME_ID, dataId, value)
 end
 
