@@ -46,7 +46,7 @@ return {
         self.rpmHarmonics = self.values[44]
     end,
     preSave = function(self)
-        self.reboot = self.values[44] == 0 and self.rpmHarmonics ~= 0
+        self.reboot = self.values[44] == 0 and self.rpmHarmonics ~= 0 and apiVersion <= 1.043
         return self.values
     end,
 }
