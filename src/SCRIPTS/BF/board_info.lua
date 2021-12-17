@@ -108,13 +108,13 @@ local function getBoardInfo()
     if boardInfoReceived then
         local f = io.open("BOARD_INFO/"..mcuId..".lua", 'w')
         io.write(f, "return {", "\n")
-        io.write(f, "    boardIdentifier = "..boardIdentifier..",", "\n")
+        io.write(f, "    boardIdentifier = "..'"'..boardIdentifier..'"'..",", "\n")
         io.write(f, "    hardwareRevision = "..tostring(hardwareRevision)..",", "\n")
         io.write(f, "    boardType = "..tostring(boardType)..",", "\n")
         io.write(f, "    targetCapabilities = "..tostring(targetCapabilities)..",", "\n")
-        io.write(f, "    targetName = "..targetName..",", "\n")
-        io.write(f, "    boardName = "..boardName..",", "\n")
-        io.write(f, "    manufacturerId = "..manufacturerId..",", "\n")
+        io.write(f, "    targetName = "..'"'..targetName..'"'..",", "\n")
+        io.write(f, "    boardName = "..'"'..boardName..'"'..",", "\n")
+        io.write(f, "    manufacturerId = "..'"'..manufacturerId..'"'..",", "\n")
         local signatureString = "    signature = { "
         for i = 1, #signature do
             signatureString = signatureString..tostring(signature[i])..", "
