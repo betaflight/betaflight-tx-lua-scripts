@@ -23,10 +23,10 @@ fields[#fields + 1] = { t = "Pitch:Roll P,I&FF", x = x + indent, y = inc.y(lineS
 fields[#fields + 1] = { t = "Master Multiplier", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 2 }, scale = 100, mult = 5 }
 
 labels[#labels + 1] = { t = "Simplified Filter", x = x,          y = inc.y(lineSpacing) }
-fields[#fields + 1] = { t = "Gyro Tuning",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 12 }, table = { [0] = "OFF", "ON" } }
-fields[#fields + 1] = { t = "Gyro Multiplier",   x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 13 }, scale = 100, mult = 5 }
-fields[#fields + 1] = { t = "D Tuning",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 10 }, table = { [0] = "OFF", "ON" } }
-fields[#fields + 1] = { t = "D Multiplier",      x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 11 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "Gyro Tuning",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 36 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "Gyro Multiplier",   x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 10, max = 200, vals = { 37 }, scale = 100, mult = 5 }
+fields[#fields + 1] = { t = "D Tuning",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 18 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "D Multiplier",      x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 10, max = 200, vals = { 19 }, scale = 100, mult = 5 }
 
 return {
     read        = 140, -- MSP_SIMPLIFIED_TUNING
@@ -34,7 +34,7 @@ return {
     title       = "Simplified Tuning",
     reboot      = false,
     eepromWrite = true,
-    minBytes    = 13,
+    minBytes    = 53,
     labels      = labels,
     fields      = fields,
 }
