@@ -77,7 +77,7 @@ return {
         self.dynamicIdle = self.values[50]
     end,
     preSave = function(self)
-        self.reboot = self.values[50] ~= self.dynamicIdle
+        self.reboot = self.values[50] ~= self.dynamicIdle and apiVersion <= 1.043
         return self.values
     end,
 }
