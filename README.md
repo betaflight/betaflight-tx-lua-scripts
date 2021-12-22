@@ -5,7 +5,9 @@
 ## Firmware Considerations
 
 - Betaflight - As a best practice, it is recommended to use the most recent stable release of Betaflight to obtain the best possible results;
-- OpenTX - 2.3.4 or newer;
+- OpenTX - 2.3.12 or newer;
+- EdgeTX - 2.4.0 or newer;
+- ExpressLRS - 2.0.1 or newer;
 - Crossfire TX / RX - v2.11 or newer;
 - FrSky TX / RX with support for SmartPort - While most receivers with SmartPort support work fine, it is recommended to update the receiver to the most recent firmware version to correct any known bugs in telemetry.
 
