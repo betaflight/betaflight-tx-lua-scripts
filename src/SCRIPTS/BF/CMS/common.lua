@@ -49,7 +49,7 @@ screen = {
     end,
     draw = function()
         if (screen.buffer ~= nil and screen.config ~= nil and #screen.buffer > 0) then
-            lcd.clear()
+            screen.clear()
             for char = 1, #screen.buffer do
                 if (screen.buffer[char] ~= 32) then -- skip spaces to avoid CPU spikes
                     c = string.char(screen.buffer[char])
@@ -60,8 +60,11 @@ screen = {
                     lcd.drawText(xPos, yPos, c, screen.config.textSize)
                 end
             end
-            lcd.drawText(screen.config.refresh.left, screen.config.refresh.top, screen.config.refresh.text, screen.config.textSize)
         end
+    end,
+    clear = function()
+        lcd.clear()
+        lcd.drawText(screen.config.refresh.left, screen.config.refresh.top, screen.config.refresh.text, screen.config.textSize)
     end
 }
 
@@ -70,6 +73,7 @@ cms = {
     init = function(cmsConfig) 
         screen.config = assert(cmsConfig, "Resolution not supported")
         screen.reset()
+        screen.clear()
         protocol.cms.close()
         cms.menuOpen = false
     end,
