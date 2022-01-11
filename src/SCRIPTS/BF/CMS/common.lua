@@ -70,12 +70,14 @@ screen = {
 
 cms = {
     menuOpen = false,
+    synced = false,
     init = function(cmsConfig) 
         screen.config = assert(cmsConfig, "Resolution not supported")
         screen.reset()
         screen.clear()
         protocol.cms.close()
         cms.menuOpen = false
+        cms.synced = false
     end,
     open = function()
         protocol.cms.open(screen.config.rows, screen.config.cols)
@@ -112,6 +114,7 @@ cms = {
                     screen.buffer = cRleDecode(screen.data)
                     screen.draw()
                     screen.reset()
+                    cms.synced = true
                 end
             else
                 protocol.cms.refresh()
