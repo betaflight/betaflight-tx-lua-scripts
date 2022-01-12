@@ -74,7 +74,6 @@ cms = {
     init = function(cmsConfig) 
         screen.config = assert(cmsConfig, "Resolution not supported")
         screen.reset()
-        screen.clear()
         protocol.cms.close()
         cms.menuOpen = false
         cms.synced = false

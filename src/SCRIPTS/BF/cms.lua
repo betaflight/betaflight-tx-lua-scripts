@@ -1,5 +1,6 @@
 local lastMenuEventTime = 0
 local INTERVAL = 80
+local firstRun = true
 
 local function init()
     cms.init(radio)
@@ -11,6 +12,10 @@ local function stickMovement()
 end
 
 local function run(event)
+    if firstRun then
+        screen.clear()
+        firstRun = false
+    end
     if stickMovement() then
         cms.synced = false
         lastMenuEventTime = getTime()
