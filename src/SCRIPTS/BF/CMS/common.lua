@@ -41,31 +41,26 @@ screen = {
     data = {},
     batchId = 0,
     sequence = 0,
+    redraws = 2,
     reset = function()
-        screen.buffer = {}
         screen.data = {}
         screen.batchId = 0
         screen.sequence = 0
     end,
     draw = function()
-        if (screen.buffer ~= nil and screen.config ~= nil and #screen.buffer > 0) then
-            screen.clear()
-            for char = 1, #screen.buffer do
-                if (screen.buffer[char] ~= 32) then -- skip spaces to avoid CPU spikes
-                    c = string.char(screen.buffer[char])
-                    row = math.ceil(char / screen.config.cols)
-                    col = char - ((row - 1) * screen.config.cols)
-                    xPos = ((col - 1) * screen.config.pixelsPerChar) + screen.config.xIndent + 1
-                    yPos = ((row - 1) * screen.config.pixelsPerRow) + screen.config.yOffset + 1
-                    lcd.drawText(xPos, yPos, c, screen.config.textSize)
-                end
+        lcd.clear()
+        lcd.drawText(screen.config.refresh.left, screen.config.refresh.top, screen.config.refresh.text, screen.config.textSize)
+        for char = 1, #screen.buffer do
+            if (screen.buffer[char] ~= 32) then -- skip spaces to avoid CPU spikes
+                local c = string.char(screen.buffer[char])
+                local row = math.ceil(char / screen.config.cols)
+                local col = char - ((row - 1) * screen.config.cols)
+                local xPos = ((col - 1) * screen.config.pixelsPerChar) + screen.config.xIndent + 1
+                local yPos = ((row - 1) * screen.config.pixelsPerRow) + screen.config.yOffset + 1
+                lcd.drawText(xPos, yPos, c, screen.config.textSize)
             end
         end
     end,
-    clear = function()
-        lcd.clear()
-        lcd.drawText(screen.config.refresh.left, screen.config.refresh.top, screen.config.refresh.text, screen.config.textSize)
-    end
 }
 
 cms = {
@@ -91,27 +86,23 @@ cms = {
     update = function()
         local command, data = protocol.cms.poll()
         if (command == "update") then
-            local firstChunk = bit32.band(data[CONST.offset.meta], CONST.bitmask.firstChunk)
-            local lastChunk = bit32.band(data[CONST.offset.meta], CONST.bitmask.lastChunk)
+            local firstChunk = bit32.btest(data[CONST.offset.meta], CONST.bitmask.firstChunk)
+            local lastChunk = bit32.btest(data[CONST.offset.meta], CONST.bitmask.lastChunk)
             local batchId = bit32.band(data[CONST.offset.meta], CONST.bitmask.batchId)
-            local sequence  = data[CONST.offset.sequence]
-            local frameData = {}
-            for i = CONST.offset.data, #data do
-                frameData[#frameData + 1] = data[i]
-            end
-            if (firstChunk ~= 0) then
+            local sequence = data[CONST.offset.sequence]
+            if firstChunk then
                 screen.reset()
                 screen.batchId = batchId
                 screen.sequence = 0
             end
             if (screen.batchId == batchId) and (screen.sequence == sequence) then
                 screen.sequence = sequence + 1
-                for i = 1, #frameData do
-                    screen.data[#screen.data + 1] = frameData[i]
+                for i = CONST.offset.data, #data do
+                    screen.data[#screen.data + 1] = data[i]
                 end
-                if (lastChunk ~= 0) then
+                if lastChunk then
                     screen.buffer = cRleDecode(screen.data)
-                    screen.draw()
+                    screen.redraws = 2
                     screen.reset()
                     cms.synced = true
                 end
@@ -121,6 +112,10 @@ cms = {
             cms.menuOpen = true
         elseif (command == "clear") then
             screen.reset()
+        end
+        if screen.redraws > 0 then
+            screen.draw()
+            screen.redraws = screen.redraws - 1
         end
     end    
 }
