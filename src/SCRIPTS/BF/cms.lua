@@ -1,6 +1,5 @@
 local lastMenuEventTime = 0
 local INTERVAL = 80
-local firstRun = true
 
 local function init()
     cms.init(radio)
@@ -12,24 +11,23 @@ local function stickMovement()
 end
 
 local function run(event)
-    if firstRun then
-        screen.clear()
-        firstRun = false
-    end
-    if stickMovement() then
-        cms.synced = false
-        lastMenuEventTime = getTime()
-    end
     cms.update()
-    if (cms.menuOpen == false) then
+    if cms.menuOpen == false then
         cms.open()
     end
-    if (event == radio.refresh.event) or (lastMenuEventTime + INTERVAL < getTime() and not cms.synced) then
-        cms.refresh()
-    end
-    if (event == EVT_VIRTUAL_EXIT) then
+    if event == radio.refresh.event then
+        cms.synced = false
+        lastMenuEventTime = 0
+    elseif stickMovement() then
+        cms.synced = false
+        lastMenuEventTime = getTime()
+    elseif event == EVT_VIRTUAL_EXIT then
         cms.close()
         return 1
+    end
+    if lastMenuEventTime + INTERVAL < getTime() and not cms.synced then
+        lastMenuEventTime = getTime()
+        cms.refresh()
     end
     return 0
 end
