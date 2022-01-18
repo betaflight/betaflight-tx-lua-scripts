@@ -1,4 +1,4 @@
-local toolName = "TNS|Betaflight setup|TNE"
+local toolName = "TNS|Betaflight Config|TNE"
 chdir("/SCRIPTS/BF")
 
 apiVersion = 0
