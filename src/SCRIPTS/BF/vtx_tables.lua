@@ -116,4 +116,4 @@ local function getVtxTables()
     return vtxTablesReceived
 end
 
-return { f = getVtxTables, t = "Downloading VTX Tables" }
+return { f = getVtxTables, t = "Downloading VTX tables" }
