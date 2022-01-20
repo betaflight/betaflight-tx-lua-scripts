@@ -2,9 +2,10 @@
 
  [![Latest version](https://img.shields.io/github/v/release/betaflight/betaflight-tx-lua-scripts)](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) [![Build Status](https://api.travis-ci.com/betaflight/betaflight-tx-lua-scripts.svg?branch=master)](https://travis-ci.com/betaflight/betaflight-tx-lua-scripts) [![Build Status](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_apis/build/status/betaflight.betaflight-tx-lua-scripts?branchName=master)](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_build/latest?definitionId=1&branchName=master) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-## Firmware Considerations
+## Requirements
 
 - Betaflight - As a best practice, it is recommended to use the most recent stable release of Betaflight to obtain the best possible results;
+- Telemetry - Telemetry has to be enabled and supported by the TX / RX for the scripts to be able to communicate with the flight controller;
 - OpenTX - 2.3.12 or newer;
 - EdgeTX - 2.4.0 or newer;
 - ExpressLRS - 2.0.1 or newer;
@@ -19,40 +20,61 @@ Download a zip file containing the latest version from the [releases page](https
 
 Unzip the files from the link above and drag the contents of the `obj` folder to your radios SD card. If you do this correctly, the `SCRIPTS` directory will merge with your existing directories, placing the scripts in their appropriate paths.  You will know if you did this correctly if the `bf.lua` file shows up in your `/SCRIPTS/TOOLS` directory.
 
-### How to install
+![Install](docs/assets/images/install.gif)
 
-Bootloader Method
+## How to use
 
-1. Power off your transmitter and power it back on in boot loader mode.
-2. Connect a USB cable and open the SD card drive on your computer.
-3. Unzip the file and copy the scripts to the root of the SD card.
-4. Unplug the USB cable and power cycle your transmitter.
+Navigate to the TOOLS menu in OpenTX, select "Betaflight setup" or "Betaflight CMS" and press the [ENTER] button. The first time the script is launched after a clean install or upgrade it will go through it's compile procedure and exit back to the TOOLS menu when it's done.
 
-Manual method (varies, based on the model of your transmitter)
+### Betaflight setup
 
-1. Power off your transmitter.
-2. Remove the SD card and plug it into a computer
-3. Unzip the file and copy the scripts to the root of the SD card.
-4. Reinsert your SD card into the transmitter
-5. Power up your transmitter.
+The "Betaflight setup" script lets you configure Betaflight through the MSP protocol.
 
-If you copied the files correctly, you can now go into the OpenTx Tools screen from the main menu and access the Betaflight Configuration tool. The first time you run the script, a message 'Compiling...' will appear in the display before the script is started - this is normal, and is done to minimise the RAM usage of the script.
+<kbd>![Betaflight setup](docs/assets/images/how_to_use.gif)</kbd>
 
-### Running the script as a telemetry page
+#### Controls
 
-Due to issues with input mapping and memory overruns, running the script as a telemetry page **is no longer supported**. The only way to run the script is through the Tools screen in the OpenTX main menu.
+- [+] / [-] / [ROTARY ENCODER] - Used to navigate.
+- [PAGE] - Press to move to the next page. Long press to move to the previous page.
+- [ENTER] - Press to access the selected element. Long press to open the function menu.
+- [EXIT] - Press to go back or exit the script.
 
-### Setting up VTX Tables
+#### Saving your changes
+
+Any changes to parameters in the script will not take effect until a save is manually initiated. Change the parameters you want to change, open the function menu by long pressing [ENTER] and select "save page" to send the modified parameters back to the flight controller. 
+
+#### Setting up VTX tables
 
 If you are using a VTX that supports the SmartAudio or Tramp protocols then bands and channels etc. are managed using VTX tables since Betaflight version 4.1.0. The script will be downloading and storing the current VTX table for every model the first time the model is connected and the script is run. If you change the VTX table, you have to re-load the updated VTX table in the script, by choosing the 'vtx tables' option in the function menu.
 
+Depending on the size of the vtx tables and the telemetry protocol used, downloading the vtx tables can take a while.
+
+<kbd>![Download VTX tables](docs/assets/images/download_vtx_tables.gif)</kbd>
+
+### Betaflight CMS
+
+**!! IMPORTANT: TBS Crossfire/Tracer only !!**
+
+"Betaflight CMS" lets you access the same CMS menu that is available in the OSD.
+
+<kbd>![Betaflight CMS](docs/assets/images/how_to_use_cms.gif)</kbd>
+
+#### Controls
+
+- [PITCH] - Navigate the current menu.
+- [ROLL] - Enter menu or change selected parameter.
+- [YAW] - Left to go back and right to enter the "SAVE / EXIT" menu.
+- [+] / [ENTER] - Manual refresh. Press if the script doesn't update.
+- [EXIT] - Close CMS menu and exit script. **!! IMPORTANT: Single press only. Long press will exit the script without closing CMS and as a result you will not be able to arm !!**
+
 ### Background script
-The optional background script offers RTC synchronization and RSSI through MSP. It can be setup as a special or global function in OpenTX. The image below shows how to run the background script as a special function.
 
-![Background script setup](docs/assets/images/background_script_setup.png)
+The optional background script offers RTC synchronization and RSSI through MSP. RSSI will only be sent if no other RSSI source is detected. It can be setup as a special or global function in OpenTX. The image below shows how to run the background script as a special function.
 
+<kbd>![Background script setup](docs/assets/images/background_script_setup.png)</kbd>
 
-## Unstable Testing Versions
+## Unstable testing versions
+
 Unstable testing versions of the latest builds of the Lua Script can be downloaded from [here](https://github.com/betaflight/betaflight-tx-lua-scripts-nightlies/releases).
 
 Be aware that these versions are intended for testing / feedback only, and may be buggy or broken. Caution is advised when using these versions.
