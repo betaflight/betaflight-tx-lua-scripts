@@ -1,7 +1,7 @@
 # Compiled Lua sources
 luac.out
 
-# luarocks build files
+# Luarocks build files
 *.src.rock
 *.zip
 *.tar.gz
@@ -42,6 +42,9 @@ luac.out
 # Eclipse
 .project
 
-#directories
+# Visual Studio Code
+.vscode
+
+# Directories
 tmp
 obj
