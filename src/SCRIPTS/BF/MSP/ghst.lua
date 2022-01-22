@@ -20,9 +20,12 @@ protocol.mspWrite = function(cmd, payload)
 end
 
 protocol.mspPoll = function()
-    local type, data = ghostTelemetryPop()
-    if type == GHST_FRAMETYPE_MSP_RESP then
-        return mspReceivedReply(data)
+    while true do
+        local type, data = ghostTelemetryPop()
+        if type == GHST_FRAMETYPE_MSP_RESP then
+            return data
+        elseif type == nil then
+            return nil
+        end
     end
-    return nil
 end
