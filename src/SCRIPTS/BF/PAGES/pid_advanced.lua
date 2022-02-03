@@ -20,6 +20,7 @@ if apiVersion >= 1.040 then
 end
 
 if apiVersion >= 1.043 then
+    fields[#fields + 1] = { t = "Motor Output Limit",x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 100, vals = { 48 } }
     fields[#fields + 1] = { t = "Dynamic Idle",      x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 50 } }
 end
 
