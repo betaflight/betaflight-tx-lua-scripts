@@ -5,6 +5,10 @@ if apiVersion >= 1.036 then
 end
 
 if apiVersion >= 1.016 then
+    PageFiles[#PageFiles + 1] = { title = "Profiles", script = "profiles.lua" }
+end
+
+if apiVersion >= 1.016 then
     PageFiles[#PageFiles + 1] = { title = "PIDs 1", script = "pids1.lua" }
 end
 
