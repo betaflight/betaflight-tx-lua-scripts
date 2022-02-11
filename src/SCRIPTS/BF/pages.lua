@@ -53,6 +53,10 @@ if apiVersion >= 1.041 then
 end
 
 if apiVersion >= 1.041 then
+    PageFiles[#PageFiles + 1] = { title = "Geofence", script = "geofencing.lua" }
+end
+
+if apiVersion >= 1.041 then
     PageFiles[#PageFiles + 1] = { title = "GPS PIDs", script = "gpspids.lua" }
 end
 
