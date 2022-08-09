@@ -33,6 +33,12 @@ if apiVersion >= 1.44 then
     fields[#fields + 1] = { t = "Thrust Linear",     x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 150, vals = { 57 } }
 end
 
+if apiVersion >= 1.45 then
+    labels[#labels + 1] = { t = "TPA",               x = x,          y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Rate",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 58 } , scale = 100 }
+    fields[#fields + 1] = { t = "Breakpoint",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 750, max = 2250, vals = { 59, 60 } }
+end
+
 if apiVersion >= 1.40 and apiVersion <= 1.41 then
     fields[#fields + 1] = { t = "Smart Feedforward", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 27 }, table = { [0] = "OFF", "ON" } } 
 end
