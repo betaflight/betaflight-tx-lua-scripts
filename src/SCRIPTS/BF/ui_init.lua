@@ -43,7 +43,7 @@ local function init()
             getVtxTables = nil
             collectgarbage()
         end
-    elseif not boardInfoReceived and apiVersion >= 1.043 then
+    elseif not boardInfoReceived and apiVersion >= 1.044 then
         getBoardInfo = getBoardInfo or assert(loadScript("board_info.lua"))()
         returnTable.t = getBoardInfo.t
         boardInfoReceived = getBoardInfo.f()

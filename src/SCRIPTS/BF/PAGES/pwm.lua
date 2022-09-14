@@ -13,7 +13,7 @@ local fields = {}
 
 local gyroSampleRateKhz
 
-if apiVersion >= 1.043 then
+if apiVersion >= 1.044 then
     gyroSampleRateKhz = assert(loadScript("BOARD_INFO/"..mcuId..".lua"))().gyroSampleRateHz / 1000
 end 
 
@@ -42,12 +42,14 @@ labels[#labels + 1] = { t = "System Config", x = x, y = inc.y(lineSpacing) }
 if apiVersion >= 1.031 and apiVersion <= 1.040 then
     fields[#fields + 1] = { t = "32kHz Sampling", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 9 }, table = { [0] = "OFF", "ON" }, upd = function(self) self.updateRateTables(self) end }
 end
-if apiVersion >= 1.043 then
+if apiVersion >= 1.044 then
     fields[#fields + 1] = { t = "Gyro Update", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 32, vals = { 1 }, table = {}, upd = function(self) self.updatePidRateTable(self) end, mult = -1, ro = true }
-else
+elseif apiVersion <= 1.042 then
     fields[#fields + 1] = { t = "Gyro Update", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 32, vals = { 1 }, table = {}, upd = function(self) self.updatePidRateTable(self) end, mult = -1 }
 end
-fields[#fields + 1] = { t = "PID Loop",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 16, vals = { 2 }, table = {}, mult = -1 }
+if apiVersion <= 1.042 or apiVersion >= 1.044 then
+    fields[#fields + 1] = { t = "PID Loop",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 16, vals = { 2 }, table = {}, mult = -1 }
+end
 
 labels[#labels + 1] = { t = "ESC/Motor",       x = x,          y = inc.y(lineSpacing) }
 fields[#fields + 1] = { t = "Protocol",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = #escProtocols, vals = { 4 }, table = escProtocols }
