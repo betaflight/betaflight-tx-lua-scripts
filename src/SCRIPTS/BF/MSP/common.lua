@@ -100,25 +100,24 @@ function mspReceivedReply(payload)
     end
     if idx > protocol.maxRxBufferSize then
         mspRemoteSeq = seq
-        return true
+        return false
     end
     mspStarted = false
     -- check CRC
     if mspRxCRC ~= payload[idx] and version == 0 then
         return nil
     end
-    return mspRxBuf
+    return true
 end
 
 function mspPollReply()
     while true do
-        local ret = protocol.mspPoll()
-        if type(ret) == "table" then
+        local mspData = protocol.mspPoll()
+        if mspData == nil then
+            return nil
+        elseif mspReceivedReply(mspData) then
             mspLastReq = 0
-            return mspRxReq, ret
-        else
-            break
-        end
+            return mspRxReq, mspRxBuf
+        end     
     end
-    return nil
 end

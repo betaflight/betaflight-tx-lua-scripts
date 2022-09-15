@@ -6,7 +6,7 @@ local CRSF_FRAMETYPE_MSP_REQ           = 0x7A      -- response request using msp
 local CRSF_FRAMETYPE_MSP_RESP          = 0x7B      -- reply with 60 byte chunked binary
 local CRSF_FRAMETYPE_MSP_WRITE         = 0x7C      -- write with 60 byte chunked binary 
 
-crsfMspCmd = 0
+local crsfMspCmd = 0
 
 protocol.mspSend = function(payload)
     local payloadOut = { CRSF_ADDRESS_BETAFLIGHT, CRSF_ADDRESS_RADIO_TRANSMITTER }
@@ -27,15 +27,16 @@ protocol.mspWrite = function(cmd, payload)
 end
 
 protocol.mspPoll = function()
-    local command, data = crossfireTelemetryPop()
-    if command == CRSF_FRAMETYPE_MSP_RESP then
-        if data[1] == CRSF_ADDRESS_RADIO_TRANSMITTER and data[2] == CRSF_ADDRESS_BETAFLIGHT then
+    while true do
+        local cmd, data = crossfireTelemetryPop()
+        if cmd == CRSF_FRAMETYPE_MSP_RESP and data[1] == CRSF_ADDRESS_RADIO_TRANSMITTER and data[2] == CRSF_ADDRESS_BETAFLIGHT then
             local mspData = {}
-            for i=3, #(data) do
-                mspData[i-2] = data[i]
+            for i = 3, #data do
+                mspData[i - 2] = data[i]
             end
-            return mspReceivedReply(mspData)
+            return mspData
+        elseif cmd == nil then
+            return nil
         end
     end
-    return nil
 end
