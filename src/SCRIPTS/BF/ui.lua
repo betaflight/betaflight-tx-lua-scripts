@@ -91,7 +91,7 @@ local function createPopupMenu()
     end
     popupMenu[#popupMenu + 1] = { t = "reboot", f = rebootFc }
     popupMenu[#popupMenu + 1] = { t = "acc cal", f = function() confirm("CONFIRM/acc_cal.lua") end }
-    if apiVersion >= 1.042 then
+    if apiVersion >= 1.42 then
         popupMenu[#popupMenu + 1] = { t = "vtx tables", f = function() confirm("CONFIRM/vtx_tables.lua") end }
     end
 end

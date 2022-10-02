@@ -15,7 +15,7 @@ local function setRtc()
         -- only send datetime one time after telemetry connection became available
         -- or when connection is restored after e.g. lipo refresh
         local values = {}
-        if apiVersion >= 1.041 then
+        if apiVersion >= 1.41 then
             -- format: seconds after the epoch (32) / milliseconds (16)
             local now = getRtcTime()
 
