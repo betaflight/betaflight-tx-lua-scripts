@@ -13,11 +13,11 @@ local fields = {}
 
 local procedure = { [0] = "Land", "Drop" }
 
-if apiVersion >= 1.039 then
+if apiVersion >= 1.39 then
     procedure[#procedure + 1] = "Rescue"
 end
 
-if apiVersion >= 1.039 then
+if apiVersion >= 1.39 then
     labels[#labels + 1] = { t = "Failsafe Switch",   x = x,          y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Action",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 2, vals = { 5 }, table = { [0] = "Stage 1", "Kill", "Stage 2" } }
 else

@@ -34,11 +34,11 @@ local function processMspReply(cmd, payload)
             hardwareRevision = bit32.bor(hardwareRevision, raw_val)
             i = i + 1
         end
-        if apiVersion >= 1.035 then
+        if apiVersion >= 1.35 then
             boardType = payload[i]
         end
         i = i + 1
-        if apiVersion >= 1.037 then
+        if apiVersion >= 1.37 then
             targetCapabilities = payload[i]
             i = i + 1
             length = payload[i]
@@ -48,7 +48,7 @@ local function processMspReply(cmd, payload)
                 i = i + 1
             end
         end
-        if apiVersion >= 1.039 then
+        if apiVersion >= 1.39 then
             length = payload[i]
             i = i + 1
             for c = 1, length do
@@ -68,14 +68,14 @@ local function processMspReply(cmd, payload)
             end
         end
         i = i + 1
-        if apiVersion >= 1.041 then
+        if apiVersion >= 1.41 then
             mcuTypeId = payload[i]
         end
         i = i + 1
-        if apiVersion >= 1.042 then
+        if apiVersion >= 1.42 then
             configurationState = payload[i]
         end
-        if apiVersion >= 1.043 then
+        if apiVersion >= 1.43 then
             for idx = 1, 2 do
                 local raw_val = bit32.lshift(payload[i], (idx-1)*8)
                 gyroSampleRateHz = bit32.bor(gyroSampleRateHz, raw_val)
@@ -87,7 +87,7 @@ local function processMspReply(cmd, payload)
                 i = i + 1
             end
         end
-        if apiVersion >= 1.044 then
+        if apiVersion >= 1.44 then
             spiRegisteredDeviceCount = payload[i]
             i = i + 1
             i2cRegisteredDeviceCount = payload[i]
