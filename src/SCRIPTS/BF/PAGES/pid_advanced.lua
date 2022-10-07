@@ -62,7 +62,7 @@ if apiVersion >= 1.36 then
         fields[#fields + 1] = { t = "Mode",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 39 }, table = { [0]="Smooth", "Step" } }
     end
     if apiVersion >= 1.45 then
-        fields[#fields + 1] = { t = "Gain",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 250, vals = { 22, 23 } }
+        fields[#fields + 1] = { t = "Gain",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 250, vals = { 22, 23 }, scale = 10 }
     elseif apiVersion >= 1.44 then
         fields[#fields + 1] = { t = "Gain",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 30000, vals = { 22, 23 }, scale = 1000, mult = 100 }
     else
