@@ -58,15 +58,19 @@ end
 
 if apiVersion >= 1.36 then
     labels[#labels + 1] = { t = "Anti Gravity",      x = x,          y = inc.y(lineSpacing) }
-    if apiVersion >= 1.40 then
+    if apiVersion >= 1.40 and apiVersion <= 1.44 then
         fields[#fields + 1] = { t = "Mode",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 39 }, table = { [0]="Smooth", "Step" } }
     end
-    if apiVersion >= 1.44 then
+    if apiVersion >= 1.45 then
+        fields[#fields + 1] = { t = "Gain",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 250, vals = { 22, 23 } }
+    elseif apiVersion >= 1.44 then
         fields[#fields + 1] = { t = "Gain",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 30000, vals = { 22, 23 }, scale = 1000, mult = 100 }
     else
         fields[#fields + 1] = { t = "Gain",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 30000, vals = { 22, 23 }, scale = 1000, mult = 100 }
     end
-    fields[#fields + 1] = { t = "Threshold",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 20, max = 1000, vals = { 20, 21 } }
+    if apiVersion <= 1.44 then
+        fields[#fields + 1] = { t = "Threshold",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 20, max = 1000, vals = { 20, 21 } }
+    end
 end
 
 return {
