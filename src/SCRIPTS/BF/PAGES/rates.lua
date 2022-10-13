@@ -75,7 +75,7 @@ if apiVersion >= 1.16 then
     end
 end
 
-if apiVersion >= 1.16 then
+if apiVersion >= 1.16 and apiVersion <= 1.44 then
     labels[#labels + 1] = { t = "TPA",            x = x,          y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Rate",           x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 6 } , scale = 100 }
     fields[#fields + 1] = { t = "Breakpoint",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 2000, vals = { 9, 10 } }
