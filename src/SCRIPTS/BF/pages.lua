@@ -57,7 +57,7 @@ if apiVersion >= 1.41 then
 end
 
 if apiVersion >= 1.16 then
-    PageFiles[#PageFiles + 1] = { title = "Trim Accelerometer", script = "acc_calibrate.lua" }
+    PageFiles[#PageFiles + 1] = { title = "Trim Accelerometer", script = "acc_trim.lua" }
 end
 
 return PageFiles
