@@ -24,4 +24,14 @@ return {
     minBytes    = 4,
     labels      = labels,
     fields      = fields,
+    postLoad = function(self)
+        temp_pitch=bit32.lshift(self.values[1], (1-1)*8)+bit32.lshift(self.values[2], (2-1)*8)
+        if temp_pitch >= 65000 then
+            self.fields[1].value = math.floor((temp_pitch-32767)-32768-1)
+        end
+        temp_roll=bit32.lshift(self.values[3], (1-1)*8)+bit32.lshift(self.values[4], (2-1)*8)
+        if temp_roll >= 65000 then
+            self.fields[2].value = math.floor((temp_roll-32767)-32768-1)
+        end
+    end,
 }
