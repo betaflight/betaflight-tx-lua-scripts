@@ -122,7 +122,7 @@ local function processMspReply(cmd,rx_buf)
                         f.value = bit32.bor(f.value, raw_val)
                     end
                     local bits = #f.vals * 8
-                    if f.min < 0 and bit32.btest(f.value, bit32.lshift(1, bits - 1)) then
+                    if f.min and f.min < 0 and bit32.btest(f.value, bit32.lshift(1, bits - 1)) then
                         f.value = f.value - (2 ^ bits)
                     end
                     f.value = f.value/(f.scale or 1)
