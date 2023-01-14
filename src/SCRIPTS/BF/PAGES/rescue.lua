@@ -16,7 +16,12 @@ if apiVersion >= 1.41 then
     fields[#fields + 1] = { t = "Angle",            x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 1, 2 } }
     fields[#fields + 1] = { t = "Initial Altitude", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 20, max = 100, vals = { 3, 4 } }
     fields[#fields + 1] = { t = "Descent Distance", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 30, max = 500, vals = { 5, 6 } }
-    fields[#fields + 1] = { t = "Ground Speed",     x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 30, max = 3000, vals = { 7, 8 } }
+
+    if apiVersion >= 1.45 then
+        fields[#fields + 1] = { t = "Ground Speed", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3000, vals = { 7, 8 }, scale = 100 }
+    else
+        fields[#fields + 1] = { t = "Ground Speed", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 30, max = 3000, vals = { 7, 8 } }
+    end
 
     if apiVersion >= 1.43 then
         fields[#fields + 1] = { t = "Ascend Rate",  x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 100, max = 2500, vals = { 17, 18 }, scale = 100 }
