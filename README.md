@@ -1,7 +1,7 @@
 ![BF lua logo light mode](docs/assets/images/bf_lua_logo_light_mode.png#gh-light-mode-only)
 ![BF lua logo dark mode](docs/assets/images/bf_lua_logo_dark_mode.png#gh-dark-mode-only)
 
- [![Latest version](https://img.shields.io/github/v/release/betaflight/betaflight-tx-lua-scripts)](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) [![Build Status](https://api.travis-ci.com/betaflight/betaflight-tx-lua-scripts.svg?branch=master)](https://travis-ci.com/betaflight/betaflight-tx-lua-scripts) [![Build Status](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_apis/build/status/betaflight.betaflight-tx-lua-scripts?branchName=master)](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_build/latest?definitionId=1&branchName=master) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+ [![Latest version](https://img.shields.io/github/v/release/betaflight/betaflight-tx-lua-scripts)](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) [![Build](https://img.shields.io/github/actions/workflow/status/betaflight/betaflight-tx-lua-scripts/nightly.yml?branch=master)](https://github.com/betaflight/betaflight-tx-lua-scripts/actions/workflows/nightly.yml) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 ## Requirements
 
@@ -10,8 +10,9 @@
 - OpenTX - 2.3.12 or newer;
 - EdgeTX - 2.4.0 or newer;
 - ExpressLRS - 2.0.1 or newer;
-- Crossfire TX / RX - v2.11 or newer;
+- TBS Crossfire/Tracer TX / RX - v2.11 or newer;
 - FrSky TX / RX with support for SmartPort - While most receivers with SmartPort support work fine, it is recommended to update the receiver to the most recent firmware version to correct any known bugs in telemetry.
+- ImmersionRC Ghost - Latest firmware.
 
 ## Installing
 
