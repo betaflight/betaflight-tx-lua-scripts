@@ -20,6 +20,16 @@ local supportedProtocols =
         saveMaxRetries  = 2,
         saveTimeout     = 150,
         cms             = {},
+    },
+    ghst =
+    {
+        mspTransport    = "MSP/ghst.lua",
+        push            = ghostTelemetryPush,
+        maxTxBufferSize = 10, -- Tx -> Rx (Push)
+        maxRxBufferSize = 6,  -- Rx -> Tx (Pop)
+        saveMaxRetries  = 2,
+        saveTimeout     = 250,
+        cms             = {},
     }
 }
 
@@ -28,6 +38,8 @@ local function getProtocol()
         return supportedProtocols.smartPort
     elseif supportedProtocols.crsf.push() ~= nil then
         return supportedProtocols.crsf
+    elseif supportedProtocols.ghst.push() ~= nil then
+        return supportedProtocols.ghst
     end
 end
 

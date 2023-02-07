@@ -12,7 +12,7 @@ local labels = {}
 local fields = {}
 
 local vtx_tables
-if apiVersion >= 1.042 then
+if apiVersion >= 1.42 then
     vtx_tables = assert(loadScript("VTX_TABLES/"..mcuId..".lua"))()
 else
     vtx_tables = assert(loadScript("VTX_TABLES/vtx_defaults.lua"))()
@@ -20,7 +20,7 @@ end
 local deviceTable = { [1]="6705", [3]="SA", [4]="Tramp", [255]="None" }
 local pitModeTable = { [0]="OFF", "ON" }
 
-if apiVersion >= 1.036 then
+if apiVersion >= 1.36 then
     fields[#fields + 1] = { t = "Band",      x = x, y = inc.y(lineSpacing), sp = x + sp, min=0, max=#(vtx_tables.bandTable),       vals = { 2 }, table = vtx_tables.bandTable, upd = function(self) self.handleBandChanUpdate(self) end }
     fields[#fields + 1] = { t = "Channel",   x = x, y = inc.y(lineSpacing), sp = x + sp, min=1, max=vtx_tables.frequenciesPerBand, vals = { 3 }, upd =  function(self) self.handleBandChanUpdate(self) end }
     fields[#fields + 1] = { t = "Power",     x = x, y = inc.y(lineSpacing), sp = x + sp, min=1,                                    vals = { 4 }, upd = function(self) self.updatePowerTable(self) end }
@@ -28,9 +28,9 @@ if apiVersion >= 1.036 then
     fields[#fields + 1] = { t = "Protocol",  x = x, y = inc.y(lineSpacing), sp = x + sp,                                           vals = { 1 }, write = false, ro = true, table = deviceTable }
 end
 
-if apiVersion >= 1.037 then
+if apiVersion >= 1.37 then
     fields[#fields + 1] = { t = "Frequency", x = x, y = inc.y(lineSpacing), sp = x + sp, min = 5000, max = 5999,                   vals = { 6 }, upd = function(self) self.handleFreqValUpdate(self) end }
-elseif apiVersion >= 1.036 then
+elseif apiVersion >= 1.36 then
     fields[#fields + 1] = { t = "Frequency", x = x, y = inc.y(lineSpacing), sp = x + sp, min = 5000, max = 5999, ro = true }
 end
 

@@ -91,7 +91,7 @@ local function createPopupMenu()
     end
     popupMenu[#popupMenu + 1] = { t = "reboot", f = rebootFc }
     popupMenu[#popupMenu + 1] = { t = "acc cal", f = function() confirm("CONFIRM/acc_cal.lua") end }
-    if apiVersion >= 1.042 then
+    if apiVersion >= 1.42 then
         popupMenu[#popupMenu + 1] = { t = "vtx tables", f = function() confirm("CONFIRM/vtx_tables.lua") end }
     end
 end
@@ -120,6 +120,10 @@ local function processMspReply(cmd,rx_buf)
                         local raw_val = Page.values[f.vals[idx]] or 0
                         raw_val = bit32.lshift(raw_val, (idx-1)*8)
                         f.value = bit32.bor(f.value, raw_val)
+                    end
+                    local bits = #f.vals * 8
+                    if f.min and f.min < 0 and bit32.btest(f.value, bit32.lshift(1, bits - 1)) then
+                        f.value = f.value - (2 ^ bits)
                     end
                     f.value = f.value/(f.scale or 1)
                 end

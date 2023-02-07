@@ -42,20 +42,23 @@ local function smartPortTelemetryPop()
 end
 
 protocol.mspPoll = function()
-    local sensorId, frameId, dataId, value = smartPortTelemetryPop()
-    if (sensorId == SMARTPORT_REMOTE_SENSOR_ID or sensorId == FPORT_REMOTE_SENSOR_ID) and frameId == REPLY_FRAME_ID then
-        local payload = {}
-        payload[1] = bit32.band(dataId,0xFF)
-        dataId = bit32.rshift(dataId,8)
-        payload[2] = bit32.band(dataId,0xFF)
-        payload[3] = bit32.band(value,0xFF)
-        value = bit32.rshift(value,8)
-        payload[4] = bit32.band(value,0xFF)
-        value = bit32.rshift(value,8)
-        payload[5] = bit32.band(value,0xFF)
-        value = bit32.rshift(value,8)
-        payload[6] = bit32.band(value,0xFF)
-        return mspReceivedReply(payload)
+    while true do
+        local sensorId, frameId, dataId, value = smartPortTelemetryPop()
+        if (sensorId == SMARTPORT_REMOTE_SENSOR_ID or sensorId == FPORT_REMOTE_SENSOR_ID) and frameId == REPLY_FRAME_ID then
+            local payload = {}
+            payload[1] = bit32.band(dataId, 0xFF)
+            dataId = bit32.rshift(dataId, 8)
+            payload[2] = bit32.band(dataId, 0xFF)
+            payload[3] = bit32.band(value, 0xFF)
+            value = bit32.rshift(value, 8)
+            payload[4] = bit32.band(value, 0xFF)
+            value = bit32.rshift(value, 8)
+            payload[5] = bit32.band(value, 0xFF)
+            value = bit32.rshift(value, 8)
+            payload[6] = bit32.band(value, 0xFF)
+            return payload
+        elseif sensorId == nil then
+            return nil
+        end
     end
-    return nil
 end

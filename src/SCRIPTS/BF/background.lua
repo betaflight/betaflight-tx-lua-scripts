@@ -21,7 +21,7 @@ local function run_bg()
                 setRtc = nil
                 collectgarbage()
             end
-        elseif rssiEnabled and apiVersion >= 1.037 then
+        elseif rssiEnabled and apiVersion >= 1.37 then
             rssiTask = rssiTask or assert(loadScript("rssi.lua"))()
             rssiEnabled = rssiTask()
             if not rssiEnabled then

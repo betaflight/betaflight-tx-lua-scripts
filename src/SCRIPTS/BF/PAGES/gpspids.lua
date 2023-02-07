@@ -11,7 +11,7 @@ local inc = { x = function(val) x = x + val return x end, y = function(val) y = 
 local labels = {}
 local fields = {}
 
-if apiVersion >= 1.041 then
+if apiVersion >= 1.41 then
     x = margin
     y = yMinLim - tableSpacing.header
     labels[#labels + 1] = { t = "",         x = x, y = inc.y(tableSpacing.header) }

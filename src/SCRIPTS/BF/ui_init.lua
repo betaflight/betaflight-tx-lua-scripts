@@ -16,7 +16,7 @@ local function init()
             getApiVersion = nil
             collectgarbage()
         end
-    elseif not mcuIdReceived and apiVersion >= 1.042 then
+    elseif not mcuIdReceived and apiVersion >= 1.42 then
         getMCUId = getMCUId or assert(loadScript("mcu_id.lua"))()
         returnTable.t = getMCUId.t
         mcuIdReceived = getMCUId.f()
@@ -35,7 +35,7 @@ local function init()
             end
             collectgarbage()
         end
-    elseif not vtxTablesReceived and apiVersion >= 1.042 then
+    elseif not vtxTablesReceived and apiVersion >= 1.42 then
         getVtxTables = getVtxTables or assert(loadScript("vtx_tables.lua"))()
         returnTable.t = getVtxTables.t
         vtxTablesReceived = getVtxTables.f()
@@ -43,7 +43,7 @@ local function init()
             getVtxTables = nil
             collectgarbage()
         end
-    elseif not boardInfoReceived and apiVersion >= 1.043 then
+    elseif not boardInfoReceived and apiVersion >= 1.44 then
         getBoardInfo = getBoardInfo or assert(loadScript("board_info.lua"))()
         returnTable.t = getBoardInfo.t
         boardInfoReceived = getBoardInfo.f()
