@@ -13,6 +13,7 @@
 - TBS Crossfire/Tracer TX / RX - v2.11 or newer;
 - FrSky TX / RX with support for SmartPort - While most receivers with SmartPort support work fine, it is recommended to update the receiver to the most recent firmware version to correct any known bugs in telemetry.
 - ImmersionRC Ghost - Latest firmware.
+- Baud rate - Set to 400K in EdgeTX/OpenTX for Crossfire, Tracer, ExpressLRS and Ghost.
 
 ## Installing
 
