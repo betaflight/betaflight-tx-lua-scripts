@@ -11,6 +11,14 @@ local inc = { x = function(val) x = x + val return x end, y = function(val) y = 
 local labels = {}
 local fields = {}
 
+if apiVersion >= 1.31 then
+    labels[#labels + 1] = { t = "Angle/Horizon",     x = x,          y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Angle Limit",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 10, max = 90, vals = { 18 } }
+    if apiVersion < 1.36 then
+        fields[#fields + 1] = { t = "Stick Sensitivity", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 10, max = 200, vals = { 19 } }
+    end
+end
+
 if apiVersion >= 1.40 then
     labels[#labels + 1] = { t = "Acro Trainer",      x = x,          y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Angle Limit",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 20, max = 80, vals = { 32 } }
