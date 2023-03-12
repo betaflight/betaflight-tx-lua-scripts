@@ -97,7 +97,7 @@ local function createPopupMenu()
 end
 
 local function processMspReply(cmd,rx_buf,err)
-    if not Page or not rx_buf or err then
+    if not Page or not rx_buf then
     elseif cmd == Page.write then
         if Page.eepromWrite then
             eepromWrite()
@@ -109,6 +109,9 @@ local function processMspReply(cmd,rx_buf,err)
             rebootFc()
         end
         invalidatePages()
+    elseif cmd == Page.read and err then
+        Page.fields = { { x = 6, y = radio.yMinLimit, value = "", ro = true } }
+        Page.labels = { { x = 6, y = radio.yMinLimit, t = "N/A" } }
     elseif cmd == Page.read and #rx_buf > 0 then
         Page.values = rx_buf
         for i=1,#Page.fields do
