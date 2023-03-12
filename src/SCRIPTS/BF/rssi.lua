@@ -9,8 +9,8 @@ local rssiSource = RSSI_SOURCE_NONE
 local lastRunTS = 0
 local INTERVAL = 50
 
-local function processMspReply(cmd,rx_buf)
-    if cmd == MSP_TX_INFO and #rx_buf >= 1 then
+local function processMspReply(cmd,rx_buf,err)
+    if cmd == MSP_TX_INFO and #rx_buf >= 1 and not err then
         rssiSource = rx_buf[1]
         rssiSourceReceived = true
     end

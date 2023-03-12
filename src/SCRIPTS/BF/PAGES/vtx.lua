@@ -12,8 +12,9 @@ local labels = {}
 local fields = {}
 
 local vtx_tables
-if apiVersion >= 1.42 then
-    vtx_tables = assert(loadScript("VTX_TABLES/"..mcuId..".lua"))()
+local f = loadScript("VTX_TABLES/"..mcuId..".lua")
+if apiVersion >= 1.42 and f then
+    vtx_tables = f()
 else
     vtx_tables = assert(loadScript("VTX_TABLES/vtx_defaults.lua"))()
 end

@@ -96,8 +96,8 @@ local function createPopupMenu()
     end
 end
 
-local function processMspReply(cmd,rx_buf)
-    if not Page or not rx_buf then
+local function processMspReply(cmd,rx_buf,err)
+    if not Page or not rx_buf or err then
     elseif cmd == Page.write then
         if Page.eepromWrite then
             eepromWrite()

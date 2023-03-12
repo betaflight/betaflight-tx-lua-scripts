@@ -5,8 +5,8 @@ local MCUIdReceived = false
 local lastRunTS = 0
 local INTERVAL = 100
 
-local function processMspReply(cmd, payload)
-    if cmd == MSP_UID then
+local function processMspReply(cmd, payload, err)
+    if cmd == MSP_UID and not err then
         local i = 1
         local id = ""
         for j = 1, 3 do

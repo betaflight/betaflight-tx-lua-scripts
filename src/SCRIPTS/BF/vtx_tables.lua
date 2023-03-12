@@ -2,6 +2,7 @@ local MSP_VTX_CONFIG = 88
 local MSP_VTXTABLE_BAND = 137
 local MSP_VTXTABLE_POWERLEVEL = 138
 
+local vtxAvailable = true
 local vtxTableAvailable = false
 local vtxConfigReceived = false
 local vtxFrequencyTableReceived = false
@@ -18,8 +19,12 @@ local powerTable = {}
 local lastRunTS = 0
 local INTERVAL = 100
 
-local function processMspReply(cmd, payload)
+local function processMspReply(cmd, payload, err)
     if cmd == MSP_VTX_CONFIG then
+        if err then
+            vtxAvailable = false
+            return
+        end
         vtxConfigReceived = true
         vtxTableAvailable = payload[12] ~= 0
         vtxTableConfig.bands = payload[13]
@@ -113,7 +118,7 @@ local function getVtxTables()
     end
     mspProcessTxQ()
     processMspReply(mspPollReply())
-    return vtxTablesReceived
+    return vtxTablesReceived or not vtxAvailable
 end
 
 return { f = getVtxTables, t = "Downloading VTX tables" }
