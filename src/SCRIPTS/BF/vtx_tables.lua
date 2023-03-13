@@ -11,15 +11,26 @@ local requestedBand = 1
 local requestedPowerLevel = 1
 local vtxTableConfig = {}
 local frequencyTable = {}
-local frequenciesPerBand = 0
 local bandTable = {}
 local powerTable = {}
 
 local lastRunTS = 0
 local INTERVAL = 100
 
-local function processMspReply(cmd, payload)
+local function processMspReply(cmd, payload, err)
     if cmd == MSP_VTX_CONFIG then
+        if err then
+            -- Vtx not available. Create empty vtx table to skip future download attempts
+            frequencyTable[1] = {}
+            vtxTableConfig.channels = 0
+            bandTable = { [0] = "U", "1" }
+            powerTable = { "LV0" }
+            vtxConfigReceived = true
+            vtxTableAvailable = true
+            vtxFrequencyTableReceived = true
+            vtxPowerTableReceived = true
+            return
+        end
         vtxConfigReceived = true
         vtxTableAvailable = payload[12] ~= 0
         vtxTableConfig.bands = payload[13]

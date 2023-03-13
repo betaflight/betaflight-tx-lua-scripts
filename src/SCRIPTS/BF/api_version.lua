@@ -4,8 +4,8 @@ local apiVersionReceived = false
 local lastRunTS = 0
 local INTERVAL = 50
 
-local function processMspReply(cmd,rx_buf)
-    if cmd == MSP_API_VERSION and #rx_buf >= 3 then
+local function processMspReply(cmd,rx_buf,err)
+    if cmd == MSP_API_VERSION and #rx_buf >= 3 and not err then
         apiVersion = rx_buf[2] + rx_buf[3] / 100
         apiVersionReceived = true
     end

@@ -3,8 +3,8 @@ local accCalibrated = false
 local lastRunTS = 0
 local INTERVAL = 500
 
-local function processMspReply(cmd,rx_buf)
-    if cmd == MSP_ACC_CALIBRATION then
+local function processMspReply(cmd,rx_buf,err)
+    if cmd == MSP_ACC_CALIBRATION and not err then
         accCalibrated = true
     end
 end

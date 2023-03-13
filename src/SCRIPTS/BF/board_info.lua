@@ -20,8 +20,8 @@ local i2cRegisteredDeviceCount = 0
 local lastRunTS = 0
 local INTERVAL = 100
 
-local function processMspReply(cmd, payload)
-    if cmd == MSP_BOARD_INFO then
+local function processMspReply(cmd, payload, err)
+    if cmd == MSP_BOARD_INFO and not err then
         local length
         local i = 1
         length = 4

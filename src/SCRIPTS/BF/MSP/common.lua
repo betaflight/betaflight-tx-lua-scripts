@@ -6,6 +6,7 @@ local MSP_STARTFLAG = bit32.lshift(1,4)
 local mspSeq = 0
 local mspRemoteSeq = 0
 local mspRxBuf = {}
+local mspRxError = false
 local mspRxSize = 0
 local mspRxCRC = 0
 local mspRxReq = 0
@@ -65,17 +66,13 @@ end
 function mspReceivedReply(payload)
     local idx = 1
     local status = payload[idx]
-    local err = bit32.btest(status, 0x80)
     local version = bit32.rshift(bit32.band(status, 0x60), 5)
     local start = bit32.btest(status, 0x10)
     local seq = bit32.band(status, 0x0F)
     idx = idx + 1
-    if err then
-        mspStarted = false
-        return nil
-    end
     if start then
         mspRxBuf = {}
+        mspRxError = bit32.btest(status, 0x80)
         mspRxSize = payload[idx]
         mspRxReq = mspLastReq
         idx = idx + 1
@@ -117,7 +114,7 @@ function mspPollReply()
             return nil
         elseif mspReceivedReply(mspData) then
             mspLastReq = 0
-            return mspRxReq, mspRxBuf
+            return mspRxReq, mspRxBuf, mspRxError
         end     
     end
 end
