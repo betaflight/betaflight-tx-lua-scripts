@@ -12,6 +12,7 @@ if scriptsCompiled then
     radio = assert(loadScript("radios.lua"))().msp
     assert(loadScript(protocol.mspTransport))()
     assert(loadScript("MSP/common.lua"))()
+    features = assert(loadScript("features.lua"))()
     run = assert(loadScript("ui.lua"))()
 else
     run = assert(loadScript("COMPILE/compile.lua"))()
