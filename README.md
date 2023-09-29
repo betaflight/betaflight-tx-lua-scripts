@@ -6,14 +6,14 @@
 ## Requirements
 
 - Betaflight - As a best practice, it is recommended to use the most recent stable release of Betaflight to obtain the best possible results;
-- Telemetry - Telemetry has to be enabled and supported by the TX / RX for the scripts to be able to communicate with the flight controller;
+- Telemetry - Telemetry has to be enabled in Betaflight Receiver tab and supported by the TX / RX for the scripts to be able to communicate with the flight controller;
 - OpenTX - 2.3.12 or newer;
 - EdgeTX - 2.4.0 or newer;
 - ExpressLRS - 2.0.1 or newer;
 - TBS Crossfire/Tracer TX / RX - v2.11 or newer;
 - FrSky TX / RX with support for SmartPort - While most receivers with SmartPort support work fine, it is recommended to update the receiver to the most recent firmware version to correct any known bugs in telemetry.
-- ImmersionRC Ghost - Latest firmware.
-- Baud rate - Set to 400K in EdgeTX/OpenTX for Crossfire, Tracer, ExpressLRS and Ghost.
+- ImmersionRC Ghost RX module - Latest firmware and module set to RF Mode "Race250" - see (Ghost receiver manual pg 36-38) (Other RF Modes have issues or do not have telemetry to allow Betaflight LUA to work).
+- Baud rate - Set to 400K in EdgeTX/OpenTX for Crossfire, Tracer, ExpressLRS.
 
 ## Installing
 
