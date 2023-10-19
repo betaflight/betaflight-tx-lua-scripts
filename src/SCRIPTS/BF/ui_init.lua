@@ -22,10 +22,15 @@ local function init()
         mcuIdReceived = getMCUId.f()
         if mcuIdReceived then
             getMCUId = nil
-            local f = loadScript("VTX_TABLES/"..mcuId..".lua")
-            if f and f() then
-                vtxTablesReceived = true
-                f = nil
+            local f = loadScript("VTX_TABLES/" .. mcuId .. ".lua")
+            if f then
+                local table = f()
+                if table then
+                    vtxTablesReceived = true
+                    features.vtx = 0 < table.frequenciesPerBand
+                    f = nil
+                    table = nil
+                end
             end
             collectgarbage()
             f = loadScript("BOARD_INFO/"..mcuId..".lua")

@@ -29,10 +29,12 @@ local function processMspReply(cmd, payload, err)
             vtxTableAvailable = true
             vtxFrequencyTableReceived = true
             vtxPowerTableReceived = true
+            features.vtx = false
             return
         end
         vtxConfigReceived = true
         vtxTableAvailable = payload[12] ~= 0
+        features.vtx = vtxTableAvailable
         vtxTableConfig.bands = payload[13]
         vtxTableConfig.channels = payload[14]
         vtxTableConfig.powerLevels = payload[15]
