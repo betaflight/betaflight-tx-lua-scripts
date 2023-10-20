@@ -54,6 +54,8 @@ Depending on the size of the vtx tables and the telemetry protocol used, downloa
 
 <kbd>![Download VTX tables](docs/assets/images/download_vtx_tables.gif)</kbd>
 
+Please note that if the "VTX" feature wasn't included in your Betaflight firmware build, the downloading of the VTX tables will be skipped and the VTX menu item won't be available. The initial setup of the VTX/VTX tables must be done using the [Configurator](https://github.com/betaflight/betaflight-configurator).
+
 ### Betaflight CMS
 
 **!! IMPORTANT: TBS Crossfire/Tracer only !!**
