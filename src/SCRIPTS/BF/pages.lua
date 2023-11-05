@@ -64,4 +64,8 @@ if apiVersion >= 1.45 then
     PageFiles[#PageFiles + 1] = { title = "OSD Elements", script = "pos_osd.lua" }
 end
 
+if apiVersion >= 1.45 then
+    PageFiles[#PageFiles + 1] = { title = "Blackbox", script = "blackbox.lua" }
+end
+
 return PageFiles
