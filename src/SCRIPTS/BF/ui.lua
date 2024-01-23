@@ -385,8 +385,23 @@ local function run_ui(event)
             end
         end
         if not Page then
-            Page = assert(loadScript("PAGES/"..PageFiles[currentPage].script))()
-            collectgarbage()
+            local function selectPage(page)
+                Page = assert(loadScript("PAGES/"..page))()
+                collectgarbage()
+            end
+
+            local selectedPage = PageFiles[currentPage]
+            if selectedPage.init then
+                local initScript = assert(loadScript(selectedPage.init), "Missing init script")()
+                collectgarbage()
+                if initScript then
+                    confirm(initScript)
+                else
+                    selectPage(selectedPage.script)
+                end
+            else
+                selectPage(selectedPage.script)
+            end
         end
         if not Page.values and pageState == pageStatus.display then
             requestPage()

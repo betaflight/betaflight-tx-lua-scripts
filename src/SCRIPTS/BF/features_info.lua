@@ -2,7 +2,7 @@ local MSP_GPS_CONFIG = 135
 local MSP_VTX_CONFIG = 88
 
 local isGpsRead = false
-local isVtxRead = true -- Checking VTX is done in `vtx_tables.lua`
+local isVtxRead = false
 
 local lastRunTS = 0
 local INTERVAL = 100

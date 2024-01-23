@@ -1,7 +1,7 @@
 local PageFiles = {}
 
 if apiVersion >= 1.36 and features.vtx then
-    PageFiles[#PageFiles + 1] = { title = "VTX Settings", script = "vtx.lua" }
+    PageFiles[#PageFiles + 1] = { title = "VTX Settings", script = "vtx.lua", init = "PAGES/INIT/vtx.lua" }
 end
 
 if apiVersion >= 1.16 then

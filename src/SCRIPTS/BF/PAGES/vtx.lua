@@ -11,7 +11,7 @@ local fields = {}
 
 local vtx_tables
 if apiVersion >= 1.42 then
-    vtx_tables = assert(loadScript("VTX_TABLES/"..mcuId..".lua"))()
+    vtx_tables = assert(loadScript("VTX_TABLES/"..mcuId..".lua"), "No VTX table!")()
 else
     vtx_tables = assert(loadScript("VTX_TABLES/vtx_defaults.lua"))()
 end
