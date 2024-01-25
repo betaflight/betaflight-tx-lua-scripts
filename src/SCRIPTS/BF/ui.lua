@@ -82,24 +82,6 @@ local function confirm(page)
     collectgarbage()
 end
 
-local function filterAvailablePages(pageFiles)
-    local newPageFiles = pageFiles
-
-    local function skipPage(script)
-        local currentPageFiles = {}
-        for i = 1, #newPageFiles do
-            if newPageFiles[i].script ~= script then
-                currentPageFiles[#currentPageFiles + 1] = newPageFiles[i]
-            end
-        end
-        newPageFiles = currentPageFiles
-    end
-
-    if not features.vtx then skipPage("vtx.lua") end
-
-    return newPageFiles
-end
-
 local function createPopupMenu()
     popupMenuActive = 1
     popupMenu = {}
@@ -314,7 +296,7 @@ local function run_ui(event)
             return 0
         end
         init = nil
-        PageFiles = filterAvailablePages(assert(loadScript("pages.lua"))())
+        PageFiles = assert(loadScript("pages.lua"))()
         invalidatePages()
         uiState = prevUiState or uiStatus.mainMenu
         prevUiState = nil
@@ -403,8 +385,23 @@ local function run_ui(event)
             end
         end
         if not Page then
-            Page = assert(loadScript("PAGES/"..PageFiles[currentPage].script))()
-            collectgarbage()
+            local function selectPage(page)
+                Page = assert(loadScript("PAGES/"..page))()
+                collectgarbage()
+            end
+
+            local selectedPage = PageFiles[currentPage]
+            if selectedPage.init then
+                local initScript = assert(loadScript(selectedPage.init), "Missing init script")()
+                collectgarbage()
+                if initScript then
+                    confirm(initScript)
+                else
+                    selectPage(selectedPage.script)
+                end
+            else
+                selectPage(selectedPage.script)
+            end
         end
         if not Page.values and pageState == pageStatus.display then
             requestPage()

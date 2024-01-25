@@ -1,7 +1,7 @@
 local PageFiles = {}
 
-if apiVersion >= 1.36 then
-    PageFiles[#PageFiles + 1] = { title = "VTX Settings", script = "vtx.lua" }
+if apiVersion >= 1.36 and features.vtx then
+    PageFiles[#PageFiles + 1] = { title = "VTX Settings", script = "vtx.lua", init = "PAGES/INIT/vtx.lua" }
 end
 
 if apiVersion >= 1.16 then
@@ -48,11 +48,11 @@ if apiVersion >= 1.16 then
     PageFiles[#PageFiles + 1] = { title = "Failsafe", script = "failsafe.lua" }
 end
 
-if apiVersion >= 1.41 then
+if apiVersion >= 1.41 and features.gps then
     PageFiles[#PageFiles + 1] = { title = "GPS Rescue", script = "rescue.lua" }
 end
 
-if apiVersion >= 1.41 then
+if apiVersion >= 1.41 and features.gps then
     PageFiles[#PageFiles + 1] = { title = "GPS PIDs", script = "gpspids.lua" }
 end
 

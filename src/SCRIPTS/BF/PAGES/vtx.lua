@@ -1,8 +1,6 @@
 local template = assert(loadScript(radio.template))()
 local margin = template.margin
-local indent = template.indent
 local lineSpacing = template.lineSpacing
-local tableSpacing = template.tableSpacing
 local sp = template.listSpacing.field
 local yMinLim = radio.yMinLimit
 local x = margin
@@ -13,7 +11,7 @@ local fields = {}
 
 local vtx_tables
 if apiVersion >= 1.42 then
-    vtx_tables = assert(loadScript("VTX_TABLES/"..mcuId..".lua"))()
+    vtx_tables = assert(loadScript("VTX_TABLES/"..mcuId..".lua"), "No VTX table!")()
 else
     vtx_tables = assert(loadScript("VTX_TABLES/vtx_defaults.lua"))()
 end

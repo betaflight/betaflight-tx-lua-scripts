@@ -1,8 +1,8 @@
 local apiVersionReceived = false
-local vtxTablesReceived = false
 local mcuIdReceived = false
 local boardInfoReceived = false
-local getApiVersion, getVtxTables, getMCUId, getBoardInfo
+local featuresReceived = false
+local getApiVersion, getMCUId, getBoardInfo, getFeaturesInfo
 local returnTable = { f = nil, t = "" }
 
 local function init()
@@ -22,30 +22,6 @@ local function init()
         mcuIdReceived = getMCUId.f()
         if mcuIdReceived then
             getMCUId = nil
-            local f = loadScript("VTX_TABLES/" .. mcuId .. ".lua")
-            if f then
-                local table = f()
-                if table then
-                    vtxTablesReceived = true
-                    features.vtx = 0 < table.frequenciesPerBand
-                    f = nil
-                    table = nil
-                end
-            end
-            collectgarbage()
-            f = loadScript("BOARD_INFO/"..mcuId..".lua")
-            if f and f() then
-                boardInfoReceived = true
-                f = nil
-            end
-            collectgarbage()
-        end
-    elseif not vtxTablesReceived and apiVersion >= 1.42 then
-        getVtxTables = getVtxTables or assert(loadScript("vtx_tables.lua"))()
-        returnTable.t = getVtxTables.t
-        vtxTablesReceived = getVtxTables.f()
-        if vtxTablesReceived then
-            getVtxTables = nil
             collectgarbage()
         end
     elseif not boardInfoReceived and apiVersion >= 1.44 then
@@ -56,10 +32,18 @@ local function init()
             getBoardInfo = nil
             collectgarbage()
         end
+    elseif not featuresReceived and apiVersion >= 1.41 then
+        getFeaturesInfo = getFeaturesInfo or assert(loadScript("features_info.lua"))()
+        returnTable.t = getFeaturesInfo.t
+        featuresReceived = getFeaturesInfo.f()
+        if featuresReceived then
+            getFeaturesInfo = nil
+            collectgarbage()
+        end
     else
         return true
     end
-    return apiVersionReceived and vtxTablesReceived and mcuId and boardInfoReceived
+    return apiVersionReceived and vtxTablesReceived and mcuId and boardInfoReceived and featuresReceived
 end
 
 returnTable.f = init
