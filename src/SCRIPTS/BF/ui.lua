@@ -94,6 +94,9 @@ local function createPopupMenu()
     if apiVersion >= 1.42 then
         popupMenu[#popupMenu + 1] = { t = "vtx tables", f = function() confirm("CONFIRM/vtx_tables.lua") end }
     end
+    if apiVersion >= 1.44 then
+        popupMenu[#popupMenu + 1] = { t = "board info", f = function() confirm("CONFIRM/pwm.lua") end }
+    end
 end
 
 local function processMspReply(cmd,rx_buf,err)
