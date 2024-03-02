@@ -37,7 +37,7 @@ if apiVersion >= 1.42 then
 end
 
 if apiVersion >= 1.16 then
-    PageFiles[#PageFiles + 1] = { title = "System / Motor", script = "pwm.lua" }
+    PageFiles[#PageFiles + 1] = { title = "System / Motor", script = "pwm.lua", init = "PAGES/INIT/pwm.lua" }
 end
 
 if apiVersion >= 1.16 then

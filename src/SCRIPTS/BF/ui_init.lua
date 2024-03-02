@@ -1,8 +1,7 @@
 local apiVersionReceived = false
 local mcuIdReceived = false
-local boardInfoReceived = false
 local featuresReceived = false
-local getApiVersion, getMCUId, getBoardInfo, getFeaturesInfo
+local getApiVersion, getMCUId, getFeaturesInfo
 local returnTable = { f = nil, t = "" }
 
 local function init()
@@ -24,14 +23,6 @@ local function init()
             getMCUId = nil
             collectgarbage()
         end
-    elseif not boardInfoReceived and apiVersion >= 1.44 then
-        getBoardInfo = getBoardInfo or assert(loadScript("board_info.lua"))()
-        returnTable.t = getBoardInfo.t
-        boardInfoReceived = getBoardInfo.f()
-        if boardInfoReceived then
-            getBoardInfo = nil
-            collectgarbage()
-        end
     elseif not featuresReceived and apiVersion >= 1.41 then
         getFeaturesInfo = getFeaturesInfo or assert(loadScript("features_info.lua"))()
         returnTable.t = getFeaturesInfo.t
@@ -43,7 +34,7 @@ local function init()
     else
         return true
     end
-    return apiVersionReceived and vtxTablesReceived and mcuId and boardInfoReceived and featuresReceived
+    return apiVersionReceived and mcuId and featuresReceived
 end
 
 returnTable.f = init
