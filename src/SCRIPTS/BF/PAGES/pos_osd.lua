@@ -1,9 +1,7 @@
 local template = assert(loadScript(radio.template))()
 local margin = template.margin
-local indent = template.indent
 local lineSpacing = template.lineSpacing
 local tableSpacing = template.tableSpacing
-local sp = template.listSpacing.field
 local yMinLim = radio.yMinLimit
 local x = margin
 local y = yMinLim - lineSpacing
@@ -133,12 +131,12 @@ return {
         self.values[3] = bit32.rshift(combineValue, 8)
         return self.values
     end,
-    checkProfile = function(self, value, profileFirst, profileSecond, profileThird)
+    checkProfile = function(_, value, profileFirst, profileSecond, profileThird)
         local profiles = profileFirst + bit32.lshift(profileSecond, 1) + bit32.lshift(profileThird, 2)
         local output = bit32.replace(value, profiles, 11, 3)
         return output
     end,
-    splitVal = function(self, inputFirstVal, inputSecondVal)
+    splitVal = function(_, inputFirstVal, inputSecondVal)
         local inputVal = inputFirstVal + bit32.lshift(inputSecondVal, 8)
         local profiles = bit32.extract(inputVal, 11, 3)
         local fieldPos = bit32.extract(inputVal, 0, 11)
