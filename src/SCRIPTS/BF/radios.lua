@@ -109,7 +109,35 @@ local supportedRadios =
             }
         },
     },
-    ["320x480"] = 
+    ["480x320"] =
+    {
+        msp = {
+            template = "TEMPLATES/480x320.lua",
+            highRes = true,
+            MenuBox = { x=120, y=100, w=200, x_offset=68, h_line=20, h_offset=6 },
+            SaveBox = { x=120, y=100, w=180, x_offset=12, h=60, h_offset=12 },
+            NoTelem = { 192, LCD_H - 28, "No Telemetry", (TEXT_COLOR or 0) + INVERS + BLINK },
+            textSize = 0,
+            yMinLimit = 35,
+            yMaxLimit = 280,
+        },
+        cms = {
+            rows = 9,
+            cols = 32,
+            pixelsPerRow = 24,
+            pixelsPerChar = 14,
+            xIndent = 14,
+            yOffset = 32,
+            textSize = MIDSIZE,
+            refresh = {
+                event = EVT_VIRTUAL_ENTER,
+                text = "Refresh: [ENT]",
+                top = 1,
+                left = 300,
+            }
+        },
+    },
+    ["320x480"] =
     {
         msp = {
             template = "TEMPLATES/320x480.lua",
