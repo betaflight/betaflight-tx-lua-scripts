@@ -64,4 +64,6 @@ if apiVersion >= 1.45 and features.osdSD then
     PageFiles[#PageFiles + 1] = { title = "OSD Elements", script = "pos_osd.lua" }
 end
 
+PageFiles[#PageFiles + 1] = { title = "Battery Settings", script = "battery_voltage.lua" }
+
 return PageFiles

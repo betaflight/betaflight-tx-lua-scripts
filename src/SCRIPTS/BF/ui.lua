@@ -97,6 +97,7 @@ local function createPopupMenu()
     if apiVersion >= 1.44 then
         popupMenu[#popupMenu + 1] = { t = "board info", f = function() confirm("CONFIRM/pwm.lua") end }
     end
+    popupMenu[#popupMenu + 1] = { t = "battery settings", f = function() confirm("battery_voltage.lua") end }
 end
 
 local function processMspReply(cmd,rx_buf,err)
