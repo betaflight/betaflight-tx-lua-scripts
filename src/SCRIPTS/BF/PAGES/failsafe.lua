@@ -33,6 +33,14 @@ labels[#labels + 1] = { t = "Stage 2 Land Settings", x = x,          y = inc.y(l
 fields[#fields + 1] = { t = "Thrl Land Value",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 750, max = 2250, vals = { 3, 4 } }
 fields[#fields + 1] = { t = "Motor Off Delay",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 2 }, scale = 10 }
 
+labels[#labels + 1] = { t = "OSD Warnings",          x = x,          y = inc.y(lineSpacing) }
+fields[#fields + 1] = { t = "Arming Status",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 9 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "Sanity Check",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 10 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "GPS Rescue Status",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 11 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "Battery Voltage",       x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 12 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "RSSI",                  x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 13 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "Failsafe",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 14 }, table = { [0] = "OFF", "ON" } }
+
 return {
    read        = 75, -- MSP_FAILSAFE_CONFIG
    write       = 76, -- MSP_SET_FAILSAFE_CONFIG

@@ -110,6 +110,14 @@ fields[#fields + 1] = {              x = x + tableSpacing.col,     y = y, min = 
 fields[#fields + 1] = {              x = x + tableSpacing.col * 2, y = y, min = 0, max = 1, vals = { 1, 2 }, table = { [0] = "OFF", "ON" } }
 fields[#fields + 1] = {              x = x + tableSpacing.col * 3, y = y, min = 0, max = 1, vals = { 1, 2 }, table = { [0] = "OFF", "ON" } }
 
+labels[#labels + 1] = { t = "OSD Warnings", x = x, y = inc.y(tableSpacing.header) }
+fields[#fields + 1] = { t = "Arming Status", x = x + tableSpacing.col, y = y, min = 0, max = 1, vals = { 1, 2 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "Sanity Check", x = x + tableSpacing.col * 2, y = y, min = 0, max = 1, vals = { 1, 2 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "GPS Rescue Status", x = x + tableSpacing.col * 3, y = y, min = 0, max = 1, vals = { 1, 2 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "Battery Voltage", x = x + tableSpacing.col * 4, y = y, min = 0, max = 1, vals = { 1, 2 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "RSSI", x = x + tableSpacing.col * 5, y = y, min = 0, max = 1, vals = { 1, 2 }, table = { [0] = "OFF", "ON" } }
+fields[#fields + 1] = { t = "Failsafe", x = x + tableSpacing.col * 6, y = y, min = 0, max = 1, vals = { 1, 2 }, table = { [0] = "OFF", "ON" } }
+
 return {
     read        = 84, -- MSP_OSD_CONFIG
     write       = 85, -- MSP_SET_OSD_CONFIG

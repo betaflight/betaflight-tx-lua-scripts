@@ -5,6 +5,7 @@ local CRSF_ADDRESS_RADIO_TRANSMITTER   = 0xEA
 local CRSF_FRAMETYPE_MSP_REQ           = 0x7A      -- response request using msp sequence as command
 local CRSF_FRAMETYPE_MSP_RESP          = 0x7B      -- reply with 60 byte chunked binary
 local CRSF_FRAMETYPE_MSP_WRITE         = 0x7C      -- write with 60 byte chunked binary 
+local CRSF_FRAMETYPE_DISPLAYPORT       = 0x7D      -- displayport frame type for OSD warnings/messages
 
 local crsfMspCmd = 0
 
@@ -39,4 +40,14 @@ protocol.mspPoll = function()
             return nil
         end
     end
+end
+
+local function crsfDisplayPortCmd(cmd, data)
+    local payloadOut = { CRSF_ADDRESS_BETAFLIGHT, CRSF_ADDRESS_RADIO_TRANSMITTER, cmd }
+    if data ~= nil then
+        for i = 1, #(data) do
+            payloadOut[3 + i] = data[i]
+        end
+    end
+    return crossfireTelemetryPush(CRSF_FRAMETYPE_DISPLAYPORT, payloadOut)
 end

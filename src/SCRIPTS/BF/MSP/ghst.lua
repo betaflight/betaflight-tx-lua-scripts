@@ -2,6 +2,7 @@
 local GHST_FRAMETYPE_MSP_REQ    = 0x21
 local GHST_FRAMETYPE_MSP_WRITE  = 0x22
 local GHST_FRAMETYPE_MSP_RESP   = 0x28
+local GHST_FRAMETYPE_DISPLAYPORT = 0x29
 
 local ghstMspType = 0
 
@@ -28,4 +29,14 @@ protocol.mspPoll = function()
             return nil
         end
     end
+end
+
+local function ghstDisplayPortCmd(cmd, data)
+    local payloadOut = { cmd }
+    if data ~= nil then
+        for i = 1, #(data) do
+            payloadOut[1 + i] = data[i]
+        end
+    end
+    return ghostTelemetryPush(GHST_FRAMETYPE_DISPLAYPORT, payloadOut)
 end
