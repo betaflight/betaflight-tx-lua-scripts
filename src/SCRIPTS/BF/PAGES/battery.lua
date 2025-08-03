@@ -12,12 +12,12 @@ local labels = {}
 local fields = {}
 
 labels[#labels + 1] = { t = "Voltage Settings",     x = x, y = inc.y(lineSpacing) }
-fields[#fields + 1] = { t = "Minimum Cell ",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 500, vals = { 8, 9 }, scale = 100 }
-fields[#fields + 1] = { t = "Maximum Cell ",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 500, vals = { 10, 11 }, scale = 100 }
-fields[#fields + 1] = { t = "Warning Cell ",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 500, vals = { 12, 13 }, scale = 100 }
+fields[#fields + 1] = { t = "Minimum Cell",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 500, vals = { 8, 9 }, scale = 100 }
+fields[#fields + 1] = { t = "Maximum Cell",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 500, vals = { 10, 11 }, scale = 100 }
+fields[#fields + 1] = { t = "Warning Cell",         x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 500, vals = { 12, 13 }, scale = 100 }
 
 labels[#labels + 1] = { t = "Capacity Settings",    x = x, y = inc.y(lineSpacing) }
-fields[#fields + 1] = { t = "Battery Capacity ",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, steps = 25, max = 10000, vals = { 4, 5 } }
+fields[#fields + 1] = { t = "Battery Capacity",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, steps = 25, max = 10000, vals = { 4, 5 } }
 
 return {
    read        = 32, -- MSP_BATTERY_CONFIG
