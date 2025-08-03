@@ -40,6 +40,10 @@ if apiVersion >= 1.16 then
     PageFiles[#PageFiles + 1] = { title = "System / Motor", script = "pwm.lua", init = "PAGES/INIT/pwm.lua" }
 end
 
+if apiVersion >= 1.41 then
+    PageFiles[#PageFiles + 1] = { title = "Battery", script = "battery.lua" }
+end
+
 if apiVersion >= 1.16 then
     PageFiles[#PageFiles + 1] = { title = "Receiver", script = "rx.lua" }
 end
