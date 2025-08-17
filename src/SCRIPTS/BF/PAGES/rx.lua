@@ -44,7 +44,7 @@ elseif apiVersion >= 1.40 then
     fields[#fields + 1] = { t = "Cutoff",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 27 }, table = { [0] = "Auto" } }
     fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 29 }, table = { [0] = "Off", "PT1", "BIQUAD", "Auto"} }
 
-    if apiVersion >= 1.20 and apiVersion <= 1.42 then
+    if apiVersion <= 1.42 then
         fields[#fields + 1] = { t = "Interpolation", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 13 }, table={ [0]="Off", "Preset", "Auto", "Manual"} }
         fields[#fields + 1] = { t = "Interval",      x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1, max = 50, vals = { 14 } }
     end
