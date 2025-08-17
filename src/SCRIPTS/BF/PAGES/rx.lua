@@ -24,7 +24,7 @@ if apiVersion >= 1.47 then
     labels[#labels + 1] = { t = "Cutoffs",         x = x + indent,   y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Setpoint",        x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 26 }, table = { [0] = "Auto" } }
     labels[#labels + 1] = { t = "Auto Smoothness", x = x + indent,   y = inc.y(lineSpacing) }
-    fields[#fields + 1] = { t = "Setpoint",        x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 31 } }
+    fields[#fields + 1] = { t = "Setpoint AF",     x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 250, vals = { 31 } }
 elseif apiVersion >= 1.44 then
     labels[#labels + 1] = { t = "RC Smoothing",    x = x,            y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Mode",            x = x + indent,   y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 25 }, table = { [0] = "ON", "OFF" } }
@@ -32,7 +32,7 @@ elseif apiVersion >= 1.44 then
     fields[#fields + 1] = { t = "Setpoint",        x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 26 }, table = { [0] = "Auto" } }
     fields[#fields + 1] = { t = "Feedforward",     x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 27 }, table = { [0] = "Auto" } }
     labels[#labels + 1] = { t = "Auto Smoothness", x = x + indent,   y = inc.y(lineSpacing) }
-    fields[#fields + 1] = { t = "Setpoint",        x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 31 } }
+    fields[#fields + 1] = { t = "Setpoint AF",     x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 250, vals = { 31 } }
 elseif apiVersion >= 1.40 then
     labels[#labels + 1] = { t = "RC Smoothing",      x = x,          y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 25 }, table = { [0] = "Interpolation", "Filter" } }
