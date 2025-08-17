@@ -18,26 +18,31 @@ if apiVersion >= 1.16 then
     fields[#fields + 1] = { t = "High",   x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 1000, max = 2000, vals = { 2, 3 } }
 end
 
-if apiVersion >= 1.44 then
+if apiVersion >= 1.47 then
+    labels[#labels + 1] = { t = "RC Smoothing",    x = x,            y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Mode",            x = x + indent,   y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 25 }, table = { [0] = "ON", "OFF" } }
+    labels[#labels + 1] = { t = "Cutoffs",         x = x + indent,   y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Setpoint",        x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 26 }, table = { [0] = "Auto" } }
+    labels[#labels + 1] = { t = "Auto Smoothness", x = x + indent,   y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Setpoint",        x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 250, vals = { 31 } }
+elseif apiVersion >= 1.44 then
     labels[#labels + 1] = { t = "RC Smoothing",    x = x,            y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Mode",            x = x + indent,   y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 25 }, table = { [0] = "ON", "OFF" } }
     labels[#labels + 1] = { t = "Cutoffs",         x = x + indent,   y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Setpoint",        x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 26 }, table = { [0] = "Auto" } }
     fields[#fields + 1] = { t = "Feedforward",     x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 27 }, table = { [0] = "Auto" } }
     labels[#labels + 1] = { t = "Auto Smoothness", x = x + indent,   y = inc.y(lineSpacing) }
-    fields[#fields + 1] = { t = "Setpoint",        x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 250, vals = { 31 } }    
-else
-    if apiVersion >= 1.40 then
-        labels[#labels + 1] = { t = "RC Smoothing",      x = x,          y = inc.y(lineSpacing) }
-        fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 25 }, table = { [0] = "Interpolation", "Filter" } }
-        fields[#fields + 1] = { t = "Channels",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 4, vals = { 24 }, table = { [0] = "RP", "RPY", "RPYT", "T", "RT" } }
-        labels[#labels + 1] = { t = "Input Filter",      x = x,          y = inc.y(lineSpacing) }
-        fields[#fields + 1] = { t = "Cutoff",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 26 }, table = { [0] = "Auto" } }
-        fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 28 }, table = { [0] = "PT1", "BIQUAD"} }
-        labels[#labels + 1] = { t = "Derivative Filter", x = x,          y = inc.y(lineSpacing) }
-        fields[#fields + 1] = { t = "Cutoff",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 27 }, table = { [0] = "Auto" } }
-        fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 29 }, table = { [0] = "Off", "PT1", "BIQUAD", "Auto"} }
-    end
+    fields[#fields + 1] = { t = "Setpoint",        x = x + indent*2, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 250, vals = { 31 } }
+elseif apiVersion >= 1.40 then
+    labels[#labels + 1] = { t = "RC Smoothing",      x = x,          y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 25 }, table = { [0] = "Interpolation", "Filter" } }
+    fields[#fields + 1] = { t = "Channels",          x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 4, vals = { 24 }, table = { [0] = "RP", "RPY", "RPYT", "T", "RT" } }
+    labels[#labels + 1] = { t = "Input Filter",      x = x,          y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Cutoff",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 26 }, table = { [0] = "Auto" } }
+    fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 1, vals = { 28 }, table = { [0] = "PT1", "BIQUAD"} }
+    labels[#labels + 1] = { t = "Derivative Filter", x = x,          y = inc.y(lineSpacing) }
+    fields[#fields + 1] = { t = "Cutoff",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 255, vals = { 27 }, table = { [0] = "Auto" } }
+    fields[#fields + 1] = { t = "Type",              x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 29 }, table = { [0] = "Off", "PT1", "BIQUAD", "Auto"} }
 
     if apiVersion >= 1.20 then
         fields[#fields + 1] = { t = "Interpolation", x = x,          y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 3, vals = { 13 }, table={ [0]="Off", "Preset", "Auto", "Manual"} }
