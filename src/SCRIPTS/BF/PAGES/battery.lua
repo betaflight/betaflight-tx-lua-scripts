@@ -23,7 +23,7 @@ return {
    read        = 32, -- MSP_BATTERY_CONFIG
    write       = 33, -- MSP_SET_BATTERY_CONFIG
    title       = "Battery",
-   reboot      = false,
+   reboot      = true,
    eepromWrite = true,
    minBytes    = 13,
    labels      = labels,
