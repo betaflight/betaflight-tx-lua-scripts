@@ -151,6 +151,47 @@ local supportedRadios =
         },
         cms = nil,
     },
+    ["320x240"] = {
+        msp = {
+            template = "TEMPLATES/320x240.lua",
+            highRes = true,
+            MenuBox = {
+                x = 80,
+                y = 80,
+                w = 160,
+                x_offset = 54,
+                h_line = 20,
+                h_offset = 10
+            },
+            SaveBox = {
+                x = 80,
+                y = 80,
+                w = 144,
+                x_offset = 10,
+                h = 60,
+                h_offset = 12
+            },
+            NoTelem = {128, LCD_H - 28, "No Telemetry", (TEXT_COLOR or 0) + INVERS + BLINK},
+            textSize = 0,
+            yMinLimit = 30,
+            yMaxLimit = 200
+        },
+        cms = {
+            rows = 9,
+            cols = 32,
+            pixelsPerRow = 24,
+            pixelsPerChar = 12,
+            xIndent = 10,
+            yOffset = 28,
+            textSize = MIDSIZE,
+            refresh = {
+                event = EVT_VIRTUAL_ENTER,
+                text = "Refresh: [ENT]",
+                top = 1,
+                left = 220
+            }
+        },
+    },
 }
 
 local resolution = LCD_W.."x"..LCD_H
