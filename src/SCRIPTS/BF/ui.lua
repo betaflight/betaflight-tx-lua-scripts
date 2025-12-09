@@ -35,10 +35,10 @@ local pageScrollY = 0
 local mainMenuScrollY = 0
 local PageFiles, Page, init, popupMenu
 
-local backgroundFill = TEXT_BGCOLOR or ERASE
-local foregroundColor = LINE_COLOR or SOLID
+local backgroundFill = COLOR_THEME_SECONDARY3 or TEXT_BGCOLOR or ERASE
+local foregroundColor = COLOR_THEME_PRIMARY3 or LINE_COLOR or SOLID
 
-local globalTextOptions = TEXT_COLOR or 0
+local globalTextOptions = COLOR_THEME_SECONDARY1 or TEXT_COLOR or 0
 
 local function saveSettings()
     if Page.values then
@@ -181,8 +181,8 @@ end
 
 local function drawScreenTitle(screenTitle)
     if radio.highRes then
-        lcd.drawFilledRectangle(0, 0, LCD_W, 30, TITLE_BGCOLOR)
-        lcd.drawText(5,5,screenTitle, MENU_TITLE_COLOR)
+        lcd.drawFilledRectangle(0, 0, LCD_W, 30, COLOR_THEME_SECONDARY1 or TITLE_BGCOLOR)
+        lcd.drawText(5,5,screenTitle, COLOR_THEME_PRIMARY2 or MENU_TITLE_COLOR)
     else
         lcd.drawFilledRectangle(0, 0, LCD_W, 10, FORCE)
         lcd.drawText(1,1,screenTitle,INVERS)
