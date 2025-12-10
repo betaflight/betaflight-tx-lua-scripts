@@ -1,7 +1,12 @@
 local apiVersionReceived = false
 local timeIsSet = false
-local getApiVersion, setRtc, rssiTask
+local getApiVersion, setRtc, rssiTask, handleOsdWarnings
 local rssiEnabled = true
+
+local function handleOsdWarnings()
+    handleOsdWarnings = handleOsdWarnings or assert(loadScript("osd_warnings.lua"))()
+    handleOsdWarnings.process()
+end
 
 local function run_bg()
     if getRSSI() > 0 then
@@ -29,6 +34,7 @@ local function run_bg()
                 collectgarbage()
             end
         end
+        handleOsdWarnings()
     else
         apiVersionReceived = false
         timeIsSet = false

@@ -62,3 +62,30 @@ protocol.mspPoll = function()
         end
     end
 end
+
+local function sendOsdWarning(dataId, value)
+    return protocol.push(LOCAL_SENSOR_ID, REQUEST_FRAME_ID, dataId, value)
+end
+
+local function handleOsdWarnings()
+    local warnings = {
+        { dataId = 0x1001, value = 1 }, -- Example warning: Arming status flag
+        { dataId = 0x1002, value = 2 }, -- Example warning: Sanity check
+        { dataId = 0x1003, value = 3 }, -- Example warning: GPS Rescue status
+        { dataId = 0x1004, value = 4 }, -- Example warning: Battery voltage warning
+        { dataId = 0x1005, value = 5 }, -- Example warning: RSSI warning
+        { dataId = 0x1006, value = 6 }, -- Example warning: Failsafe warning
+    }
+
+    for _, warning in ipairs(warnings) do
+        sendOsdWarning(warning.dataId, warning.value)
+    end
+end
+
+return {
+    mspSend = protocol.mspSend,
+    mspRead = protocol.mspRead,
+    mspWrite = protocol.mspWrite,
+    mspPoll = protocol.mspPoll,
+    handleOsdWarnings = handleOsdWarnings,
+}
