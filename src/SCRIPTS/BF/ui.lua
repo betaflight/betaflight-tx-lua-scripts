@@ -1,3 +1,5 @@
+local template = assert(loadScript(radio.template))()
+
 local uiStatus =
 {
     init     = 1,
@@ -181,8 +183,8 @@ end
 
 local function drawScreenTitle(screenTitle)
     if radio.highRes then
-        lcd.drawFilledRectangle(0, 0, LCD_W, 30, COLOR_THEME_SECONDARY1 or TITLE_BGCOLOR)
-        lcd.drawText(5,5,screenTitle, COLOR_THEME_PRIMARY2 or MENU_TITLE_COLOR)
+        lcd.drawFilledRectangle(0, 0, LCD_W, template.lineSpacing + template.margin, COLOR_THEME_SECONDARY1 or TITLE_BGCOLOR)
+        lcd.drawText(template.margin,template.margin,screenTitle, COLOR_THEME_PRIMARY2 or MENU_TITLE_COLOR)
     else
         lcd.drawFilledRectangle(0, 0, LCD_W, 10, FORCE)
         lcd.drawText(1,1,screenTitle,INVERS)
@@ -217,7 +219,7 @@ local function drawScreen()
             if pageState == pageStatus.editing then
                 valueOptions = valueOptions + BLINK
             end
-        end 
+        end
         if f.value then
             if f.upd and Page.values then
                 f.upd(Page)
@@ -319,10 +321,7 @@ local function run_ui(event)
         lcd.clear()
         local yMinLim = radio.yMinLimit
         local yMaxLim = radio.yMaxLimit
-        local lineSpacing = 10
-        if radio.highRes then
-            lineSpacing = 25
-        end
+        local lineSpacing = template.lineSpacing
         local currentFieldY = (currentPage-1)*lineSpacing + yMinLim
         if currentFieldY <= yMinLim then
             mainMenuScrollY = 0
