@@ -146,8 +146,8 @@ local supportedRadios =
             SaveBox = { x=300, y=180, w=220, x_offset=12, h=80, h_offset=12 },
             NoTelem = { (LCD_W-96)/2, LCD_H - 28, "No Telemetry", (COLOR_THEME_SECONDARY1 or TEXT_COLOR or 0) + INVERS + BLINK },
             textSize = 0,
-            yMinLimit = 35,
-            yMaxLimit = 280,
+            yMinLimit = 45,
+            yMaxLimit = LCD_H - 45,
         },
         cms = {
             rows = 9,
