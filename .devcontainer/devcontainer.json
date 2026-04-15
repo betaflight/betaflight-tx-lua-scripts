@@ -1,0 +1,13 @@
+{
+  "name": "betaflight-tx-lua-scripts",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "files.eol": "\n"
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 ![BF lua logo light mode](docs/assets/images/bf_lua_logo_light_mode.png#gh-light-mode-only)
 ![BF lua logo dark mode](docs/assets/images/bf_lua_logo_dark_mode.png#gh-dark-mode-only)
 
- [![Latest version](https://img.shields.io/github/v/release/betaflight/betaflight-tx-lua-scripts)](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) [![Build](https://img.shields.io/github/actions/workflow/status/betaflight/betaflight-tx-lua-scripts/nightly.yml?branch=master)](https://github.com/betaflight/betaflight-tx-lua-scripts/actions/workflows/nightly.yml) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+ [![Latest version](https://img.shields.io/github/v/release/betaflight/betaflight-tx-lua-scripts)](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) [![Build](https://img.shields.io/github/actions/workflow/status/betaflight/betaflight-tx-lua-scripts/nightly.yml?branch=master)](https://github.com/betaflight/betaflight-tx-lua-scripts/actions/workflows/nightly.yml) [![Open in GitHub Codespaces](https://img.shields.io/badge/Codespaces-Open-181717?logo=github)](https://codespaces.new/betaflight/betaflight-tx-lua-scripts) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 ## Requirements
 
@@ -85,6 +85,16 @@ Unstable testing versions of the latest builds of the Lua Script can be download
 Be aware that these versions are intended for testing / feedback only, and may be buggy or broken. Caution is advised when using these versions.
 
 ## Building from source
+
+### Using a Dev Container (recommended)
+
+- Open this repository in VS Code
+- Run `Dev Containers: Reopen in Container`
+- The same `.devcontainer` setup is used by GitHub Codespaces, thus you can also click the "Open in GitHub Codespaces" badge above
+- The container includes `make`, `lua`/`luac` 5.2, `zip`, `git`, and `bash`
+- Run `make` from the root folder
+
+### Building locally
 
 - Be sure to have `make` and `luac` in version 5.2 installed in the path
 - Run `make` from the root folder
