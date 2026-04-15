@@ -44,7 +44,7 @@ The "Betaflight setup" script lets you configure Betaflight through the MSP prot
 
 #### Saving your changes
 
-Any changes to parameters in the script will not take effect until a save is manually initiated. Change the parameters you want to change, open the function menu by long pressing [ENTER] and select "save page" to send the modified parameters back to the flight controller. 
+Any changes to parameters in the script will not take effect until a save is manually initiated. Change the parameters you want to change, open the function menu by long pressing [ENTER] and select "save page" to send the modified parameters back to the flight controller.
 
 #### Setting up VTX tables
 
@@ -86,7 +86,7 @@ Be aware that these versions are intended for testing / feedback only, and may b
 
 ## Building from source
 
-### Using a Dev Container (recommended)
+### Using a Dev Container
 
 - Open this repository in VS Code
 - Run `Dev Containers: Reopen in Container`
@@ -96,6 +96,7 @@ Be aware that these versions are intended for testing / feedback only, and may b
 
 ### Building locally
 
-- Be sure to have `make` and `luac` in version 5.2 installed in the path
+- Be sure to have `make` and Lua 5.2 (`luac`) installed in the path
+- For `make release`, you also need `git` and `zip` installed
 - Run `make` from the root folder
 - The installation files will be created in the `obj` folder. Copy the files to your transmitter as instructed in the '[Installing](#installing)' section as if you unzipped from a downloaded file.
