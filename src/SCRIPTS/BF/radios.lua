@@ -1,6 +1,6 @@
 local supportedRadios =
 {
-    ["128x64"]  = 
+    ["128x64"]  =
     {
         msp = {
             template = "TEMPLATES/128x64.lua",
@@ -27,7 +27,7 @@ local supportedRadios =
             },
         },
     },
-    ["128x96"]  = 
+    ["128x96"]  =
     {
         msp = {
             template = "TEMPLATES/128x96.lua",
@@ -54,7 +54,7 @@ local supportedRadios =
             },
         },
     },
-    ["212x64"]  = 
+    ["212x64"]  =
     {
         msp = {
             template = "TEMPLATES/212x64.lua",
@@ -81,7 +81,7 @@ local supportedRadios =
             }
         },
     },
-    ["480x272"] = 
+    ["480x272"] =
     {
         msp = {
             template = "TEMPLATES/480x272.lua",
@@ -127,6 +127,34 @@ local supportedRadios =
             pixelsPerRow = 24,
             pixelsPerChar = 14,
             xIndent = 14,
+            yOffset = 32,
+            textSize = MIDSIZE,
+            refresh = {
+                event = EVT_VIRTUAL_ENTER,
+                text = "Refresh: [ENT]",
+                top = 1,
+                left = 300,
+            }
+        },
+    },
+    ["800x480"] =
+    {
+        msp = {
+            template = "TEMPLATES/800x480.lua",
+            highRes = true,
+            MenuBox = { x=300, y=180, w=220, x_offset=88, h_line=25, h_offset=6 },
+            SaveBox = { x=300, y=180, w=220, x_offset=12, h=80, h_offset=12 },
+            NoTelem = { (LCD_W-96)/2, LCD_H - 28, "No Telemetry", (COLOR_THEME_SECONDARY1 or TEXT_COLOR or 0) + INVERS + BLINK },
+            textSize = 0,
+            yMinLimit = 45,
+            yMaxLimit = LCD_H - 45,
+        },
+        cms = {
+            rows = 9,
+            cols = 32,
+            pixelsPerRow = 28,
+            pixelsPerChar = 25,
+            xIndent = 10,
             yOffset = 32,
             textSize = MIDSIZE,
             refresh = {
