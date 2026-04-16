@@ -1,7 +1,7 @@
 ![BF lua logo light mode](docs/assets/images/bf_lua_logo_light_mode.png#gh-light-mode-only)
 ![BF lua logo dark mode](docs/assets/images/bf_lua_logo_dark_mode.png#gh-dark-mode-only)
 
- [![Latest version](https://img.shields.io/github/v/release/betaflight/betaflight-tx-lua-scripts)](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) [![Build](https://img.shields.io/github/actions/workflow/status/betaflight/betaflight-tx-lua-scripts/nightly.yml?branch=master)](https://github.com/betaflight/betaflight-tx-lua-scripts/actions/workflows/nightly.yml) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+ [![Latest version](https://img.shields.io/github/v/release/betaflight/betaflight-tx-lua-scripts)](https://github.com/betaflight/betaflight-tx-lua-scripts/releases) [![Build](https://img.shields.io/github/actions/workflow/status/betaflight/betaflight-tx-lua-scripts/nightly.yml?branch=master)](https://github.com/betaflight/betaflight-tx-lua-scripts/actions/workflows/nightly.yml) [![Open in GitHub Codespaces](https://img.shields.io/badge/Codespaces-Open-181717?logo=github)](https://codespaces.new/betaflight/betaflight-tx-lua-scripts) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 ## Requirements
 
@@ -44,7 +44,7 @@ The "Betaflight setup" script lets you configure Betaflight through the MSP prot
 
 #### Saving your changes
 
-Any changes to parameters in the script will not take effect until a save is manually initiated. Change the parameters you want to change, open the function menu by long pressing [ENTER] and select "save page" to send the modified parameters back to the flight controller. 
+Any changes to parameters in the script will not take effect until a save is manually initiated. Change the parameters you want to change, open the function menu by long pressing [ENTER] and select "save page" to send the modified parameters back to the flight controller.
 
 #### Setting up VTX tables
 
@@ -86,6 +86,17 @@ Be aware that these versions are intended for testing / feedback only, and may b
 
 ## Building from source
 
-- Be sure to have `make` and `luac` in version 5.2 installed in the path
+### Using a Dev Container
+
+- Open this repository in VS Code
+- Run `Dev Containers: Reopen in Container`
+- The same `.devcontainer` setup is used by GitHub Codespaces, thus you can also click the "Open in GitHub Codespaces" badge above
+- The container includes `make`, `lua`/`luac` 5.2, `zip`, `git`, and `bash`
+- Run `make` from the root folder
+
+### Building locally
+
+- Be sure to have `make` and Lua 5.2 (`luac`) installed in the path
+- For `make release`, you also need `git` and `zip` installed
 - Run `make` from the root folder
 - The installation files will be created in the `obj` folder. Copy the files to your transmitter as instructed in the '[Installing](#installing)' section as if you unzipped from a downloaded file.
