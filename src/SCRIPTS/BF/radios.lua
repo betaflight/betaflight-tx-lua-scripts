@@ -204,7 +204,21 @@ local supportedRadios =
             yMinLimit = 30,
             yMaxLimit = 200
         },
-        cms = nil,
+        cms = {
+            rows = 13,
+            cols = 32,
+            pixelsPerRow = 16,
+            pixelsPerChar = 9,
+            xIndent = 8,
+            yOffset = 22,
+            textSize = SMLSIZE,
+            refresh = {
+                event = EVT_VIRTUAL_ENTER,
+                text = "Refresh: [ENT]",
+                top = 1,
+                left = 200,
+            }
+        },
     },
 }
 
