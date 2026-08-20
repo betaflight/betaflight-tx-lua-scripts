@@ -421,15 +421,18 @@ local function canChangePage()
     return not Controller.saving
 end
 
---- The scrolling column every view fills. A page of settings sits tighter than
---- a list of buttons, which want a gap wide enough to read as separate targets.
-local function bodyBox(pg, flexPad)
-    return pg:box({
-        w = FULL,
-        flexFlow = lvgl.FLOW_COLUMN,
-        flexPad = flexPad,
-        borderPad = BODY_PAD,
-    })
+--- Build a view. The rows go straight onto the page rather than into a box of
+--- our own: lvgl.page already gives you a body that scrolls and takes a flex
+--- layout, and a box inside it is a second scroll container nested in the
+--- first, with its own scroll bar and its own idea of where the top is.
+---
+--- A page of settings sits tighter than a list of buttons, which want a gap
+--- wide enough to read as separate targets, so the row spacing is per view.
+local function newPage(opts, flexPad)
+    opts.flexFlow = lvgl.FLOW_COLUMN
+    opts.flexPad = flexPad
+    opts.borderPad = BODY_PAD
+    return lvgl.page(opts)
 end
 
 --- A gap between two groups of rows. An hline would read better, but a line is
@@ -458,12 +461,21 @@ local function addSaveRow(body)
     })
 end
 
+-- Every view sets backButton and none sets menu, which the firmware reads as:
+-- draw the exit cross top right and wire it to `back`, and leave the top-left
+-- header tile calling nothing. Without backButton there is no cross at all and
+-- the only way out by touch is that tile, which looks like the EdgeTX logo and
+-- reads like one. An inert logo costs a touch user nothing; an invisible exit
+-- costs them the way out. pcallSimpleFunc returns early on LUA_REFNIL, so the
+-- unset menu callback is a no-op rather than an error.
+
 local function buildPage()
     lvgl.clear()
     local Page = Controller.Page
-    local pg = lvgl.page({
+    local body = newPage({
         title = "Betaflight",
         subtitle = subtitle,
+        backButton = true,
         back = function()
             Controller.exitPage()
             view = VIEW.none
@@ -482,9 +494,8 @@ local function buildPage()
             end,
             active = canChangePage,
         },
-    })
+    }, lvgl.PAD_SMALL)
 
-    local body = bodyBox(pg, lvgl.PAD_SMALL)
     local rows = rowsOf(Page)
     for i = 1, #rows do
         addRow(body, rows[i])
@@ -495,14 +506,14 @@ end
 
 local function buildMainMenu()
     lvgl.clear()
-    local pg = lvgl.page({
+    local body = newPage({
         title = "Betaflight",
         subtitle = "Configuration",
+        backButton = true,
         back = function()
             UI.shouldExit = true
         end,
-    })
-    local body = bodyBox(pg, lvgl.PAD_MEDIUM)
+    }, lvgl.PAD_MEDIUM)
     for i = 1, #Controller.PageFiles do
         local index = i
         body:button({
@@ -538,14 +549,14 @@ end
 
 local function buildInit()
     lvgl.clear()
-    local pg = lvgl.page({
+    local body = newPage({
         title = "Betaflight",
         subtitle = "Connecting",
+        backButton = true,
         back = function()
             UI.shouldExit = true
         end,
-    })
-    local body = bodyBox(pg, lvgl.PAD_MEDIUM)
+    }, lvgl.PAD_MEDIUM)
     body:label({
         w = FULL,
         text = function()
@@ -557,15 +568,15 @@ end
 local function buildConfirm()
     lvgl.clear()
     local Page = Controller.Page
-    local pg = lvgl.page({
+    local body = newPage({
         title = "Betaflight",
         subtitle = Page.title or "Confirm",
+        backButton = true,
         back = function()
             Controller.confirmCancel()
             view = VIEW.none
         end,
-    })
-    local body = bodyBox(pg, lvgl.PAD_MEDIUM)
+    }, lvgl.PAD_MEDIUM)
     for i = 1, #Page.labels do
         body:label({ w = FULL, text = Page.labels[i].t or "" })
     end
