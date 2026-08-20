@@ -46,6 +46,7 @@ local MSP_API_VERSION = 1
 local MSP_BUILD_INFO = 5
 local MSP_UID = 160
 local MSP_STATUS_EX = 150
+local MSP_RC_TUNING = 111
 
 local BUILD_OPTION = {
     GPS = 16412,
@@ -104,11 +105,48 @@ local function statusExPayload()
     return payload
 end
 
+-- The block where zeros misrepresent a real FC the most. Rates are stored as
+-- raw bytes a display convention divides or multiplies -- RC Rate byte 120
+-- reads "1.20" -- and an all-zero reply exercises none of that, which is how a
+-- renderer that floored every scaled value to an integer got past the
+-- screenshots. These are the power-on defaults of a 4.5 target, byte for byte
+-- as betaflight-firmware's msp.c serialises pgResetFn_controlRateProfiles:
+-- rates type ACTUAL, centre sensitivity 70 deg/s, max rate 670 deg/s, expo
+-- 0.00, throttle mid 0.50.
+local function rcTuningPayload()
+    local payload = settingsPayload()
+    payload[1] = 7 -- rcRates[ROLL]
+    payload[2] = 0 -- rcExpo[ROLL]
+    payload[3] = 67 -- rates[ROLL]
+    payload[4] = 67 -- rates[PITCH]
+    payload[5] = 67 -- rates[YAW]
+    payload[6] = 0 -- was tpa_rate
+    payload[7] = 50 -- thrMid8
+    payload[8] = 0 -- thrExpo8
+    payload[9] = 0 -- was tpa_breakpoint, low byte
+    payload[10] = 0 -- was tpa_breakpoint, high byte
+    payload[11] = 0 -- rcExpo[YAW]
+    payload[12] = 7 -- rcRates[YAW]
+    payload[13] = 7 -- rcRates[PITCH]
+    payload[14] = 0 -- rcExpo[PITCH]
+    payload[15] = 0 -- throttle_limit_type = OFF
+    payload[16] = 100 -- throttle_limit_percent
+    payload[17] = 206 -- rate_limit[ROLL], 1998 little-endian
+    payload[18] = 7
+    payload[19] = 206 -- rate_limit[PITCH]
+    payload[20] = 7
+    payload[21] = 206 -- rate_limit[YAW]
+    payload[22] = 7
+    payload[23] = 3 -- rates_type = ACTUAL
+    return payload
+end
+
 local replies = {
     [MSP_API_VERSION] = { 0, config.apiVersion[1], config.apiVersion[2] },
     [MSP_BUILD_INFO] = buildInfoPayload(),
     [MSP_UID] = uidPayload(),
     [MSP_STATUS_EX] = statusExPayload(),
+    [MSP_RC_TUNING] = rcTuningPayload(),
     -- Acknowledgements carry no payload on real firmware.
     [MSP_EEPROM_WRITE] = {},
     [MSP_REBOOT] = {},

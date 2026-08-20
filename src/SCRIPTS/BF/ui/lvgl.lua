@@ -153,21 +153,41 @@ local function addToggle(box, f)
     })
 end
 
+--- How many decimal places a scale implies: 100 puts the point two digits in.
+--- Scales below 1 (ACTUAL rates store degrees-per-second divided by ten) spread
+--- the raw byte out to a larger whole number, so they get none.
+local function decimalsOf(scale)
+    local d = 0
+    while scale > 1 do
+        scale = scale / 10
+        d = d + 1
+    end
+    return d
+end
+
 local function addNumber(box, f, w)
+    -- numberEdit holds an integer, so it works in the field's raw units --
+    -- f.min and f.max are already raw -- and a display handler renders the
+    -- scaled value the user knows: RC Rate byte 120 reads "1.20". This also
+    -- makes one detent one raw step, the field's actual resolution; handing
+    -- the widget the scaled value instead would floor 1.20 to "1".
     local scale = f.scale or 1
+    local fmt = "%." .. decimalsOf(scale) .. "f"
     box:numberEdit({
         w = w,
-        -- min/max are raw bytes; the value the user sees is scaled.
-        min = (f.min or 0) / scale,
-        max = (f.max or 255) / scale,
+        min = f.min or 0,
+        max = f.max or 255,
         get = function()
-            return f.value or 0
+            return math.floor((f.value or 0) * scale + 0.5)
         end,
         set = function(v)
-            Controller.setFieldValue(f, v)
+            Controller.setFieldValue(f, v / scale)
         end,
+        display = scale ~= 1 and function(v)
+            return string.format(fmt, v / scale)
+        end or nil,
         edited = function(v)
-            Controller.setFieldValue(f, v)
+            Controller.setFieldValue(f, v / scale)
             Controller.postEdit(f)
             -- postEdit can rewrite min, max and scale across the whole page
             -- (rates.lua does, on all nine rate fields at once). numberEdit has
