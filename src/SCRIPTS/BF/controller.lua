@@ -271,13 +271,15 @@ function Controller.isFieldEditable(f)
     return Page ~= nil and Page.values ~= nil and f.vals ~= nil and Page.values[f.vals[#f.vals]] ~= nil and not f.ro
 end
 
---- Step a field and write the result back into the raw byte array, which stays
+--- Set a field and write the result back into the raw byte array, which stays
 --- the single source of truth -- the save path sends those bytes untouched.
-function Controller.incFieldValue(f, inc)
+--- The value is clipped to the field's range and snapped to its step, so a
+--- widget that hands over an arbitrary number cannot put the page out of range.
+function Controller.setFieldValue(f, value)
     local Page = Controller.Page
     local scale = f.scale or 1
     local mult = f.mult or 1
-    f.value = clipValue(f.value + inc * mult / scale, (f.min or 0) / scale, (f.max or 255) / scale)
+    f.value = clipValue(value, (f.min or 0) / scale, (f.max or 255) / scale)
     f.value = math.floor(f.value * scale / mult + 0.5) * mult / scale
     for idx = 1, #f.vals do
         Page.values[f.vals[idx]] = bit32.rshift(math.floor(f.value * scale + 0.5), (idx - 1) * 8)
@@ -285,6 +287,11 @@ function Controller.incFieldValue(f, inc)
     if f.upd and Page.values then
         f.upd(Page)
     end
+end
+
+--- Step a field by one detent in either direction.
+function Controller.incFieldValue(f, inc)
+    Controller.setFieldValue(f, f.value + inc * (f.mult or 1) / (f.scale or 1))
 end
 
 function Controller.postEdit(f)

@@ -4,6 +4,14 @@ chdir("/SCRIPTS/BF")
 apiVersion = 0
 mcuId = nil
 
+-- PERCENT_SIZE arrived in 2.11.4, in the same batch as the page header's
+-- navigation buttons and the layout constants ui/lvgl.lua is built on, so it
+-- is an honest gate for the whole renderer rather than for the lvgl table
+-- alone -- that has existed since 2.11.0. A colour radio below 2.11.4 falls
+-- through to ui/lcd.lua and keeps the rendering it has always had; there is no
+-- version-nag screen.
+local useLvgl = (lvgl ~= nil and lvgl.PERCENT_SIZE ~= nil)
+
 -- Forward-declared so init() can drop itself once it has run: the table this
 -- file returns stays on the standalone script's Lua stack for the whole
 -- session, and with it every upvalue init() closed over.
@@ -16,6 +24,10 @@ local M = {}
 local scriptsCompiled = assert(loadScript("COMPILE/scripts_compiled.lua"))()
 if not scriptsCompiled then
     M.run = assert(loadScript("COMPILE/compile.lua"))()
+    -- compile.lua draws with lcd.*, and the firmware only allows that when the
+    -- script has not claimed an LVGL layout. Report false for this launch; the
+    -- next one picks the real backend.
+    M.useLvgl = false
     return M
 end
 
@@ -51,7 +63,7 @@ local function init()
         applyMock()
     end
 
-    UI = loader("ui/lcd.lua")
+    UI = loader(useLvgl and "ui/lvgl.lua" or "ui/lcd.lua")
     if UI.init then
         UI.init()
     end
@@ -64,4 +76,5 @@ end
 
 M.init = init
 M.run = run
+M.useLvgl = useLvgl
 return M
