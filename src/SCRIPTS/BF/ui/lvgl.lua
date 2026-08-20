@@ -27,10 +27,28 @@ local status = Controller.status
 
 local UI = {}
 
--- 320-wide radios cannot fit a title and three editors on one line.
-local IS_NARROW = LCD_W < 400
-local LABEL_PCT = lvgl.PERCENT_SIZE + (IS_NARROW and 42 or 50)
 local FULL = lvgl.PERCENT_SIZE + 100
+
+-- 320-wide radios have less room for a title beside the controls it names.
+local IS_NARROW = LCD_W < 400
+
+-- How much of a row its title takes. A row with one editor keeps EdgeTX's own
+-- half-and-half proportions; a grid row's title is a single word ("ROLL") and
+-- the columns need the rest of the line -- at half, the third editor starts
+-- past the right edge, because an editor left to size itself takes a fixed
+-- 100px (EdgeTxStyles::EDIT_FLD_WIDTH) no matter how many share the row.
+local LIST_TITLE_PCT = IS_NARROW and 42 or 50
+local GRID_TITLE_PCT = IS_NARROW and 34 or 26
+
+-- The theme draws the scroll bar inside the box and a focus outline around the
+-- control rather than beside it, so a full-width child of an unpadded box ends
+-- up flush against both. This is the room for them.
+local BODY_PAD = {
+    left = lvgl.PAD_MEDIUM,
+    right = lvgl.PAD_LARGE,
+    top = lvgl.PAD_SMALL,
+    bottom = lvgl.PAD_MEDIUM,
+}
 
 -- Which screen the current LVGL tree was built for. Kept apart from
 -- Controller.state because the popup menu is a view here, not a tool state.
@@ -47,6 +65,7 @@ local view = VIEW.none
 local builtPage -- the Page the tree was built from
 local builtValues -- and whether its values had arrived
 local menuReturnView
+local lastEvent -- see UI.render: the firmware delivers each key twice
 
 -- ============================================================================
 -- Field classification
@@ -99,7 +118,7 @@ end
 -- Widgets
 -- ============================================================================
 
-local function addChoice(box, f)
+local function addChoice(box, f, w)
     -- BF value tables start at f.min, usually 0; lvgl.choice is 1-based.
     local base = f.min or 0
     local values = {}
@@ -107,6 +126,7 @@ local function addChoice(box, f)
         values[#values + 1] = tostring(f.table[i])
     end
     box:choice({
+        w = w,
         title = f.t or "",
         values = values,
         get = function()
@@ -135,9 +155,10 @@ local function addToggle(box, f)
     })
 end
 
-local function addNumber(box, f)
+local function addNumber(box, f, w)
     local scale = f.scale or 1
     box:numberEdit({
+        w = w,
         -- min/max are raw bytes; the value the user sees is scaled.
         min = (f.min or 0) / scale,
         max = (f.max or 255) / scale,
@@ -165,29 +186,106 @@ local function addNumber(box, f)
     })
 end
 
-local function addLabel(box, f)
+local function addLabel(box, f, w)
     box:label({
+        w = w,
         text = function()
             return displayValue(f)
         end,
     })
 end
 
-local function addWidget(box, f)
+--- `w` is nil for a row with one editor, which leaves each control its natural
+--- width, and a percentage of the row for a grid, where three of those natural
+--- widths do not fit.
+local function addWidget(box, f, w)
     if f.ro or not f.vals or isEmptyRange(f) then
-        addLabel(box, f)
+        addLabel(box, f, w)
     elseif isToggle(f) then
+        -- A toggle is a fixed-size switch; stretching it to a column would draw
+        -- a switch with a gap after it rather than a wider switch.
         addToggle(box, f)
     elseif isDenseTable(f) then
-        addChoice(box, f)
+        addChoice(box, f, w)
     else
-        addNumber(box, f)
+        addNumber(box, f, w)
     end
 end
 
 -- ============================================================================
 -- Rows
 -- ============================================================================
+
+local function byX(a, b)
+    return (a.x or 0) < (b.x or 0)
+end
+
+--- The text that titles a row. A field's own `t` wins; otherwise the leftmost
+--- label sharing its line, which is how the grid pages name their axes.
+local function rowTitle(row)
+    if #row.fields == 1 and row.fields[1].t then
+        return row.fields[1].t
+    end
+    for i = 1, #row.labels do
+        local l = row.labels[i]
+        if l.t and l.t ~= "" then
+            return l.t
+        end
+    end
+    return ""
+end
+
+--- Where a row's title ends and its columns begin. Everything on one line
+--- shares this, so a column header lands over the editor it names.
+local function geometryOf(cols, hasTitle)
+    if cols < 2 then
+        return { cols = 1, titlePct = hasTitle and LIST_TITLE_PCT or 0 }
+    end
+    local titlePct = hasTitle and GRID_TITLE_PCT or 0
+    return {
+        cols = cols,
+        titlePct = titlePct,
+        boxPct = 100 - titlePct,
+        -- The two points held back per column pay for the flex gap between the
+        -- editors and the focus outline around the last one.
+        colPct = math.floor(100 / cols) - 2,
+    }
+end
+
+--- A run of label-only lines above a grid, folded into one row carrying a text
+--- per column. Each page file puts a header label at the same x as the column
+--- it heads, which is the mapping used here; rates.lua splits "RC Rate" over
+--- two such lines, so texts landing in the same column are joined.
+local function headerRow(rows, from, to, target)
+    local texts = {}
+    for i = from, to do
+        local labels = rows[i].labels
+        for k = 1, #labels do
+            local l = labels[k]
+            local col = 0 -- 0 is the title column, left of the first editor
+            for c = 1, #target.fields do
+                if target.fields[c].x == l.x then
+                    col = c
+                    break
+                end
+            end
+            if l.t and l.t ~= "" then
+                texts[col] = texts[col] and (texts[col] .. " " .. l.t) or l.t
+            end
+        end
+    end
+    return {
+        y = rows[from].y,
+        labels = {},
+        fields = {},
+        texts = texts,
+        geom = geometryOf(#target.fields, rowTitle(target) ~= ""),
+    }
+end
+
+local function headsAGrid(row)
+    return #row.fields == 0 and #row.labels > 1
+end
 
 --- Group a page's labels and fields by y. Pages lay themselves out in screen
 --- order, so a shared y is a shared line: one field is a setting, three are a
@@ -212,27 +310,44 @@ local function rowsOf(Page)
         row.fields[#row.fields + 1] = f
     end
     table.sort(ys)
+
     local rows = {}
     for i = 1, #ys do
-        rows[#rows + 1] = byY[ys[i]]
+        local row = byY[ys[i]]
+        -- Columns are read left to right; the page files fill them top to
+        -- bottom, so insertion order is not it.
+        table.sort(row.labels, byX)
+        table.sort(row.fields, byX)
+        rows[#rows + 1] = row
     end
-    return rows
-end
 
---- The text that titles a row. A field's own `t` wins; otherwise the leftmost
---- label sharing its line, which is how the grid pages name their axes.
-local function rowTitle(row)
-    if #row.fields == 1 and row.fields[1].t then
-        return row.fields[1].t
-    end
-    local best
-    for i = 1, #row.labels do
-        local l = row.labels[i]
-        if l.t and l.t ~= "" and (not best or l.x < best.x) then
-            best = l
+    local out = {}
+    local i = 1
+    while i <= #rows do
+        local j = i
+        while j <= #rows and headsAGrid(rows[j]) do
+            j = j + 1
+        end
+        if j > i and rows[j] and #rows[j].fields > 1 then
+            out[#out + 1] = headerRow(rows, i, j - 1, rows[j])
+            i = j
+        else
+            out[#out + 1] = rows[i]
+            i = i + 1
         end
     end
-    return best and best.t or ""
+    return out
+end
+
+--- The box holding a row's controls, starting where its title ends.
+local function valueBox(setting, geom)
+    return setting:box({
+        x = geom.titlePct > 0 and (lvgl.PERCENT_SIZE + geom.titlePct) or nil,
+        w = geom.boxPct and (lvgl.PERCENT_SIZE + geom.boxPct) or nil,
+        flexFlow = lvgl.FLOW_ROW,
+        flexPad = lvgl.PAD_SMALL,
+        align = LEFT,
+    })
 end
 
 local function addHeadingRow(container, row)
@@ -248,21 +363,38 @@ local function addHeadingRow(container, row)
     container:label({ w = FULL, text = table.concat(parts, "  "), font = BOLD })
 end
 
-local function addRow(container, row)
-    if #row.fields == 0 then
-        addHeadingRow(container, row)
-        return
+local function addHeaderRow(container, row)
+    local geom = row.geom
+    local setting = container:setting({ w = FULL, title = row.texts[0] or "" })
+    local box = valueBox(setting, geom)
+    for c = 1, geom.cols do
+        box:label({
+            w = lvgl.PERCENT_SIZE + geom.colPct,
+            text = row.texts[c] or "",
+            font = BOLD,
+            align = CENTER,
+        })
     end
+end
 
-    local setting = container:setting({ w = FULL, title = rowTitle(row) })
-    local box = setting:box({
-        x = LABEL_PCT,
-        flexFlow = lvgl.FLOW_ROW,
-        flexPad = lvgl.PAD_MEDIUM,
-        align = LEFT,
-    })
+local function addFieldRow(container, row)
+    local title = rowTitle(row)
+    local geom = geometryOf(#row.fields, title ~= "")
+    local setting = container:setting({ w = FULL, title = title })
+    local box = valueBox(setting, geom)
+    local w = geom.colPct and (lvgl.PERCENT_SIZE + geom.colPct) or nil
     for i = 1, #row.fields do
-        addWidget(box, row.fields[i])
+        addWidget(box, row.fields[i], w)
+    end
+end
+
+local function addRow(container, row)
+    if row.texts then
+        addHeaderRow(container, row)
+    elseif #row.fields == 0 then
+        addHeadingRow(container, row)
+    else
+        addFieldRow(container, row)
     end
 end
 
@@ -297,6 +429,17 @@ local function openMenuFrom(from)
     UI.pendingView = VIEW.menu
 end
 
+--- The scrolling column every view fills. A page of settings sits tighter than
+--- a list of buttons, which want a gap wide enough to read as separate targets.
+local function bodyBox(pg, flexPad)
+    return pg:box({
+        w = FULL,
+        flexFlow = lvgl.FLOW_COLUMN,
+        flexPad = flexPad,
+        borderPad = BODY_PAD,
+    })
+end
+
 local function buildPage()
     lvgl.clear()
     local Page = Controller.Page
@@ -328,7 +471,7 @@ local function buildPage()
         },
     })
 
-    local body = pg:box({ w = FULL, flexFlow = lvgl.FLOW_COLUMN, flexPad = lvgl.PAD_OUTLINE })
+    local body = bodyBox(pg, lvgl.PAD_SMALL)
 
     -- The header's menu button is touch-only -- the firmware maps no key to it
     -- -- and the menu is where "save page" lives, so it needs a row as well.
@@ -358,7 +501,7 @@ local function buildMainMenu()
             openMenuFrom(VIEW.mainMenu)
         end,
     })
-    local body = pg:box({ w = FULL, flexFlow = lvgl.FLOW_COLUMN, flexPad = lvgl.PAD_OUTLINE })
+    local body = bodyBox(pg, lvgl.PAD_MEDIUM)
     body:button({
         w = FULL,
         text = "Menu",
@@ -390,7 +533,7 @@ local function buildInit()
             UI.shouldExit = true
         end,
     })
-    local body = pg:box({ w = FULL, flexFlow = lvgl.FLOW_COLUMN, flexPad = lvgl.PAD_MEDIUM })
+    local body = bodyBox(pg, lvgl.PAD_MEDIUM)
     body:label({
         w = FULL,
         text = function()
@@ -411,7 +554,7 @@ local function buildConfirm()
             view = VIEW.none
         end,
     })
-    local body = pg:box({ w = FULL, flexFlow = lvgl.FLOW_COLUMN, flexPad = lvgl.PAD_MEDIUM })
+    local body = bodyBox(pg, lvgl.PAD_MEDIUM)
     for i = 1, #Page.labels do
         body:label({ w = FULL, text = Page.labels[i].t or "" })
     end
@@ -440,7 +583,7 @@ local function buildMenu()
             UI.pendingView = menuReturnView
         end,
     })
-    local body = pg:box({ w = FULL, flexFlow = lvgl.FLOW_COLUMN, flexPad = lvgl.PAD_OUTLINE })
+    local body = bodyBox(pg, lvgl.PAD_MEDIUM)
     for i = 1, #actions do
         local action = actions[i]
         body:button({
@@ -518,9 +661,18 @@ local function rebuildIfNeeded()
 end
 
 function UI.render(event)
+    -- Every key event arrives twice. WidgetPage::onEvent queues it for the
+    -- script and then bubbles it to StandaloneLuaWindow::onEvent, which queues
+    -- it again, and the Lua event buffer hands them out one per frame -- so one
+    -- press of PAGE would step two pages. killEvents is no help; it clears the
+    -- key state, not the buffer. The copies always land on consecutive frames,
+    -- which no pair of real presses can.
+    local duplicate = event ~= 0 and event == lastEvent
+    lastEvent = event
+
     -- The PAGE keys are not wired to prevButton/nextButton by the firmware --
     -- those are touch only -- so the physical keys are handled here.
-    if Controller.state == status.pages and canChangePage() then
+    if not duplicate and Controller.state == status.pages and canChangePage() then
         if event == EVT_VIRTUAL_PREV_PAGE then
             Controller.prevPage()
             view = VIEW.none

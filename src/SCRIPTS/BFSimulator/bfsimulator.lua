@@ -45,6 +45,7 @@ local MSP_REBOOT = 68
 local MSP_API_VERSION = 1
 local MSP_BUILD_INFO = 5
 local MSP_UID = 160
+local MSP_STATUS_EX = 150
 
 local BUILD_OPTION = {
     GPS = 16412,
@@ -93,10 +94,21 @@ local function settingsPayload()
     return payload
 end
 
+-- The one settings block a zeroed reply gets wrong. profiles.lua does not take
+-- its PID-profile range from the page file; it derives it from the count the FC
+-- reports, so a zero there means "no profiles exist" and the row renders as a
+-- read-only value rather than a picker. Three is what a stock target has.
+local function statusExPayload()
+    local payload = settingsPayload()
+    payload[14] = 3
+    return payload
+end
+
 local replies = {
     [MSP_API_VERSION] = { 0, config.apiVersion[1], config.apiVersion[2] },
     [MSP_BUILD_INFO] = buildInfoPayload(),
     [MSP_UID] = uidPayload(),
+    [MSP_STATUS_EX] = statusExPayload(),
     -- Acknowledgements carry no payload on real firmware.
     [MSP_EEPROM_WRITE] = {},
     [MSP_REBOOT] = {},
