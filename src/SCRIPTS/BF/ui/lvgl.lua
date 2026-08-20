@@ -50,21 +50,19 @@ local BODY_PAD = {
     bottom = lvgl.PAD_MEDIUM,
 }
 
--- Which screen the current LVGL tree was built for. Kept apart from
--- Controller.state because the popup menu is a view here, not a tool state.
+-- Which screen the current LVGL tree was built for. `none` means the next frame
+-- rebuilds: it is how an action says the tree it was invoked from is stale.
 local VIEW = {
     none = 0,
     init = 1,
     mainMenu = 2,
     page = 3,
     confirm = 4,
-    menu = 5,
 }
 
 local view = VIEW.none
 local builtPage -- the Page the tree was built from
 local builtValues -- and whether its values had arrived
-local menuReturnView
 local lastEvent -- see UI.render: the firmware delivers each key twice
 
 -- ============================================================================
@@ -423,12 +421,6 @@ local function canChangePage()
     return not Controller.saving
 end
 
-local function openMenuFrom(from)
-    menuReturnView = from
-    view = VIEW.none
-    UI.pendingView = VIEW.menu
-end
-
 --- The scrolling column every view fills. A page of settings sits tighter than
 --- a list of buttons, which want a gap wide enough to read as separate targets.
 local function bodyBox(pg, flexPad)
@@ -440,21 +432,42 @@ local function bodyBox(pg, flexPad)
     })
 end
 
+--- A gap between two groups of rows. An hline would read better, but a line is
+--- a simple widget rather than a window and never decodes PERCENT_SIZE, so a
+--- full-width one takes the sentinel literally and flattens the whole column.
+local function addSpacer(body)
+    body:box({ w = FULL, h = lvgl.PAD_LARGE })
+end
+
+--- The one action that belongs to the open page, at the end of the form, which
+--- is where a colour radio puts the button that submits one. It goes inactive
+--- while a save is in flight so a second press cannot start a second
+--- transaction on a link that is already busy.
+local function addSaveRow(body)
+    body:button({
+        w = FULL,
+        text = "Save page",
+        press = function()
+            if Controller.Page then
+                Controller.savePage()
+            end
+        end,
+        active = function()
+            return not Controller.saving
+        end,
+    })
+end
+
 local function buildPage()
     lvgl.clear()
     local Page = Controller.Page
-    local openMenu = function()
-        openMenuFrom(VIEW.page)
-    end
     local pg = lvgl.page({
         title = "Betaflight",
         subtitle = subtitle,
-        backButton = true,
         back = function()
             Controller.exitPage()
             view = VIEW.none
         end,
-        menu = openMenu,
         prevButton = {
             press = function()
                 Controller.prevPage()
@@ -472,21 +485,12 @@ local function buildPage()
     })
 
     local body = bodyBox(pg, lvgl.PAD_SMALL)
-
-    -- The header's menu button is touch-only -- the firmware maps no key to it
-    -- -- and the menu is where "save page" lives, so it needs a row as well.
-    -- First rather than last: it is what the rotary lands on when a page opens,
-    -- and a save should not be at the bottom of a scroll.
-    body:button({
-        w = FULL,
-        text = "Menu",
-        press = openMenu,
-    })
-
     local rows = rowsOf(Page)
     for i = 1, #rows do
         addRow(body, rows[i])
     end
+    addSpacer(body)
+    addSaveRow(body)
 end
 
 local function buildMainMenu()
@@ -497,18 +501,8 @@ local function buildMainMenu()
         back = function()
             UI.shouldExit = true
         end,
-        menu = function()
-            openMenuFrom(VIEW.mainMenu)
-        end,
     })
     local body = bodyBox(pg, lvgl.PAD_MEDIUM)
-    body:button({
-        w = FULL,
-        text = "Menu",
-        press = function()
-            openMenuFrom(VIEW.mainMenu)
-        end,
-    })
     for i = 1, #Controller.PageFiles do
         local index = i
         body:button({
@@ -518,6 +512,24 @@ local function buildMainMenu()
                 Controller.currentPage = index
                 Controller.reload()
                 Controller.openPage()
+                view = VIEW.none
+            end,
+        })
+    end
+
+    -- The flight-controller actions live here rather than behind a menu on a
+    -- settings page, which is where the lcd renderer keeps them: none of them
+    -- has anything to do with the page that happens to be open.
+    addSpacer(body)
+    body:label({ w = FULL, text = "Flight Controller", font = BOLD })
+    local actions = Controller.fcActions()
+    for i = 1, #actions do
+        local action = actions[i]
+        body:button({
+            w = FULL,
+            text = action.title or action.t,
+            press = function()
+                action.f()
                 view = VIEW.none
             end,
         })
@@ -548,7 +560,6 @@ local function buildConfirm()
     local pg = lvgl.page({
         title = "Betaflight",
         subtitle = Page.title or "Confirm",
-        backButton = true,
         back = function()
             Controller.confirmCancel()
             view = VIEW.none
@@ -568,53 +579,12 @@ local function buildConfirm()
     })
 end
 
---- The popup menu, as a page of its own. The lcd renderer draws a box over the
---- screen; here the header's menu button opens this and the back button
---- returns, which is what a colour radio user expects.
-local function buildMenu()
-    lvgl.clear()
-    local actions = Controller.menuActions()
-    local pg = lvgl.page({
-        title = "Betaflight",
-        subtitle = "Menu",
-        backButton = true,
-        back = function()
-            view = VIEW.none
-            UI.pendingView = menuReturnView
-        end,
-    })
-    local body = bodyBox(pg, lvgl.PAD_MEDIUM)
-    for i = 1, #actions do
-        local action = actions[i]
-        body:button({
-            w = FULL,
-            text = action.t,
-            press = function()
-                action.f()
-                view = VIEW.none
-                -- An action that opened a confirmation has already moved the
-                -- tool on; anything else goes back where the menu came from.
-                UI.pendingView = nil
-            end,
-        })
-    end
-end
-
 -- ============================================================================
 -- Frame
 -- ============================================================================
 
---- Which view the current tool state calls for, unless something explicitly
---- asked for another one.
+--- Which view the current tool state calls for.
 local function wantedView()
-    if UI.pendingView then
-        local v = UI.pendingView
-        UI.pendingView = nil
-        return v
-    end
-    if view == VIEW.menu then
-        return VIEW.menu
-    end
     if Controller.state == status.init then
         return VIEW.init
     elseif Controller.state == status.mainMenu then
@@ -653,8 +623,6 @@ local function rebuildIfNeeded()
         buildMainMenu()
     elseif want == VIEW.confirm then
         buildConfirm()
-    elseif want == VIEW.menu then
-        buildMenu()
     else
         buildPage()
     end

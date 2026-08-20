@@ -225,6 +225,44 @@ function Controller.tickSaving()
     end
 end
 
+--- What the flight controller can be asked to do, as against what the page in
+--- front of you can. None of these read or write the open page, which is why
+--- the LVGL renderer lists them on the main menu instead of behind a per-page
+--- menu; the lcd renderer offers them in its popup, from either screen.
+---
+--- `t` is the label a 128x64 screen has room for. `title` is the same action
+--- spelled out, for a renderer with the width to say it.
+function Controller.fcActions()
+    local actions = {}
+    actions[#actions + 1] = { t = "reboot", title = "Reboot FC", f = Controller.reboot }
+    actions[#actions + 1] = {
+        t = "acc cal",
+        title = "Calibrate Accelerometer",
+        f = function()
+            Controller.confirm("CONFIRM/acc_cal.lua")
+        end,
+    }
+    if apiVersion >= 1.42 then
+        actions[#actions + 1] = {
+            t = "vtx tables",
+            title = "Download VTX Tables",
+            f = function()
+                Controller.confirm("CONFIRM/vtx_tables.lua")
+            end,
+        }
+    end
+    if apiVersion >= 1.44 then
+        actions[#actions + 1] = {
+            t = "board info",
+            title = "Download Board Info",
+            f = function()
+                Controller.confirm("CONFIRM/pwm.lua")
+            end,
+        }
+    end
+    return actions
+end
+
 --- The popup menu's contents. Which entries exist depends on the API version
 --- and on whether a page is open, both of which are this side of the split;
 --- where the box is drawn is not.
@@ -234,28 +272,9 @@ function Controller.menuActions()
         actions[#actions + 1] = { t = "save page", f = Controller.savePage }
         actions[#actions + 1] = { t = "reload", f = Controller.reload }
     end
-    actions[#actions + 1] = { t = "reboot", f = Controller.reboot }
-    actions[#actions + 1] = {
-        t = "acc cal",
-        f = function()
-            Controller.confirm("CONFIRM/acc_cal.lua")
-        end,
-    }
-    if apiVersion >= 1.42 then
-        actions[#actions + 1] = {
-            t = "vtx tables",
-            f = function()
-                Controller.confirm("CONFIRM/vtx_tables.lua")
-            end,
-        }
-    end
-    if apiVersion >= 1.44 then
-        actions[#actions + 1] = {
-            t = "board info",
-            f = function()
-                Controller.confirm("CONFIRM/pwm.lua")
-            end,
-        }
+    local fc = Controller.fcActions()
+    for i = 1, #fc do
+        actions[#actions + 1] = fc[i]
     end
     return actions
 end
