@@ -1,12 +1,17 @@
--- The lcd.* renderer: 128x64 and 212x64 monochrome, and every colour radio
--- whose firmware predates the LVGL page API.
+-- The lcd.* renderer: 128x64, 128x96 and 212x64 monochrome, and every colour
+-- radio whose firmware predates the LVGL page API.
 --
--- Everything that is not drawing moved to controller.lua. What is left owns the
+-- Everything that is not drawing lives in controller.lua. What is left owns the
 -- pixels and the keys -- focus, scrolling, edit mode, the popup menu box, the
 -- event ladder -- and reaches the rest through Controller intents.
+--
+-- Paths here are relative to /SCRIPTS/BF because bf.lua chdir'd there;
+-- loadScript resolves against the working directory, not against this file.
 
-local Controller = assert(loadScript("controller.lua"))()
-local template = assert(loadScript(radio.template))()
+local loader = assert(loadScript("loader.lua"))()
+
+local Controller = loader("controller.lua")
+local template = loader(radio.template)
 
 local status = Controller.status
 
@@ -159,7 +164,11 @@ local function drawMainMenu()
     drawScreenTitle("Betaflight Config")
 end
 
-local function run_ui(event)
+local UI = {}
+
+--- One frame. Returns what the tool's run() should return: 0 to keep going,
+--- 2 to leave.
+function UI.render(event)
     -- Edit mode cannot outlive the page it was editing. The single-function
     -- version got this for free by keeping editing and saving in one variable
     -- that page invalidation reset; now that they are apart, say it.
@@ -273,4 +282,4 @@ local function run_ui(event)
     return 0
 end
 
-return run_ui
+return UI
