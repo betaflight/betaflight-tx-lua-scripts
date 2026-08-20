@@ -35,16 +35,47 @@ The "Betaflight setup" script lets you configure Betaflight through the MSP prot
 
 <kbd>![Betaflight setup](docs/assets/images/how_to_use.gif)</kbd>
 
+On a colour radio running EdgeTX 2.11.4 or newer the script uses the radio's own
+LVGL widgets — dropdowns, toggles and number editors in a standard EdgeTX page,
+with page navigation in the header. Everything else is the same script: the same
+settings, the same pages, the same protocol. Colour radios on older firmware, and
+every monochrome radio, keep the layout they have always had.
+
+<kbd>![Main menu](screenshots/tool_mainmenu.png)</kbd>
+<kbd>![Settings page](screenshots/tool_page.png)</kbd>
+
 #### Controls
+
+Monochrome radios, and colour radios on EdgeTX older than 2.11.4:
 
 - [+] / [-] / [ROTARY ENCODER] - Used to navigate.
 - [PAGE] - Press to move to the next page. Long press to move to the previous page.
 - [ENTER] - Press to access the selected element. Long press to open the function menu.
 - [EXIT] - Press to go back or exit the script.
 
+Colour radios on EdgeTX 2.11.4 or newer:
+
+- [ROTARY ENCODER] - Move between controls. Press [ENTER] to edit one, and again to accept.
+- [PAGE] - Move to the next or previous page. The header's arrow buttons do the same.
+- [EXIT] - Go back, or exit the script from the main menu.
+
+There is no function menu on a colour radio. "Save page" is the last row of every
+settings page, and the actions that concern the flight controller rather than the
+page you are on — reboot, accelerometer calibration, and the VTX table and board
+info downloads — are listed on the main menu under "Flight Controller".
+
+<kbd>![Flight controller actions](screenshots/tool_actions.png)</kbd>
+
 #### Saving your changes
 
-Any changes to parameters in the script will not take effect until a save is manually initiated. Change the parameters you want to change, open the function menu by long pressing [ENTER] and select "save page" to send the modified parameters back to the flight controller.
+Any changes to parameters in the script will not take effect until a save is manually initiated. Change the parameters you want to change, then send them back to the flight controller:
+
+- **Colour radios on EdgeTX 2.11.4 or newer** - select "Save page", the last row of the page.
+- **Monochrome radios**, and colour radios on older firmware - long press [ENTER] to open the function menu, then select "save page".
+
+Leaving a page without saving discards the changes on it.
+
+<kbd>![Function menu](screenshots/tool_menu_bw.png)</kbd>
 
 #### Setting up VTX tables
 
