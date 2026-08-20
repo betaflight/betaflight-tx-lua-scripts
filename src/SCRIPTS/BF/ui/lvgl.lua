@@ -12,13 +12,18 @@
 --     at the bottom of the frame -- possibly after an MSP_SET_* but before its
 --     eepromWrite. Every getter here answers with a default rather than
 --     indexing something that might be nil.
---   * Rebuilding destroys focus and scroll position, so it happens only when
---     the view genuinely changes: a different page, values arriving for the
---     first time, or an edit that rewrote the field table underneath us.
---   * numberEdit does not poll its get() on this firmware, so a row built
---     before the flight controller answered would show 0 for ever. The
---     values-arrived rebuild is what covers that, and it lands before anyone
---     can have touched a control.
+--   * Rebuilding destroys focus and scroll position -- and recreating the
+--     page recreates its header, which cannot be done invisibly: the firmware
+--     creates the nav buttons a frame after the page, and until the first
+--     focus move the header's invisible menu button wears the focus ring as a
+--     white pill over the EdgeTX logo. So the page shell is built once per
+--     visit, and page turns swap only the rows under it.
+--   * A page file lies until the flight controller has answered: postLoad
+--     rewrites ranges from the reply (profiles.lua turns PID Profile's
+--     declared 0..1 into 0..count-1), so a row built early is built as the
+--     wrong control and flashes into the right one when the values land.
+--     Field rows are therefore only built from arrived values; while a page
+--     loads, the previous page's rows stay up, greyed.
 
 local loader = assert(loadScript("loader.lua"))()
 
@@ -61,8 +66,12 @@ local VIEW = {
 }
 
 local view = VIEW.none
-local builtPage -- the Page the tree was built from
+local builtPage -- the Page the rows were built from
 local builtValues -- and whether its values had arrived
+local builtReady -- and whether it was ready to carry field rows at all
+local pageShell -- the lvgl.page the rows live in, while the page view is up
+local swapPending -- rows cleared this frame; the refill lands next frame
+local bodyStale -- an edit rewrote the field tables under the built rows
 local lastEvent -- see UI.render: the firmware delivers each key twice
 
 -- ============================================================================
@@ -131,7 +140,14 @@ local function addChoice(box, f, w)
             return (f.value or base) - base + 1
         end,
         set = function(index)
+            -- Picking an entry is a whole edit, so postEdit fires here; the
+            -- rates-type field's rewrites every rate row's range and label,
+            -- which only a row swap can show.
             Controller.setFieldValue(f, index - 1 + base)
+            Controller.postEdit(f)
+            if f.postEdit then
+                bodyStale = true
+            end
         end,
         active = function()
             return fieldEditable(f)
@@ -146,6 +162,10 @@ local function addToggle(box, f)
         end,
         set = function(v)
             Controller.setFieldValue(f, v)
+            Controller.postEdit(f)
+            if f.postEdit then
+                bodyStale = true
+            end
         end,
         active = function()
             return fieldEditable(f)
@@ -190,12 +210,12 @@ local function addNumber(box, f, w)
             Controller.setFieldValue(f, v / scale)
             Controller.postEdit(f)
             -- postEdit can rewrite min, max and scale across the whole page
-            -- (rates.lua does, on all nine rate fields at once). numberEdit has
-            -- no way to take that, so the tree is rebuilt instead. Confined to
-            -- fields that asked for a postEdit, which the user has just
-            -- finished editing.
+            -- (rates.lua does, on all nine rate fields at once). numberEdit
+            -- has no way to take that, so the rows are swapped out instead.
+            -- Confined to fields that asked for a postEdit, which the user
+            -- has just finished editing.
             if f.postEdit then
-                view = VIEW.none
+                bodyStale = true
             end
         end,
         active = function()
@@ -420,6 +440,14 @@ end
 -- Views
 -- ============================================================================
 
+--- Whether the page can be trusted to build widgets from. Ranges and value
+--- tables are not final until the reply has been through postLoad, and a read
+--- the FC refused clears Page.read on its way to becoming the N/A notice, so
+--- "no values and nothing on order" also counts as arrived.
+local function pageReady(Page)
+    return Page.read == nil or Page.values ~= nil
+end
+
 local function subtitle()
     if Controller.saving then
         return Controller.retrying() and "Retrying..." or "Saving..."
@@ -428,15 +456,21 @@ local function subtitle()
         return "No Telemetry"
     end
     local Page = Controller.Page
+    if Page and not pageReady(Page) then
+        return "Loading..."
+    end
     if Page and Page.title then
         return Page.title
     end
     return ""
 end
 
---- Page navigation is greyed out rather than hidden while a save is in flight:
---- leaving the page mid-transaction abandons it after the MSP_SET_* and before
---- the eepromWrite.
+--- Page navigation holds still while a save is in flight: leaving the page
+--- mid-transaction abandons it after the MSP_SET_* and before the eepromWrite.
+--- The block is this check inside each press, never `active` on the header
+--- arrows -- disabling those buttons mid-save wedges the firmware's encoder
+--- group, after which no rotary or key input ever lands again. A page turn
+--- that quietly does nothing for the half second a save takes costs less.
 local function canChangePage()
     return not Controller.saving
 end
@@ -489,10 +523,24 @@ end
 -- costs them the way out. pcallSimpleFunc returns early on LUA_REFNIL, so the
 -- unset menu callback is a no-op rather than an error.
 
+--- Everything below the header: the rows, or word that they are coming.
+local function fillBody(body)
+    local Page = Controller.Page
+    if not Page or not pageReady(Page) then
+        body:label({ w = FULL, text = "Loading..." })
+        return
+    end
+    local rows = rowsOf(Page)
+    for i = 1, #rows do
+        addRow(body, rows[i])
+    end
+    addSpacer(body)
+    addSaveRow(body)
+end
+
 local function buildPage()
     lvgl.clear()
-    local Page = Controller.Page
-    local body = newPage({
+    pageShell = newPage({
         title = "Betaflight",
         subtitle = subtitle,
         backButton = true,
@@ -500,28 +548,24 @@ local function buildPage()
             Controller.exitPage()
             view = VIEW.none
         end,
+        -- Page turns leave `view` alone: the shell stays, and the change of
+        -- Controller.Page swaps the rows under it.
         prevButton = {
             press = function()
-                Controller.prevPage()
-                view = VIEW.none
+                if canChangePage() then
+                    Controller.prevPage()
+                end
             end,
-            active = canChangePage,
         },
         nextButton = {
             press = function()
-                Controller.nextPage()
-                view = VIEW.none
+                if canChangePage() then
+                    Controller.nextPage()
+                end
             end,
-            active = canChangePage,
         },
     }, lvgl.PAD_SMALL)
-
-    local rows = rowsOf(Page)
-    for i = 1, #rows do
-        addRow(body, rows[i])
-    end
-    addSpacer(body)
-    addSaveRow(body)
+    fillBody(pageShell)
 end
 
 local function buildMainMenu()
@@ -630,8 +674,35 @@ local function rebuildIfNeeded()
     local want = wantedView()
     local Page = Controller.Page
     local values = Page and Page.values or nil
+    -- Readiness can flip without values ever arriving: a refused read becomes
+    -- the N/A notice, which `values == builtValues` alone would never notice.
+    local ready = Page ~= nil and pageReady(Page)
 
-    if want == view and Page == builtPage and values == builtValues then
+    -- Content changes while the page view is up swap the rows and leave the
+    -- shell standing; only a change of view rebuilds the whole screen. Two
+    -- rules make the swap invisible:
+    --
+    --   * Swap only once the incoming page is ready. Until then the outgoing
+    --     rows stay up -- greyed, their fields no longer being editable --
+    --     which reads as a page turn in progress rather than a blink through
+    --     an empty screen.
+    --   * The firmware releases a cleared object's child refs after this
+    --     frame's run() returns, and rows built before that sweep would be
+    --     swept with them. So: clear this frame, refill the next.
+    if want == VIEW.page and view == VIEW.page and pageShell then
+        if swapPending then
+            swapPending = false
+            bodyStale = false
+            builtPage, builtValues, builtReady = Page, values, ready
+            fillBody(pageShell)
+        elseif ready and (Page ~= builtPage or values ~= builtValues or ready ~= builtReady or bodyStale) then
+            pageShell:clear()
+            swapPending = true
+        end
+        return
+    end
+
+    if want == view and Page == builtPage and values == builtValues and ready == builtReady then
         return
     end
 
@@ -647,6 +718,10 @@ local function rebuildIfNeeded()
     view = want
     builtPage = Page
     builtValues = values
+    builtReady = ready
+    pageShell = nil
+    swapPending = false
+    bodyStale = false
 
     if want == VIEW.init then
         buildInit()
@@ -674,11 +749,9 @@ function UI.render(event)
     if not duplicate and Controller.state == status.pages and canChangePage() then
         if event == EVT_VIRTUAL_PREV_PAGE then
             Controller.prevPage()
-            view = VIEW.none
             killEvents(event) -- X10/T16 issue: pageUp is a long press
         elseif event == EVT_VIRTUAL_NEXT_PAGE then
             Controller.nextPage()
-            view = VIEW.none
         end
     end
 

@@ -351,6 +351,10 @@ local function processMspReply(cmd, rx_buf, err)
         end
         Controller.reload()
     elseif cmd == Page.read and err then
+        -- The FC refused the command; asking again gets the same answer.
+        -- Clearing `read` stops the retry loop, and doubles as the sign that
+        -- this page is as loaded as it will ever be.
+        Page.read = nil
         Page.fields = { { x = 6, y = radio.yMinLimit, value = "", ro = true } }
         Page.labels = { { x = 6, y = radio.yMinLimit, t = "N/A" } }
     elseif cmd == Page.read and #rx_buf > 0 then

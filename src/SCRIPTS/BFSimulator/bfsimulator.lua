@@ -37,6 +37,8 @@ local config = {
     -- Frames to wait before answering. 1 keeps the depth-1 request/response
     -- alternation the real link has; 0 would let a page fill in the same frame
     -- it asked, which the tool never sees on hardware.
+    -- Raise to ~45 to stretch the loading states out to visible length when
+    -- working on how the UI behaves while a page is in flight.
     latency = 1,
 }
 
