@@ -157,8 +157,13 @@ local function addChoice(box, f, w)
     })
 end
 
-local function addToggle(box, f)
-    box:toggle({
+local function addToggle(box, f, w)
+    -- A toggle is a fixed-size switch; stretched to a column it draws the
+    -- switch at natural size with dead space after it, hanging off the left
+    -- edge of the header above. So in a grid it goes inside a cell of the
+    -- column's width, centered, which is where the header text is.
+    local cell = w and box:box({ w = w, flexFlow = lvgl.FLOW_ROW, align = CENTER }) or box
+    cell:toggle({
         get = function()
             return f.value or 0
         end,
@@ -243,9 +248,7 @@ local function addWidget(box, f, w)
     if f.ro or not f.vals or isEmptyRange(f) then
         addLabel(box, f, w)
     elseif isToggle(f) then
-        -- A toggle is a fixed-size switch; stretching it to a column would draw
-        -- a switch with a gap after it rather than a wider switch.
-        addToggle(box, f)
+        addToggle(box, f, w)
     elseif isDenseTable(f) then
         addChoice(box, f, w)
     else
