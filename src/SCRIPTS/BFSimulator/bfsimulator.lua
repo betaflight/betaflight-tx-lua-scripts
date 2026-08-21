@@ -28,11 +28,12 @@ local config = {
     -- detection instead of three separate config reads.
     apiVersion = { 1, 46 },
 
-    -- Build options the mocked firmware reports. VTX and OSD are off on
-    -- purpose: both add a page whose first act is to download a table from the
-    -- FC and write it to the SD card, which is a flow of its own rather than
-    -- the settings UI. Add BUILD_OPTION.VTX here to exercise it.
-    buildOptions = { "GPS" },
+    -- Build options the mocked firmware reports. VTX is off on purpose: its
+    -- page's first act is to download a table from the FC and write it to the
+    -- SD card, which is a flow of its own rather than the settings UI. Add
+    -- BUILD_OPTION.VTX here to exercise it. OSD_SD is what puts the OSD
+    -- Elements page on the menu.
+    buildOptions = { "GPS", "OSD_SD" },
 
     -- Frames to wait before answering. 1 keeps the depth-1 request/response
     -- alternation the real link has; 0 would let a page fill in the same frame
@@ -49,6 +50,7 @@ local MSP_BUILD_INFO = 5
 local MSP_UID = 160
 local MSP_STATUS_EX = 150
 local MSP_RC_TUNING = 111
+local MSP_OSD_CONFIG = 84
 
 local BUILD_OPTION = {
     GPS = 16412,
@@ -143,12 +145,32 @@ local function rcTuningPayload()
     return payload
 end
 
+-- The OSD block has to run longer than the generic zeros: pos_osd.lua reads
+-- two bytes per element up to values[164], and an element whose bytes are
+-- missing is a nil that splitVal's arithmetic dies on, taking the tool and
+-- the MSP pump with it. A real FC serialises every element it was built with.
+-- A few elements carry distinct positions and profile bits, so moving the
+-- element selector has to visibly change every widget under it.
+local function osdConfigPayload()
+    local payload = {}
+    for i = 1, 164 do
+        payload[i] = 0
+    end
+    payload[11] = 100 -- rssi_pos: position 100, no profiles
+    payload[13] = 200 -- vbat_pos: position 200, all three profiles
+    payload[14] = 0x38
+    payload[63] = 44 -- pit_ang_pos: position 44, all three profiles
+    payload[64] = 0x38
+    return payload
+end
+
 local replies = {
     [MSP_API_VERSION] = { 0, config.apiVersion[1], config.apiVersion[2] },
     [MSP_BUILD_INFO] = buildInfoPayload(),
     [MSP_UID] = uidPayload(),
     [MSP_STATUS_EX] = statusExPayload(),
     [MSP_RC_TUNING] = rcTuningPayload(),
+    [MSP_OSD_CONFIG] = osdConfigPayload(),
     -- Acknowledgements carry no payload on real firmware.
     [MSP_EEPROM_WRITE] = {},
     [MSP_REBOOT] = {},

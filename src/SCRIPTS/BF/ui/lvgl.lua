@@ -142,7 +142,9 @@ local function addChoice(box, f, w)
         set = function(index)
             -- Picking an entry is a whole edit, so postEdit fires here; the
             -- rates-type field's rewrites every rate row's range and label,
-            -- which only a row swap can show.
+            -- which only a row swap can show. upd hooks need no swap: they
+            -- rewrite values and label texts, which the widgets watch through
+            -- their bound getters.
             Controller.setFieldValue(f, index - 1 + base)
             Controller.postEdit(f)
             if f.postEdit then
@@ -210,10 +212,11 @@ local function addNumber(box, f, w)
             Controller.setFieldValue(f, v / scale)
             Controller.postEdit(f)
             -- postEdit can rewrite min, max and scale across the whole page
-            -- (rates.lua does, on all nine rate fields at once). numberEdit
-            -- has no way to take that, so the rows are swapped out instead.
-            -- Confined to fields that asked for a postEdit, which the user
-            -- has just finished editing.
+            -- (rates.lua does, on all nine rate fields at once). A built
+            -- numberEdit's range cannot follow that, so the rows are swapped
+            -- out instead, once the edit the user is in has finished. upd
+            -- hooks rewrite only values and label texts, which the bound
+            -- getters carry without a rebuild.
             if f.postEdit then
                 bodyStale = true
             end
@@ -416,9 +419,16 @@ local function addHeaderRow(container, row)
 end
 
 local function addFieldRow(container, row)
-    local title = rowTitle(row)
-    local geom = geometryOf(#row.fields, title ~= "")
-    local setting = container:setting({ w = FULL, title = title })
+    local geom = geometryOf(#row.fields, rowTitle(row) ~= "")
+    local setting = container:setting({
+        w = FULL,
+        -- Bound rather than copied: the firmware re-reads a function title
+        -- every frame, which is how pos_osd's element selector renames its
+        -- own row from an upd hook without anything being rebuilt.
+        title = function()
+            return rowTitle(row)
+        end,
+    })
     local box = valueBox(setting, geom)
     local w = geom.colPct and (lvgl.PERCENT_SIZE + geom.colPct) or nil
     for i = 1, #row.fields do
