@@ -290,10 +290,16 @@ function Controller.isFieldEditable(f)
     return Page ~= nil and Page.values ~= nil and f.vals ~= nil and Page.values[f.vals[#f.vals]] ~= nil and not f.ro
 end
 
---- Set a field and write the result back into the raw byte array, which stays
---- the single source of truth -- the save path sends those bytes untouched.
---- The value is clipped to the field's range and snapped to its step, so a
---- widget that hands over an arbitrary number cannot put the page out of range.
+--- Set a field and write the result back into Page.values, which stays the
+--- single source of truth for the save path. The slots are not strictly
+--- bytes, and masking them would break things: a field with one vals entry
+--- keeps its whole value in that slot (vtx's Frequency, 5000-5999, which its
+--- page splits into bytes itself in preSave), and a multi-byte field leaves
+--- slot idx holding the value shifted down 8*(idx-1) bits -- the transport
+--- bands every byte to 0xFF as it buffers, and rates' lshift+bor readback is
+--- exact on the overlapped form. The value itself is clipped to the field's
+--- range and snapped to its step, so a widget that hands over an arbitrary
+--- number cannot put the page out of range.
 function Controller.setFieldValue(f, value)
     local Page = Controller.Page
     local scale = f.scale or 1
