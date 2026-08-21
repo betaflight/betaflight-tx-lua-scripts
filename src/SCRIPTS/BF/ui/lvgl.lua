@@ -1,4 +1,4 @@
--- The LVGL renderer: colour radios on EdgeTX 2.11.4 or later.
+-- The LVGL renderer: colour radios on EdgeTX 2.11.7+, 2.12.1+ or 3.0+.
 --
 -- Same controller, same page files, native widgets. Rows are built from the
 -- coordinates the page files already carry -- fields sharing a y are one visual

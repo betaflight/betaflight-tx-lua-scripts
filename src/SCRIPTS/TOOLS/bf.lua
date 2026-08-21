@@ -4,13 +4,32 @@ chdir("/SCRIPTS/BF")
 apiVersion = 0
 mcuId = nil
 
--- PERCENT_SIZE arrived in 2.11.4, in the same batch as the page header's
--- navigation buttons and the layout constants ui/lvgl.lua is built on, so it
--- is an honest gate for the whole renderer rather than for the lvgl table
--- alone -- that has existed since 2.11.0. A colour radio below 2.11.4 falls
--- through to ui/lcd.lua and keeps the rendering it has always had; there is no
--- version-nag screen.
-local useLvgl = (lvgl ~= nil and lvgl.PERCENT_SIZE ~= nil)
+-- ui/lvgl.lua asks for EdgeTX 2.11.7+, 2.12.1+ or 3.0+. No probe of the lvgl
+-- table can express that: what separates these releases from their
+-- predecessors is behavior -- a numberEdit reporting a finished edit through
+-- its `edited` callback (2.11.6), which is how every numeric field here
+-- commits, and on the 2.12 line re-reading its `get` every frame (2.12.1),
+-- without which a field rewritten out-of-band, like pos_osd's whole editor,
+-- renders stale. So the gate reads the firmware version itself. A colour
+-- radio below a floor falls through to ui/lcd.lua and keeps the rendering it
+-- has always had; there is no version-nag screen.
+local function lvglCapable()
+    if lvgl == nil then
+        return false
+    end
+    local _, _, major, minor, revision = getVersion()
+    if major ~= 2 then
+        return major > 2
+    end
+    if minor == 11 then
+        return revision >= 7
+    end
+    if minor == 12 then
+        return revision >= 1
+    end
+    return minor > 12
+end
+local useLvgl = lvglCapable()
 
 -- Forward-declared so init() can drop itself once it has run: the table this
 -- file returns stays on the standalone script's Lua stack for the whole

@@ -35,25 +35,26 @@ The "Betaflight setup" script lets you configure Betaflight through the MSP prot
 
 <kbd>![Betaflight setup](docs/assets/images/how_to_use.gif)</kbd>
 
-On a colour radio running EdgeTX 2.11.4 or newer the script uses the radio's own
-LVGL widgets — dropdowns, toggles and number editors in a standard EdgeTX page,
-with page navigation in the header. Everything else is the same script: the same
-settings, the same pages, the same protocol. Colour radios on older firmware, and
-every monochrome radio, keep the layout they have always had.
+On a colour radio running EdgeTX 2.11.7 / 2.12.1 or newer the script uses the
+radio's own LVGL widgets — dropdowns, toggles and number editors in a standard
+EdgeTX page, with page navigation in the header. Everything else is the same
+script: the same settings, the same pages, the same protocol. Colour radios on
+other firmware versions, and every monochrome radio, keep the layout they have
+always had.
 
 <kbd>![Main menu](screenshots/tool_mainmenu.png)</kbd>
 <kbd>![Settings page](screenshots/tool_page.png)</kbd>
 
 #### Controls
 
-Monochrome radios, and colour radios on EdgeTX older than 2.11.4:
+Monochrome radios, and colour radios on other EdgeTX versions:
 
 - [+] / [-] / [ROTARY ENCODER] - Used to navigate.
 - [PAGE] - Press to move to the next page. Long press to move to the previous page.
 - [ENTER] - Press to access the selected element. Long press to open the function menu.
 - [EXIT] - Press to go back or exit the script.
 
-Colour radios on EdgeTX 2.11.4 or newer:
+Colour radios on EdgeTX 2.11.7 / 2.12.1 or newer:
 
 - [ROTARY ENCODER] - Move between controls. Press [ENTER] to edit one, and again to accept.
 - [PAGE] - Move to the next or previous page. The header's arrow buttons do the same.
@@ -70,8 +71,8 @@ info downloads — are listed on the main menu under "Flight Controller".
 
 Any changes to parameters in the script will not take effect until a save is manually initiated. Change the parameters you want to change, then send them back to the flight controller:
 
-- **Colour radios on EdgeTX 2.11.4 or newer** - select "Save page", the last row of the page.
-- **Monochrome radios**, and colour radios on older firmware - long press [ENTER] to open the function menu, then select "save page".
+- **Colour radios on EdgeTX 2.11.7 / 2.12.1 or newer** - select "Save page", the last row of the page.
+- **Monochrome radios**, and colour radios on other firmware versions - long press [ENTER] to open the function menu, then select "save page".
 
 Leaving a page without saving discards the changes on it.
 
@@ -79,7 +80,7 @@ Leaving a page without saving discards the changes on it.
 
 #### Setting up VTX tables
 
-If you are using a VTX that supports the SmartAudio or Tramp protocols then bands and channels etc. are managed using VTX tables since Betaflight version 4.1.0. The script will be downloading and storing the current VTX table for every model the first time the model is connected and the script is run. If you change the VTX table, you have to re-load the updated VTX table in the script, by choosing the 'vtx tables' option in the function menu.
+If you are using a VTX that supports the SmartAudio or Tramp protocols then bands and channels etc. are managed using VTX tables since Betaflight version 4.1.0. The script will be downloading and storing the current VTX table for every model the first time the model is connected and the script is run. If you change the VTX table, you have to re-load the updated VTX table in the script: on a colour radio running EdgeTX 2.11.7 / 2.12.1 or newer, select "Download VTX Tables" under "Flight Controller" on the main menu; on monochrome radios and other firmware versions, choose the 'vtx tables' option in the function menu.
 
 Depending on the size of the vtx tables and the telemetry protocol used, downloading the vtx tables can take a while.
 
