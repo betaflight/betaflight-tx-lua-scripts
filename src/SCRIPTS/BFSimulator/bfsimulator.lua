@@ -13,6 +13,10 @@
 -- byte stream underneath it would be a second implementation of it to keep in
 -- step for no extra coverage of the UI.
 --
+-- What it does keep is the state a save changes: a write is decoded into the
+-- block its page reads back, so a saved value is still there on the reload
+-- afterwards. See "Writes" below.
+--
 -- bf.lua only ever loads this in the simulator -- it checks that getVersion()
 -- ends in "-simu" first -- so on a radio the file just sits on the card.
 --
@@ -177,8 +181,100 @@ local replies = {
 }
 
 -- ============================================================================
+-- Writes
+-- ============================================================================
+--
+-- A real flight controller decodes a write into its configuration and
+-- serialises that configuration back on the next read. Acknowledging a write
+-- and then answering the re-read with the original bytes makes every save look
+-- like it silently did nothing, which is the one thing a save flow has to be
+-- able to prove -- so the write has to reach the block a later read serves.
+
+--- Most pages send back exactly the block they were given, so the payload
+--- becomes the new block.
+local function replaceBlock(payload)
+    return payload
+end
+
+--- MSP_SET_OSD_CONFIG carries a single element -- its index, then its position
+--- and profile bits -- while MSP_OSD_CONFIG answers with the whole table, two
+--- bytes per element from values[11]. So this write lands in one element's
+--- slot instead of replacing anything.
+local function applyOsdElement(payload, block)
+    local item = payload[1]
+    if item and item <= 76 then
+        block[11 + item * 2] = payload[2] or 0
+        block[12 + item * 2] = payload[3] or 0
+    end
+    return block
+end
+
+--- MSP_SELECT_SETTING carries one byte: a profile index, tagged with the kind
+--- of profile it selects. MSP_STATUS_EX reports the PID profile in values[11]
+--- and the rate profile in values[15].
+local function applyProfileSelect(payload, block)
+    local value = payload[1] or 0
+    if bit32.btest(value, 0x80) then
+        block[15] = bit32.band(value, 0x7F)
+    elseif not bit32.btest(value, 0x40) then
+        block[11] = value
+    end
+    return block
+end
+
+--- Every write the pages issue, and where its payload goes. A write that is
+--- not listed here is acknowledged without being stored: MSP_VTX_SET_CONFIG
+--- reshapes its payload on the way out (a channel number the reply reports as
+--- a band and a channel), and the VTX page is not reachable in the mock
+--- anyway, since config.buildOptions leaves the feature out.
+local writes = {
+    [239] = { read = 240, apply = replaceBlock }, -- MSP_SET_ACC_TRIM
+    [202] = { read = 112, apply = replaceBlock }, -- MSP_SET_PID
+    [226] = { read = 136, apply = replaceBlock }, -- MSP_SET_GPS_RESCUE_PIDS
+    [33] = { read = 32, apply = replaceBlock }, -- MSP_SET_BATTERY_CONFIG
+    [76] = { read = 75, apply = replaceBlock }, -- MSP_SET_FAILSAFE_CONFIG
+    [225] = { read = 135, apply = replaceBlock }, -- MSP_SET_GPS_RESCUE
+    [95] = { read = 94, apply = replaceBlock }, -- MSP_SET_PID_ADVANCED
+    [204] = { read = 111, apply = replaceBlock }, -- MSP_SET_RC_TUNING
+    [45] = { read = 44, apply = replaceBlock }, -- MSP_SET_RX_CONFIG
+    [93] = { read = 92, apply = replaceBlock }, -- MSP_SET_FILTER_CONFIG
+    [91] = { read = 90, apply = replaceBlock }, -- MSP_SET_ADVANCED_CONFIG
+    [141] = { read = 140, apply = replaceBlock }, -- MSP_SET_SIMPLIFIED_TUNING
+    [85] = { read = 84, apply = applyOsdElement }, -- MSP_SET_OSD_CONFIG
+    [210] = { read = 150, apply = applyProfileSelect }, -- MSP_SELECT_SETTING
+}
+
+--- The payload as the flight controller would have received it. Page.values
+--- holds a field's value in its first slot and shifted copies in the rest, and
+--- it is MSP/common.lua that bands each one to a byte on its way into the
+--- frame -- a layer this mock replaces, so it does that masking itself.
+local function receivedBytes(payload)
+    local bytes = {}
+    for i = 1, #payload do
+        bytes[i] = bit32.band(payload[i], 0xFF)
+    end
+    return bytes
+end
+
+-- ============================================================================
 -- The link
 -- ============================================================================
+
+--- Replies are copied on the way out because a page keeps the table it was
+--- given as its Page.values and edits it in place. Handing out the stored
+--- block itself would make an edit stick without a save -- and make a save
+--- impossible to tell from one.
+local function replyTo(cmd)
+    if writes[cmd] then
+        return {}
+    end
+    local block = replies[cmd] or settingsPayload()
+    local copy = {}
+    for i = 1, #block do
+        copy[i] = block[i]
+    end
+    return copy
+end
 
 local pending = nil
 local countdown = 0
@@ -202,9 +298,14 @@ end
 return function()
     -- protocol.mspRead and protocol.mspWrite both funnel through
     -- mspSendRequest, so it is the only entry point requests need.
-    mspSendRequest = function(cmd, _payload)
+    mspSendRequest = function(cmd, payload)
         if pending or not cmd then
             return nil
+        end
+        local write = writes[cmd]
+        if write and payload then
+            local block = replies[write.read] or settingsPayload()
+            replies[write.read] = write.apply(receivedBytes(payload), block)
         end
         pending = cmd
         countdown = config.latency
@@ -225,6 +326,6 @@ return function()
         end
         local cmd = pending
         pending = nil
-        return cmd, replies[cmd] or settingsPayload(), false
+        return cmd, replyTo(cmd), false
     end
 end
