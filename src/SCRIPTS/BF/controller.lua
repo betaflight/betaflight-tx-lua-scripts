@@ -44,6 +44,13 @@ Controller.PageFiles = nil
 Controller.currentPage = 1
 Controller.saving = false
 
+--- Bumped when a reply changes what the open page's fields say. A renderer
+--- that builds widgets against those fields can watch this instead of watching
+--- for replies: a re-read that comes back with the values it was sent -- which
+--- is what a save normally answers -- leaves it at rest, and the screen the
+--- user is looking at stands.
+Controller.valuesRev = 0
+
 -- ============================================================================
 -- Globals the pages rely on
 -- ============================================================================
@@ -69,6 +76,23 @@ function Controller.reload()
     Controller.saving = false
     saveTS = 0
     collectgarbage()
+end
+
+--- Re-read the open page's values without reloading the page itself. This is
+--- where a save ends, rather than in reload(): re-running the page script
+--- builds a fresh set of labels and fields, and a renderer holding widgets
+--- bound to the old ones can only throw the screen away and build it again,
+--- taking the focus and the scroll position with it. A save cannot change the
+--- shape of the page it saved, only the values on it, so only the values are
+--- fetched again -- into the tables that are already on screen.
+function Controller.refreshValues()
+    Controller.saving = false
+    saveTS = 0
+    local Page = Controller.Page
+    if Page then
+        Page.values = nil
+        Page.reqTS = nil
+    end
 end
 
 local function incMax(val, inc, base)
@@ -341,6 +365,26 @@ local function requestPage()
     end
 end
 
+--- The field values as they stood before the reply being processed. Kept and
+--- refilled rather than built per reply: every page read passes through here,
+--- including on radios with little enough heap that the COMPILE pass exists.
+local prevValues = {}
+
+--- Whether the reply just applied moved anything the page shows. `was` is the
+--- field count it was taken at, since the refused-read notice replaces the
+--- fields outright.
+local function valuesChanged(Page, was)
+    if #Page.fields ~= was then
+        return true
+    end
+    for i = 1, was do
+        if Page.fields[i].value ~= prevValues[i] then
+            return true
+        end
+    end
+    return false
+end
+
 local function processMspReply(cmd, rx_buf, err)
     local Page = Controller.Page
     if not Page or not rx_buf then
@@ -349,13 +393,16 @@ local function processMspReply(cmd, rx_buf, err)
         if Page.eepromWrite then
             eepromWrite()
         else
-            Controller.reload()
+            Controller.refreshValues()
         end
     elseif cmd == uiMsp.eepromWrite then
         if Page.reboot then
+            -- A reboot invalidates everything the page was built from, down to
+            -- which pages exist, so that one does start over.
             Controller.reboot()
+        else
+            Controller.refreshValues()
         end
-        Controller.reload()
     elseif cmd == Page.read and err then
         -- The FC refused the command; asking again gets the same answer.
         -- Clearing `read` stops the retry loop, and doubles as the sign that
@@ -363,8 +410,15 @@ local function processMspReply(cmd, rx_buf, err)
         Page.read = nil
         Page.fields = { { x = 6, y = radio.yMinLimit, value = "", ro = true } }
         Page.labels = { { x = 6, y = radio.yMinLimit, t = "N/A" } }
+        -- The fields a renderer is holding have just been replaced wholesale,
+        -- which no comparison of values would show.
+        Controller.valuesRev = Controller.valuesRev + 1
     elseif cmd == Page.read and #rx_buf > 0 then
         Page.values = rx_buf
+        local was = #Page.fields
+        for i = 1, was do
+            prevValues[i] = Page.fields[i].value
+        end
         for i = 1, #Page.fields do
             if #Page.values >= Page.minBytes then
                 local f = Page.fields[i]
@@ -385,6 +439,14 @@ local function processMspReply(cmd, rx_buf, err)
         end
         if Page.postLoad then
             Page.postLoad(Page)
+        end
+        -- Compared here rather than field by field above, because above is not
+        -- where a page's values are finished: pos_osd declares `vals` that the
+        -- loop reads nonsense out of and postLoad then replaces with the
+        -- element the user is actually on. What the widgets show is what is
+        -- left standing after postLoad, so that is what is worth comparing.
+        if valuesChanged(Page, was) then
+            Controller.valuesRev = Controller.valuesRev + 1
         end
     end
 end

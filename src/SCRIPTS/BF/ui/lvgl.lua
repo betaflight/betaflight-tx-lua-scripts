@@ -67,7 +67,7 @@ local VIEW = {
 
 local view = VIEW.none
 local builtPage -- the Page the rows were built from
-local builtValues -- and whether its values had arrived
+local builtRev -- the Controller.valuesRev they were built at
 local builtReady -- and whether it was ready to carry field rows at all
 local pageShell -- the lvgl.page the rows live in, while the page view is up
 local swapPending -- rows cleared this frame; the refill lands next frame
@@ -510,20 +510,22 @@ local function addSpacer(body)
 end
 
 --- The one action that belongs to the open page, at the end of the form, which
---- is where a colour radio puts the button that submits one. It goes inactive
---- while a save is in flight so a second press cannot start a second
---- transaction on a link that is already busy.
+--- is where a colour radio puts the button that submits one.
+---
+--- A second press while the first save is still in flight would open a second
+--- transaction on a busy link, so it is refused -- but refused inside `press`,
+--- the same way the header arrows are, and for the same reason: `active` takes
+--- the button out of the focus group for as long as the save lasts, and the
+--- ring does not come back to it afterwards. Since this is the button every
+--- save is made from, that is the focus lost on every save.
 local function addSaveRow(body)
     body:button({
         w = FULL,
         text = "Save page",
         press = function()
-            if Controller.Page then
+            if Controller.Page and not Controller.saving then
                 Controller.savePage()
             end
-        end,
-        active = function()
-            return not Controller.saving
         end,
     })
 end
@@ -686,19 +688,23 @@ end
 local function rebuildIfNeeded()
     local want = wantedView()
     local Page = Controller.Page
-    local values = Page and Page.values or nil
-    -- Readiness can flip without values ever arriving: a refused read becomes
-    -- the N/A notice, which `values == builtValues` alone would never notice.
+    local rev = Controller.valuesRev
+    -- Readiness can flip without the values changing: a refused read becomes
+    -- the N/A notice, which the revision alone would never account for.
     local ready = Page ~= nil and pageReady(Page)
 
     -- Content changes while the page view is up swap the rows and leave the
-    -- shell standing; only a change of view rebuilds the whole screen. Two
-    -- rules make the swap invisible:
+    -- shell standing; only a change of view rebuilds the whole screen. Three
+    -- rules keep the swap from being felt:
     --
     --   * Swap only once the incoming page is ready. Until then the outgoing
     --     rows stay up -- greyed, their fields no longer being editable --
     --     which reads as a page turn in progress rather than a blink through
     --     an empty screen.
+    --   * Swap only for a reply that changed something. A save ends in a
+    --     re-read of the page it saved, and the answer to that is normally the
+    --     values that were just sent: rebuilding for it would cost the user
+    --     their place on the page every time they saved.
     --   * The firmware releases a cleared object's child refs after this
     --     frame's run() returns, and rows built before that sweep would be
     --     swept with them. So: clear this frame, refill the next.
@@ -706,16 +712,16 @@ local function rebuildIfNeeded()
         if swapPending then
             swapPending = false
             bodyStale = false
-            builtPage, builtValues, builtReady = Page, values, ready
+            builtPage, builtRev, builtReady = Page, rev, ready
             fillBody(pageShell)
-        elseif ready and (Page ~= builtPage or values ~= builtValues or ready ~= builtReady or bodyStale) then
+        elseif ready and (Page ~= builtPage or rev ~= builtRev or ready ~= builtReady or bodyStale) then
             pageShell:clear()
             swapPending = true
         end
         return
     end
 
-    if want == view and Page == builtPage and values == builtValues and ready == builtReady then
+    if want == view and Page == builtPage and rev == builtRev and ready == builtReady then
         return
     end
 
@@ -730,7 +736,7 @@ local function rebuildIfNeeded()
 
     view = want
     builtPage = Page
-    builtValues = values
+    builtRev = rev
     builtReady = ready
     pageShell = nil
     swapPending = false
