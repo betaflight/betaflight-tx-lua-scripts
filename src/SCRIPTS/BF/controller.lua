@@ -389,6 +389,16 @@ local function processMspReply(cmd, rx_buf, err)
     local Page = Controller.Page
     if not Page or not rx_buf then
         return
+    elseif err and (cmd == Page.write or cmd == uiMsp.eepromWrite) then
+        -- The FC refused the write -- an armed flight controller refuses
+        -- MSP_EEPROM_WRITE, for one. The reply still carries a buffer, so
+        -- without this it would walk the branches below and finish the save
+        -- as if it had worked: an eeprom write issued for a settings write
+        -- that did not happen, or values re-read -- from RAM the eeprom
+        -- write never committed -- and shown as saved. Doing nothing here
+        -- leaves `saving` standing, so tickSaving() resends the save and,
+        -- if the FC keeps refusing, gives up the same way it does when the
+        -- reply never arrives at all.
     elseif cmd == Page.write then
         if Page.eepromWrite then
             eepromWrite()
