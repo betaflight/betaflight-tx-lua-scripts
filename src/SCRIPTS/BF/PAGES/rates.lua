@@ -68,6 +68,9 @@ end
 if apiVersion >= 1.16 then
     labels[#labels + 1] = { t = "Throttle",       x = x,          y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Mid",            x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 7 }, scale = 100 }
+    if apiVersion >= 1.47 then
+        fields[#fields + 1] = { t = "Hover Point", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 24 }, scale = 100 }
+    end
     fields[#fields + 1] = { t = "Expo",           x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 8 }, scale = 100 }
     if apiVersion >= 1.41 then
         fields[#fields + 1] = { t = "Limit Type", x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 2, vals = { 15 }, table = { [0] = "OFF", "SCALE", "CLIP" } }
