@@ -12,9 +12,15 @@ local labels = {}
 local fields = {}
 
 local dMinMax = 100
+local dAdvancedLabel = "D Min"
 
 if apiVersion >= 1.44 then
     dMinMax = 250
+end
+
+-- Firmware 4.6 (API 1.47) swapped D Min / D Max: these bytes now hold D Max.
+if apiVersion >= 1.47 then
+    dAdvancedLabel = "D Max"
 end
 
 if apiVersion >= 1.40 then
@@ -38,7 +44,7 @@ if apiVersion >= 1.40 then
         x = x + tableSpacing.col
         y = yMinLim - tableSpacing.header
 
-        labels[#labels + 1] = { t = "D Min", x = x, y = inc.y(tableSpacing.header) }
+        labels[#labels + 1] = { t = dAdvancedLabel, x = x, y = inc.y(tableSpacing.header) }
         fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = dMinMax, vals = { 40 } }
         fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = dMinMax, vals = { 41 } }
         fields[#fields + 1] = {              x = x, y = inc.y(tableSpacing.row), min = 0, max = dMinMax, vals = { 42 } }
@@ -61,7 +67,7 @@ if apiVersion >= 1.40 then
 end
 
 if apiVersion >= 1.41 then
-    labels[#labels + 1] = { t = "D Min",       x = x,          y = inc.y(lineSpacing) }
+    labels[#labels + 1] = { t = dAdvancedLabel,     x = x,          y = inc.y(lineSpacing) }
     fields[#fields + 1] = { t = "Gain",        x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 100, vals = { 43 } }
     fields[#fields + 1] = { t = "Advance",     x = x + indent, y = inc.y(lineSpacing), sp = x + sp, min = 0, max = 200, vals = { 44 } }
 end

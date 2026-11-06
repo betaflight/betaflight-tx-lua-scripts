@@ -16,6 +16,11 @@ local dLabel = "D"
 
 if apiVersion >= 1.44 then
     pidMax = 250
+end
+
+-- Firmware 4.3 - 4.5 (API 1.44 - 1.46) used the PID D term as D Max.
+-- Since 4.6 (API 1.47) the PID D term is the base D and D Max is in MSP_PID_ADVANCED.
+if apiVersion >= 1.44 and apiVersion < 1.47 then
     dLabel = "D Max"
 end
 
