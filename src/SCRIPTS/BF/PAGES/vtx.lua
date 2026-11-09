@@ -56,7 +56,9 @@ return {
     fields         = fields,
     freqLookup = vtx_tables.frequencyTable,
     postLoad = function (self)
-        if (self.values[2] or 0) < 0 or (self.values[3] or 0) == 0 or (self.values[4] or 0) == 0 then
+        -- channel is 0 when the VTX is in user-frequency mode (band 0), so only
+        -- treat it as invalid when a band is selected
+        if ((self.values[2] or 0) > 0 and (self.values[3] or 0) == 0) or (self.values[4] or 0) == 0 then
             self.values = {}
         else
             self.prevBandVal = 0                      -- reset value trackers
