@@ -201,7 +201,7 @@ end
 
 function Controller.savePage()
     local Page = Controller.Page
-    if not Page.values then
+    if not Page.values or not Page.write then
         return
     end
     local payload = Page.values
@@ -287,14 +287,44 @@ function Controller.fcActions()
     return actions
 end
 
+--- What the open page itself offers besides saving, e.g. erasing the blackbox
+--- flash. A page declares these as `actions(Page)`, returning entries with a
+--- `confirm` script, so a destructive action always goes through a
+--- confirmation screen. Empty until the page has loaded.
+function Controller.pageActions()
+    local Page = Controller.Page
+    local actions = {}
+    if not (Page and Page.actions and Page.values) then
+        return actions
+    end
+    local declared = Page.actions(Page)
+    for i = 1, #declared do
+        local a = declared[i]
+        actions[#actions + 1] = {
+            t = a.t,
+            title = a.title,
+            f = function()
+                Controller.confirm(a.confirm)
+            end,
+        }
+    end
+    return actions
+end
+
 --- The popup menu's contents. Which entries exist depends on the API version
 --- and on whether a page is open, both of which are this side of the split;
 --- where the box is drawn is not.
 function Controller.menuActions()
     local actions = {}
     if Controller.state == status.pages then
-        actions[#actions + 1] = { t = "save page", f = Controller.savePage }
+        if Controller.Page and Controller.Page.write then
+            actions[#actions + 1] = { t = "save page", f = Controller.savePage }
+        end
         actions[#actions + 1] = { t = "reload", f = Controller.reload }
+        local pageActions = Controller.pageActions()
+        for i = 1, #pageActions do
+            actions[#actions + 1] = pageActions[i]
+        end
     end
     local fc = Controller.fcActions()
     for i = 1, #fc do

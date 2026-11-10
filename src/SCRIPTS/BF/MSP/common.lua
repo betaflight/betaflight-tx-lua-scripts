@@ -49,6 +49,15 @@ function mspProcessTxQ()
     return true
 end
 
+-- Drop a request that is still waiting to go out, e.g. when the caller has
+-- given up on it. A partially sent message is harmless: the next request
+-- starts with the start flag, which makes the FC discard the fragment.
+function mspClearTxQ()
+    mspTxBuf = {}
+    mspTxIdx = 1
+    mspTxCRC = 0
+end
+
 function mspSendRequest(cmd, payload)
     -- busy
     if #(mspTxBuf) ~= 0 or not cmd then
