@@ -22,6 +22,9 @@ local eraseSentTS = nil
 -- answering the summary polls while it runs, so this only counts silence.
 local NO_REPLY_TIMEOUT = 1000
 local lastReplyTS = nil
+-- How long "Erase status unknown" stays up before returning to the page.
+local UNKNOWN_HOLD = 300
+local unknownUntil = nil
 
 local returnTable = { f = nil, t = "Erasing blackbox flash..." }
 
@@ -54,11 +57,18 @@ end
 
 local function erase()
     lastReplyTS = lastReplyTS or getTime()
-    if lastReplyTS + NO_REPLY_TIMEOUT < getTime() then
-        -- Erase status unknown; the page re-read afterwards shows what is on
-        -- the flash. Any request still queued is drained by the next frame's
-        -- mspProcessTxQ, and its late reply is ignored by the page.
-        done = true
+    if unknownUntil then
+        done = unknownUntil < getTime()
+        return done
+    end
+    if not done and lastReplyTS + NO_REPLY_TIMEOUT < getTime() then
+        -- Give up and say so. Drop any request still queued so an erase the
+        -- link never delivered cannot go out after the user has left; the
+        -- page re-read afterwards shows the flash once the FC answers.
+        mspClearTxQ()
+        returnTable.t = "Erase status unknown"
+        unknownUntil = getTime() + UNKNOWN_HOLD
+        return false
     end
     if not done and lastRunTS + INTERVAL < getTime() then
         lastRunTS = getTime()
