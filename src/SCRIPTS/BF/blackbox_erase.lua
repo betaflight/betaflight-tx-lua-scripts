@@ -17,10 +17,18 @@ local INTERVAL = 50
 -- link from starting it twice.
 local ERASE_RETRY = 300
 local eraseSentTS = nil
+-- Give up when the FC has gone quiet for this long (lost telemetry), so the
+-- init screen cannot hang. A chip erase can take minutes, but the FC keeps
+-- answering the summary polls while it runs, so this only counts silence.
+local NO_REPLY_TIMEOUT = 1000
+local lastReplyTS = nil
 
 local returnTable = { f = nil, t = "Erasing blackbox flash..." }
 
 local function processMspReply(cmd, payload, err)
+    if cmd == MSP_DATAFLASH_ERASE or cmd == MSP_DATAFLASH_SUMMARY then
+        lastReplyTS = getTime()
+    end
     if cmd == MSP_DATAFLASH_ERASE then
         -- A refusal ends here; the page re-read afterwards shows what is left.
         done = err and true or false
@@ -40,7 +48,14 @@ local function processMspReply(cmd, payload, err)
 end
 
 local function erase()
-    if lastRunTS + INTERVAL < getTime() then
+    lastReplyTS = lastReplyTS or getTime()
+    if lastReplyTS + NO_REPLY_TIMEOUT < getTime() then
+        -- Erase status unknown; the page re-read afterwards shows what is on
+        -- the flash. Any request still queued is drained by the next frame's
+        -- mspProcessTxQ, and its late reply is ignored by the page.
+        done = true
+    end
+    if not done and lastRunTS + INTERVAL < getTime() then
         lastRunTS = getTime()
         if not eraseAcked then
             if not eraseSentTS or eraseSentTS + ERASE_RETRY < getTime() then

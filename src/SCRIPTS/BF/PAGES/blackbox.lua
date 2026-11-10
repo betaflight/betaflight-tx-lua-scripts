@@ -39,6 +39,12 @@ return {
     fields   = fields,
     supported = false,
     postLoad = function(self)
+        -- A truncated reply would decode as wrong sizes; drop it so the
+        -- controller asks again.
+        if #self.values < self.minBytes then
+            self.values = nil
+            return
+        end
         local flags = self.values[1] or 0
         self.supported = bit32.btest(flags, FLAG_SUPPORTED)
         if not self.supported then

@@ -80,7 +80,7 @@ Leaving a page without saving discards the changes on it.
 
 #### Blackbox
 
-The "Blackbox" page shows whether the flight controller has onboard flash for blackbox logging, and how much of it is used and free. To delete all logs, select "Erase Blackbox Flash" at the end of the page on a colour radio running EdgeTX 2.11.7 / 2.12.1 or newer, or long press [ENTER] and choose 'erase flash' from the function menu on other radios. You will be asked to confirm before anything is erased, and erasing can take a while depending on the size of the flash chip. Logs on an SD card cannot be managed from the script.
+The "Blackbox" page shows whether the flight controller has onboard flash for blackbox logging, and how much of it is used and free. To delete all logs, select "Erase Blackbox Flash" at the end of the page on a colour radio running EdgeTX 2.11.7 / 2.12.1 or newer, or long press [ENTER] and choose "erase flash" from the function menu on other radios. You will be asked to confirm before anything is erased, and erasing can take a while depending on the size of the flash chip. Erasing is not blocked while armed, so disarm first. Logs on an SD card cannot be managed from the script.
 
 #### Setting up VTX tables
 
