@@ -550,7 +550,23 @@ local function fillBody(body)
         addRow(body, rows[i])
     end
     addSpacer(body)
-    addSaveRow(body)
+    local actions = Controller.pageActions()
+    for i = 1, #actions do
+        local action = actions[i]
+        body:button({
+            w = FULL,
+            text = action.title or action.t,
+            press = function()
+                if not Controller.saving then
+                    action.f()
+                    view = VIEW.none
+                end
+            end,
+        })
+    end
+    if Page.write then
+        addSaveRow(body)
+    end
 end
 
 local function buildPage()
