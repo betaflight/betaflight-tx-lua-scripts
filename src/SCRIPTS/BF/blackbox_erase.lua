@@ -25,19 +25,22 @@ local lastReplyTS = nil
 
 local returnTable = { f = nil, t = "Erasing blackbox flash..." }
 
+local SUMMARY_BYTES = 13 -- flags (U8), sectors, total, used (U32 each)
+
 local function processMspReply(cmd, payload, err)
-    -- Only usable replies count as the FC being there; a refused summary
-    -- must not keep the timeout from expiring.
-    if (cmd == MSP_DATAFLASH_ERASE or cmd == MSP_DATAFLASH_SUMMARY) and not err then
+    -- Only usable replies count as the FC being there: a refused or truncated
+    -- summary must neither keep the timeout from expiring nor be decoded.
+    local usableSummary = cmd == MSP_DATAFLASH_SUMMARY and not err and payload and #payload >= SUMMARY_BYTES
+    if (cmd == MSP_DATAFLASH_ERASE and not err) or usableSummary then
         lastReplyTS = getTime()
     end
     if cmd == MSP_DATAFLASH_ERASE then
         -- A refusal ends here; the page re-read afterwards shows what is left.
         done = err and true or false
         eraseAcked = not err
-    elseif cmd == MSP_DATAFLASH_SUMMARY and eraseAcked and payload and not err then
-        local ready = bit32.btest(payload[1] or 0, FLAG_READY)
-        local used = (payload[10] or 0) + (payload[11] or 0) * 256 + (payload[12] or 0) * 65536 + (payload[13] or 0) * 16777216
+    elseif usableSummary and eraseAcked then
+        local ready = bit32.btest(payload[1], FLAG_READY)
+        local used = payload[10] + payload[11] * 256 + payload[12] * 65536 + payload[13] * 16777216
         if not ready then
             sawBusy = true
         elseif used == 0 or sawBusy then
