@@ -26,7 +26,9 @@ local lastReplyTS = nil
 local returnTable = { f = nil, t = "Erasing blackbox flash..." }
 
 local function processMspReply(cmd, payload, err)
-    if cmd == MSP_DATAFLASH_ERASE or cmd == MSP_DATAFLASH_SUMMARY then
+    -- Only usable replies count as the FC being there; a refused summary
+    -- must not keep the timeout from expiring.
+    if (cmd == MSP_DATAFLASH_ERASE or cmd == MSP_DATAFLASH_SUMMARY) and not err then
         lastReplyTS = getTime()
     end
     if cmd == MSP_DATAFLASH_ERASE then
